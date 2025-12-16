@@ -3,7 +3,7 @@ const CalculationStepsComponent = {
     props: ['steps'],
     template: `
         <div v-if="steps?.length" 
-             class="card flex-fill m-0 ms-sm-3 mt-4 mt-sm-0">
+             class="nc-card card flex-fill m-0 ms-sm-3 mt-4 mt-sm-0">
             <div class="card-body">
                 <div v-for="(s,i) in steps"
                      :key="i"

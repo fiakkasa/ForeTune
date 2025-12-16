@@ -60,7 +60,7 @@ const IndexPage = {
 
             return active
                 ? [item.activeCssClass || 'btn-primary', 'rounded-circle']
-                : [item.inactiveCssClass || 'btn-secondary', 'rounded-circle', 'active'];
+                : [item.inactiveCssClass || 'btn-secondary', 'rounded-circle'];
         },
         navigateTo(urlFragment) {
             this.$router.push(`/${urlFragment}`);

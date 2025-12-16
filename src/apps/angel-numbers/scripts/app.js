@@ -1,15 +1,21 @@
+import { SearchInputComponent } from './components/SearchInputComponent.js';
 import { IndexPage } from './pages/IndexPage.js';
+
+const uiConfig = {
+    maxInputChars: 1000,
+    uiDefaultDelay: 250
+};
 
 const routes = [
     { path: '/:value', component: IndexPage },
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(config = {}, appsConfig = {}, storageService) {
+async function appInit(config = {}, storageService) {
     const {
-        id = 'navigator',
-        path = 'apps/navigator',
-        urlFragment = ''
+        id = 'angel-numbers',
+        path = 'apps/angel-numbers',
+        urlFragment = 'angel-numbers'
     } = config;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
@@ -21,9 +27,10 @@ async function appInit(config = {}, appsConfig = {}, storageService) {
         fallbackLocale: 'en',
         messages: {
             en: {
-                main: 'Home',
-                numerology_calculator: 'Numerology Calculator',
-                angel_numbers: 'Angel Numbers'
+                enter_your_values: 'Enter your values..',
+                characters_of_max_characters: '{characters} / {maxCharacters}',
+                items_of_total: '{items} of {total}',
+                nothing_found: 'No items matched your search token..'
             }
         }
     });
@@ -35,9 +42,11 @@ async function appInit(config = {}, appsConfig = {}, storageService) {
     app.use(router);
     app.use(i18n);
 
+    app.component('search-input', SearchInputComponent);
     app.component('index-page', IndexPage);
+
     app.provide('appConfig', config);
-    app.provide('appsConfig', appsConfig);
+    app.provide('uiConfig', uiConfig);
 
     const locale = 'en-US';
     const localeStorageKey = `${id}__localization[${locale}]`;
@@ -55,6 +64,21 @@ async function appInit(config = {}, appsConfig = {}, storageService) {
 
     i18n.global.setLocaleMessage(locale, messages);
     i18n.global.locale.value = locale;
+
+    const dataStorageKey = `${id}__data`;
+    let data = storageService.get(localeStorageKey) || [];
+
+    if (!data.length) {
+        data = await fetch(`${path}/assets/data.json`)
+            .then(response => response.json())
+            .catch(error => {
+                console.error(error);
+                return [];
+            });
+        storageService.set(dataStorageKey, data);
+    }
+
+    app.provide('data', data);
 
     return app;
 }

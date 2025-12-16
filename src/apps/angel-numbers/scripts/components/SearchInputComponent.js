@@ -20,7 +20,7 @@ const SearchInputComponent = {
         </div>
 
         <small class="d-flex text-muted mt-1">
-            <span v-if="loading" class="nc-loading"></span>
+            <span v-if="loading" class="an-loading"></span>
             <span class="flex-fill"></span>
             <span class="px-1 bg-white rounded"
                   v-text="$t('characters_of_max_characters', { characters: text?.length || 0, maxCharacters: uiConfig.maxInputChars })"></span>

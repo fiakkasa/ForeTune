@@ -6,6 +6,7 @@ describe('IndexPage', function () {
             title: 'main',
             urlFragment: '',
             path: 'apps/navigator',
+            id: 'navigator',
             icon: 'oi oi-home',
             activeCssClass: '',
             inactiveCssClass: '',
@@ -14,9 +15,10 @@ describe('IndexPage', function () {
             title: 'numerology_calculator',
             urlFragment: 'numerology-calculator',
             path: 'apps/numerology-calculator',
+            id: 'numerology-calculator',
             icon: 'oi oi-calculator',
-            activeCssClass: '',
-            inactiveCssClass: '',
+            activeCssClass: 'btn-primary',
+            inactiveCssClass: 'btn-secondary',
         }
     };
 
@@ -62,7 +64,6 @@ describe('IndexPage', function () {
             const { app, container } = mountPage();
             await delay();
             await Vue.nextTick();
-            const buttonEl = container.querySelector('button.btn-primary');
 
             expect(container.querySelector('nav.nv-stand-alone')).toBeTruthy();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);

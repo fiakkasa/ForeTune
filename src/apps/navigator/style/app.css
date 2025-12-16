@@ -4,23 +4,23 @@
   --navigator-lift: 5.25rem;
 }
 
-#navigator .nv-nav {
+.nv-nav {
   padding: var(--navigator-padding);
   flex-wrap: wrap;
 }
 
-#navigator .nv-nav:not(.nv-stand-alone) {
+.nv-nav:not(.nv-stand-alone) {
   flex-direction: column;
   gap: var(--navigator-gap);
   border-right: var(--bs-gray-300) 1px solid;
 }
 
-#navigator .nv-nav.nv-stand-alone {
+.nv-nav.nv-stand-alone {
   width: calc(100vw - (2 * var(--navigator-padding)));
   gap: calc(2 * var(--navigator-gap));
 }
 
-#navigator .nv-nav > .btn {
+.nv-nav > .btn {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -29,25 +29,25 @@
   overflow: hidden;
 }
 
-#navigator .nv-nav > .btn:not(:hover) {
+.nv-nav > .btn:not(:hover) {
   transition: font-size 500ms ease, border-radius 500ms ease;
 }
 
-#navigator .nv-nav:not(.nv-stand-alone) > .btn:last-child {
+.nv-nav:not(.nv-stand-alone) > .btn:last-child {
   margin-bottom: var(--navigator-lift);
 }
 
-#navigator .nv-nav.nv-stand-alone > .btn {
+.nv-nav.nv-stand-alone > .btn {
   width: 15rem;
   height: 15rem;
   padding: 0.5rem !important;
 }
 
-#navigator .nv-nav.nv-stand-alone > .btn > i {
+.nv-nav.nv-stand-alone > .btn > i {
   font-size: 6rem;
 }
 
-#navigator .nv-nav.nv-stand-alone > .btn > span {
+.nv-nav.nv-stand-alone > .btn > span {
   width: 100%;
   white-space: nowrap;
   overflow: hidden;

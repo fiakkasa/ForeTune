@@ -26,8 +26,12 @@ const routes = [
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(config = {}) {
-    const { path = '', urlFragment = '' } = config;
+async function appInit(config = {}, storageService) {
+    const {
+        id = 'numerology-calculator',
+        path = 'apps/numerology-calculator',
+        urlFragment = 'numerology-calculator'
+    } = config;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
         routes
@@ -41,7 +45,8 @@ async function appInit(config = {}) {
                 enter_your_values: 'Enter your values..',
                 digit_calculation: 'Numeric Calculation',
                 letter_calculation: 'Letter Calculation',
-                combined_calculation: 'Combined Calculation'
+                combined_calculation: 'Combined Calculation',
+                characters_of_max_characters: '{characters} / {maxCharacters}',
             }
         }
     });
@@ -66,7 +71,7 @@ async function appInit(config = {}) {
     app.component('search-input', SearchInputComponent);
     app.component('index-page', IndexPage);
 
-    app.provide('config', config);
+    app.provide('appConfig', config);
     app.provide('uiConfig', uiConfig);
     app.provide('linksService', linksService);
     app.provide('uiService', uiService);
@@ -74,12 +79,18 @@ async function appInit(config = {}) {
     app.provide('letterCalculatorService', letterCalculatorService);
 
     const locale = 'en-US';
-    const messages = await fetch(`${path}/localization/${locale}.json`)
-        .then(response => response.json())
-        .catch(error => {
-            console.error(error);
-            return {};
-        });
+    const localeStorageKey = `${id}__localization[${locale}]`;
+    let messages = storageService.get(localeStorageKey) || {};
+
+    if (!Object.values(messages).length) {
+        messages = await fetch(`${path}/localization/${locale}.json`)
+            .then(response => response.json())
+            .catch(error => {
+                console.error(error);
+                return {};
+            });
+        storageService.set(localeStorageKey, messages);
+    }
 
     i18n.global.setLocaleMessage(locale, messages);
     i18n.global.locale.value = locale;

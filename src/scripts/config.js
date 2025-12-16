@@ -3,16 +3,27 @@ const appsConfig = {
         title: 'main',
         urlFragment: '',
         path: 'apps/navigator',
+        id: 'navigator',
         icon: 'oi oi-home',
-        activeCssClass: '',
+        activeCssClass: 'btn-success',
         inactiveCssClass: '',
     },
     numerologyCalculator: {
         title: 'numerology_calculator',
         urlFragment: 'numerology-calculator',
         path: 'apps/numerology-calculator',
+        id: 'numerology-calculator',
         icon: 'oi oi-calculator',
-        activeCssClass: '',
+        activeCssClass: 'btn-danger',
+        inactiveCssClass: '',
+    },
+    angelNumbers: {
+        title: 'angel_numbers',
+        urlFragment: 'angel-numbers',
+        path: 'apps/angel-numbers',
+        id: 'angel-numbers',
+        icon: 'oi oi-cloud',
+        activeCssClass: 'btn-primary',
         inactiveCssClass: '',
     }
 };
@@ -22,5 +33,10 @@ const urlConfig = {
 const loaderConfig = {
     timeout: 375
 };
+const storageConfig = {
+    namespace: 'foretune__',
+    name: 'ls',
+    storage: 'session'
+};
 
-export { appsConfig, urlConfig, loaderConfig }
+export { appsConfig, urlConfig, loaderConfig, storageConfig }
