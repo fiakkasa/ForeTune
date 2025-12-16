@@ -1,0 +1,13 @@
+{
+    "port": 5200,
+    "server": {
+        "baseDir": "src"
+    },
+    "files": [
+        "./src/**/*.{html,css,js}",
+        "./src/*.{html,css,js}",
+        "./src/localization/*.json"
+    ],
+    "open": true,
+    "notify": true
+}

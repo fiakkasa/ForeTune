@@ -1,0 +1,67 @@
+﻿#numerology-calculator .nc-loading:before {
+  animation: nc-dots 1s infinite;
+  content: ".";
+  color: var(--bs-gray-500);
+}
+
+#numerology-calculator .nc-hide-when-empty:empty {
+  display: none;
+}
+
+@keyframes nc-dots {
+  0% {
+    content: ".";
+  }
+
+  33% {
+    content: "..";
+  }
+
+  67% {
+    content: "...";
+  }
+}
+
+#numerology-calculator {
+  position: relative;
+  background-image: url("../assets/sun-faded.png");
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+
+#numerology-calculator .card {
+  position: relative;
+}
+
+#numerology-calculator .card,
+#numerology-calculator .nc-search-input-container {
+  background-color: transparent;
+  overflow: hidden;
+}
+
+#numerology-calculator .nc-search-input-spacer {
+  transition: 375ms ease-in-out all;
+}
+
+#numerology-calculator .card:after,
+#numerology-calculator .nc-search-input-container:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bs-white);
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  filter: blur(8px) opacity(0.5);
+  -webkit-filter: blur(8px) opacity(0.65);
+}
+
+#numerology-calculator .card > .card-body,
+#numerology-calculator .nc-search-input-container > * {
+  position: relative;
+  z-index: 10;
+}

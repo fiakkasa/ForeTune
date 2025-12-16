@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>ForeTune</title>
+    <link href="style/loader.css" rel="stylesheet" />
+    <link href="style/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="style/open-iconic/font/css/open-iconic-bootstrap.min.css" rel="stylesheet" />
+    <link href="style/common.css" rel="stylesheet" />
+    <link href="apps/navigator/style/app.css" rel="stylesheet" />
+    <link href="apps/numerology-calculator/style/app.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+</head>
+
+<body>
+    <div id="loader" class="loader">
+        <div class="loader-animation"></div>
+    </div>
+    <div class="apps-container d-flex align-items-start justify-content-start vh-100">
+        <div id="navigator" class="apps-nav flex-shrink-0 h-100"></div>
+        <div class="apps-panel flex-fill h-100 overflow-auto">
+            <div id="numerology-calculator" class="app-container min-vh-100"></div>
+        </div>
+    </div>
+
+    <script src="scripts/single-spa.min.js"></script>
+    <script src="scripts/vue.global.prod.min.js"></script>
+    <script src="scripts/vue-router.global.min.js"></script>
+    <script src="scripts/vue-i18n.global.prod.js"></script>
+
+    <script type="module">
+        import { appsConfig, urlConfig, loaderConfig } from './scripts/config.js';
+        import { appInit as navigatorAppInit } from './apps/navigator/scripts/app.js';
+        import { appInit as numerologyCalculatorAppInit } from './apps/numerology-calculator/scripts/app.js';
+
+        let _loaderTimeoutRef;
+
+        async function setLoader(show) {
+            const loader = document.getElementById('loader');
+
+            if (_loaderTimeoutRef) {
+                clearTimeout(_loaderTimeoutRef);
+            }
+
+            if (show) {
+                loader.style.display = 'unset';
+                return;
+            }
+
+            _loaderTimeoutRef = setTimeout(() => {
+                loader.style.display = 'none';
+            }, loaderConfig.timeout);
+        }
+
+        singleSpa.registerApplication(
+            'numerology-calculator',
+            async () => {
+                let appRef;
+
+                return {
+                    bootstrap: () => setLoader(true),
+                    mount: async () => {
+                        setLoader(true);
+
+                        appRef = await numerologyCalculatorAppInit(appsConfig.numerologyCalculator);
+
+                        appRef.mount('#numerology-calculator');
+
+                        setLoader(false);
+                    },
+                    unmount: async () => appRef?.unmount()
+                };
+            },
+            location => location.hash.startsWith(
+                urlConfig.prefix + appsConfig.numerologyCalculator.urlFragment
+            )
+        );
+
+        singleSpa.registerApplication(
+            'navigator',
+            async () => ({
+                bootstrap: () => setLoader(true),
+                mount: async () => {
+                    const app = await navigatorAppInit(appsConfig.main, appsConfig);
+
+                    app.mount('#navigator');
+
+                    return setLoader(false);
+                },
+                unmount: async () => { }
+            }),
+            location => true
+        );
+
+        singleSpa.start();
+    </script>
+</body>
+
+</html>
