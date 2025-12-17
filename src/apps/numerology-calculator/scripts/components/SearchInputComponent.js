@@ -15,7 +15,7 @@ const SearchInputComponent = {
             <button class="btn btn-outline-secondary"
                     :disabled="!text"
                     @click="clear">
-                <i class="oi oi-x"></i>
+                <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 

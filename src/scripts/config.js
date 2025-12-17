@@ -4,7 +4,7 @@ const appsConfig = {
         urlFragment: '',
         path: 'apps/navigator',
         id: 'navigator',
-        icon: 'oi oi-home',
+        icon: 'fa-regular fa-house',
         activeCssClass: 'btn-success',
         inactiveCssClass: '',
     },
@@ -13,7 +13,7 @@ const appsConfig = {
         urlFragment: 'numerology-calculator',
         path: 'apps/numerology-calculator',
         id: 'numerology-calculator',
-        icon: 'oi oi-calculator',
+        icon: 'fa-solid fa-calculator',
         activeCssClass: 'btn-danger',
         inactiveCssClass: '',
     },
@@ -22,16 +22,16 @@ const appsConfig = {
         urlFragment: 'angel-numbers',
         path: 'apps/angel-numbers',
         id: 'angel-numbers',
-        icon: 'oi oi-cloud',
+        icon: 'fa-solid fa-feather-pointed',
         activeCssClass: 'btn-primary',
         inactiveCssClass: '',
     }
 };
 const urlConfig = {
-    prefix: '#/'
+    baseUrlPrefix: '#/'
 };
-const loaderConfig = {
-    timeout: 375
+const uiConfig = {
+    loaderTimeout: 375
 };
 const storageConfig = {
     namespace: 'foretune__',
@@ -39,4 +39,4 @@ const storageConfig = {
     storage: 'session'
 };
 
-export { appsConfig, urlConfig, loaderConfig, storageConfig }
+export { appsConfig, urlConfig, uiConfig, storageConfig }
