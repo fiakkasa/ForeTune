@@ -1,6 +1,6 @@
 class NumerologyLinksService {
     constructor(config) {
-        this.config = config;
+        this._config = config;
     }
 
     isEligible(value = '') {
@@ -8,7 +8,7 @@ class NumerologyLinksService {
     }
 
     getUrl(value) {
-        return this.config.url.replace('{0}', value || '');
+        return this._config.url.replace('{0}', value || '');
     }
 }
 

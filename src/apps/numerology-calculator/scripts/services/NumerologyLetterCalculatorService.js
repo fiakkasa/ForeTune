@@ -1,7 +1,7 @@
 class NumerologyLetterCalculatorService {
     constructor(uiService) {
-        this.uiService = uiService;
-        this.letterMap = {
+        this._uiService = uiService;
+        this._letterMap = {
             A: 1, J: 1, S: 1,
             B: 2, K: 2, T: 2,
             C: 3, L: 3, U: 3,
@@ -12,7 +12,7 @@ class NumerologyLetterCalculatorService {
             H: 8, Q: 8, Z: 8,
             I: 9, R: 9
         };
-        this.codePointsMap = {
+        this._codePointsMap = {
             '1': 1,
             '2': 2,
             '3': 3,
@@ -26,7 +26,7 @@ class NumerologyLetterCalculatorService {
     }
 
     toDeltaInt(character) {
-        return this.codePointsMap[character] ?? 0;
+        return this._codePointsMap[character] ?? 0;
     }
 
     toDeltaIntCollectionSequence(text) {
@@ -52,20 +52,20 @@ class NumerologyLetterCalculatorService {
     calculate(text, cancellationSignal) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                const uiService = this.uiService;
+                const uiService = this._uiService;
                 const letters = [];
                 const digits = [];
                 const composed = [];
 
                 for (const ch of (text || '').toUpperCase()) {
-                    if (!this.letterMap[ch]) {
+                    if (!this._letterMap[ch]) {
                         continue;
                     }
 
                     letters.push(ch);
-                    digits.push(this.letterMap[ch]);
+                    digits.push(this._letterMap[ch]);
                     composed.push(
-                        uiService.composeCombinedItem(ch, this.letterMap[ch])
+                        uiService.composeCombinedItem(ch, this._letterMap[ch])
                     );
                 }
 

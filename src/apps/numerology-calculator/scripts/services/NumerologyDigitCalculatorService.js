@@ -1,7 +1,7 @@
 class NumerologyDigitCalculatorService {
     constructor(uiService) {
-        this.uiService = uiService;
-        this.codePointsMap = {
+        this._uiService = uiService;
+        this._codePointsMap = {
             '1': 1,
             '2': 2,
             '3': 3,
@@ -15,7 +15,7 @@ class NumerologyDigitCalculatorService {
     }
 
     toDeltaInt(character) {
-        return this.codePointsMap[character] ?? 0;
+        return this._codePointsMap[character] ?? 0;
     }
 
     toDeltaIntCollectionSequence(text) {
@@ -29,7 +29,7 @@ class NumerologyDigitCalculatorService {
     calculateSumAndStep(digits, sequence) {
         const sum = this.toSumString(digits);
         const step = {
-            equation: this.uiService.composeEntryEquation(digits),
+            equation: this._uiService.composeEntryEquation(digits),
             sum,
             numberOfCharacters: digits.length,
             sequence
@@ -55,7 +55,7 @@ class NumerologyDigitCalculatorService {
 
                     let { sum, step } = this.calculateSumAndStep(
                         digits,
-                        this.uiService.composeEntrySequence(digits)
+                        this._uiService.composeEntrySequence(digits)
                     );
 
                     result = sum;
@@ -65,7 +65,7 @@ class NumerologyDigitCalculatorService {
                         digits = this.toDeltaIntCollectionSequence(result);
                         let { sum, step } = this.calculateSumAndStep(
                             digits,
-                            this.uiService.composeEntrySequence(digits)
+                            this._uiService.composeEntrySequence(digits)
                         );
 
                         result = sum;

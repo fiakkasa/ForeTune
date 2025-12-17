@@ -1,5 +1,7 @@
 import { SearchInputComponent } from './components/SearchInputComponent.js';
 import { IndexPage } from './pages/IndexPage.js';
+import { FilteringService } from './services/FilteringService.js';
+import { UiService } from './services/UiService.js';
 
 const uiConfig = {
     maxInputChars: 1000,
@@ -35,6 +37,9 @@ async function appInit(config = {}, storageService) {
         }
     });
 
+    const filteringService = new FilteringService();
+    const uiService = new UiService(uiConfig);
+
     const app = Vue.createApp({
         template: `<router-view />`
     });
@@ -47,6 +52,9 @@ async function appInit(config = {}, storageService) {
 
     app.provide('appConfig', config);
     app.provide('uiConfig', uiConfig);
+
+    app.provide('filteringService', filteringService);
+    app.provide('uiService', uiService);
 
     const locale = 'en-US';
     const localeStorageKey = `${id}__localization[${locale}]`;
@@ -77,8 +85,7 @@ async function appInit(config = {}, storageService) {
             });
         storageService.set(dataStorageKey, data);
     }
-
-    app.provide('data', data);
+    filteringService.Data = data;
 
     return app;
 }
