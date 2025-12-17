@@ -66,7 +66,7 @@ async function appInit(config = {}, storageService) {
     i18n.global.locale.value = locale;
 
     const dataStorageKey = `${id}__data`;
-    let data = storageService.get(localeStorageKey) || [];
+    let data = storageService.get(dataStorageKey) || [];
 
     if (!data.length) {
         data = await fetch(`${path}/assets/data.json`)

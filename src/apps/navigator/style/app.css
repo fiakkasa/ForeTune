@@ -8,10 +8,6 @@
   --navigator-button-icon-size: 6rem;
 }
 
-.nv-app {
-  flex-shrink: 0;
-}
-
 .nv-nav-container {
   padding: var(--navigator-padding);
 }
