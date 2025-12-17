@@ -65,7 +65,7 @@ describe('IndexPage', function () {
             await delay();
             await Vue.nextTick();
 
-            expect(container.querySelector('nav.nv-stand-alone')).toBeTruthy();
+            expect(container.querySelector('.nv-nav-container.nv-stand-alone')).toBeTruthy();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);
             expect(container.querySelector('button.btn-primary').getAttribute('title')).toBe('main');
 
@@ -79,7 +79,7 @@ describe('IndexPage', function () {
             await Vue.nextTick();
             const buttonEl = container.querySelector('button.btn-primary');
 
-            expect(container.querySelector('nav.nv-stand-alone')).toBeTruthy();
+            expect(container.querySelector('.nv-nav-container.nv-stand-alone')).toBeTruthy();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);
             expect(container.querySelector('button.btn-primary').getAttribute('title')).toBe('main');
 
@@ -92,7 +92,7 @@ describe('IndexPage', function () {
             await delay();
             await Vue.nextTick();
 
-            expect(container.querySelector('nav.nv-stand-alone')).toBeNull();
+            expect(container.querySelector('.nv-nav-container.nv-stand-alone')).toBeNull();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);
             expect(container.querySelector('button.btn-primary').getAttribute('title')).toBe('numerology_calculator');
 
@@ -107,7 +107,7 @@ describe('IndexPage', function () {
             await delay();
             await Vue.nextTick();
 
-            expect(container.querySelector('nav.nv-stand-alone')).toBeTruthy();
+            expect(container.querySelector('.nv-nav-container.nv-stand-alone')).toBeTruthy();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);
             expect(container.querySelector('button.btn-primary').getAttribute('title')).toBe('main');
             expect(router.currentRoute.value.fullPath).toBe('/');
@@ -119,7 +119,7 @@ describe('IndexPage', function () {
 
             const newButtonEl = container.querySelector('button.btn-primary');
 
-            expect(container.querySelector('nav.nv-stand-alone')).toBeNull();
+            expect(container.querySelector('.nv-nav-container.nv-stand-alone')).toBeNull();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);
             expect(container.querySelector('button.btn-primary').getAttribute('title')).toBe('numerology_calculator');
             expect(router.currentRoute.value.fullPath).toBe('/numerology-calculator');
@@ -133,7 +133,7 @@ describe('IndexPage', function () {
             await delay();
             await Vue.nextTick();
 
-            expect(container.querySelector('nav.nv-stand-alone')).toBeNull();
+            expect(container.querySelector('.nv-nav-container.nv-stand-alone')).toBeNull();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);
             expect(container.querySelector('button.btn-primary').getAttribute('title')).toBe('numerology_calculator');
             expect(router.currentRoute.value.fullPath).toBe('/numerology-calculator');
@@ -143,7 +143,7 @@ describe('IndexPage', function () {
             await delay();
             await Vue.nextTick();
 
-            expect(container.querySelector('nav.nv-stand-alone')).toBeTruthy();
+            expect(container.querySelector('.nv-nav-container.nv-stand-alone')).toBeTruthy();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);
             expect(container.querySelector('button.btn-primary').getAttribute('title')).toBe('main');
             expect(router.currentRoute.value.fullPath).toBe('/');
@@ -159,7 +159,7 @@ describe('IndexPage', function () {
             await delay();
             await Vue.nextTick();
 
-            expect(container.querySelector('nav.nv-stand-alone')).toBeTruthy();
+            expect(container.querySelector('.nv-nav-container.nv-stand-alone')).toBeTruthy();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);
             expect(container.querySelector('button.btn-primary').getAttribute('title')).toBe('main');
             expect(router.currentRoute.value.fullPath).toBe('/');
@@ -169,7 +169,7 @@ describe('IndexPage', function () {
             await delay();
             await Vue.nextTick();
 
-            expect(container.querySelector('nav.nv-stand-alone')).toBeNull();
+            expect(container.querySelector('.nv-nav-container.nv-stand-alone')).toBeNull();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);
             expect(container.querySelector('button.btn-primary').getAttribute('title')).toBe('numerology_calculator');
             expect(router.currentRoute.value.fullPath).toBe('/numerology-calculator');
@@ -179,7 +179,7 @@ describe('IndexPage', function () {
             await delay();
             await Vue.nextTick();
 
-            expect(container.querySelector('nav.nv-stand-alone')).toBeTruthy();
+            expect(container.querySelector('.nv-nav-container.nv-stand-alone')).toBeTruthy();
             expect(container.querySelectorAll('button.btn')?.length).toBe(2);
             expect(container.querySelector('button.btn-primary').getAttribute('title')).toBe('main');
             expect(router.currentRoute.value.fullPath).toBe('/');

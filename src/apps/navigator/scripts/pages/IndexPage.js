@@ -1,17 +1,20 @@
 const IndexPage = {
     inject: ['appsConfig'],
     template: `
-        <nav class="nv-nav d-flex align-items-center justify-content-center h-100 overflow-auto"
-             :class="{ 'nv-stand-alone' : standAlone }">
-            <button class="btn flex-shrink-0" 
-                v-for="item of appsConfig"
-                :class="getButtonClass(item)"
-                :title="$t(item.title)"
-                @click="navigateTo(item.urlFragment)">
-                <i v-if="item.icon" :class="item.icon"></i>
-                <span v-if="standAlone" v-text="$t(item.title)"></span>
-            </button> 
-        </nav>
+        <div class="nv-nav-container position-relative d-flex align-items-center justify-content-center overflow-auto vh-100" 
+             :class="{ 'nv-stand-alone vw-100' : standAlone }">
+            <nav class="nv-nav d-flex flex-wrap align-items-center justify-content-center">
+                <button class="btn d-inline-flex flex-column align-items-center justify-content-center flex-shrink-0 overflow-hidden" 
+                    v-for="item of appsConfig"
+                    :class="getButtonClass(item)"
+                    :title="$t(item.title)"
+                    @click="navigateTo(item.urlFragment)">
+                    <i v-if="item.icon" :class="item.icon"></i>
+                    <span class="mw-100 overflow-hidden text-nowrap text-truncate"
+                          v-if="standAlone" v-text="$t(item.title)"></span>
+                </button> 
+            </nav>
+        </div>
     `,
     data() {
         return {

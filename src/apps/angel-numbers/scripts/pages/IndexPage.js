@@ -19,13 +19,13 @@ const IndexPage = {
             </div>
 
             <small class="an-footer position-sticky sticky-bottom p-1 px-3 d-flex text-muted"
-                   v-if="data.length && !loading"
+                   v-if="!loading || visibleData.length"
                    :class="[visibleData.length ? 'justify-content-end' : 'justify-content-center']">
                 <span class="px-1 bg-white rounded"
                       v-if="visibleData.length"
                       v-text="$t('items_of_total', { items: visibleData.length, total: data.length })">
                 </span>
-                <span v-else v-text="$t('nothing_found')"></span>
+                <span v-else-if="data.length" v-text="$t('nothing_found')"></span>
             </small>
         </div>
     `,
@@ -60,6 +60,7 @@ const IndexPage = {
             }
 
             this.setTextItemsFromRoute();
+            this.find();
         }
     },
     methods: {
@@ -86,23 +87,43 @@ const IndexPage = {
                             return;
                         }
 
-                        // simple match
-                        const simpleMatchResult = data.reduce(
-                            (acc, { number, text, processedText }) => {
-                                if (
-                                    numericToken && number === numericToken
-                                    || textToken && processedText.includes(textToken)
-                                ) {
-                                    acc[number] = {
-                                        number,
-                                        text,
-                                        processedText
-                                    };
-                                }
-                                return acc;
-                            },
-                            {}
-                        );
+                        // simple numeric match
+                        let simpleNumericMatchResult = [];
+                        if (numericToken) {
+                            simpleNumericMatchResult = data.reduce(
+                                (acc, { number, text, processedText }) => {
+                                    if (numericToken && number === numericToken) {
+                                        acc[number] = {
+                                            number,
+                                            text,
+                                            processedText
+                                        };
+                                    }
+                                    return acc;
+                                },
+                                {}
+                            );
+                        }
+
+                        let simpleTextMatchResult = [];
+                        if (textToken) {
+                            simpleTextMatchResult = data.reduce(
+                                (acc, { number, text, processedText }) => {
+                                    if (
+                                        !simpleNumericMatchResult[number]
+                                        && textToken && processedText.includes(textToken)
+                                    ) {
+                                        acc[number] = {
+                                            number,
+                                            text,
+                                            processedText
+                                        };
+                                    }
+                                    return acc;
+                                },
+                                {}
+                            );
+                        }
 
                         // number tokenized match
                         let tokenizedNumberResult = {};
@@ -124,7 +145,8 @@ const IndexPage = {
                                 tokenizedNumberResult = data.reduce(
                                     (acc, { number, text, processedText }) => {
                                         if (
-                                            !simpleMatchResult[number]
+                                            !simpleNumericMatchResult[number]
+                                            && !simpleTextMatchResult[number]
                                             && tokenizedNumber.every(fragment => number.includes(fragment))
                                         ) {
                                             acc[number] = {
@@ -147,7 +169,8 @@ const IndexPage = {
                             tokenizedTextResult = data.reduce(
                                 (acc, { number, text, processedText }) => {
                                     if (
-                                        !simpleMatchResult[number]
+                                        !simpleNumericMatchResult[number]
+                                        && !simpleTextMatchResult[number]
                                         && !tokenizedNumberResult[number]
                                         && tokenizedText.every(fragment => processedText.includes(fragment))
                                     ) {
@@ -164,7 +187,8 @@ const IndexPage = {
                         }
 
                         resolve([
-                            ...Object.values(simpleMatchResult),
+                            ...Object.values(simpleNumericMatchResult),
+                            ...Object.values(simpleTextMatchResult),
                             ...Object.values(tokenizedNumberResult),
                             ...Object.values(tokenizedTextResult)
                         ]);

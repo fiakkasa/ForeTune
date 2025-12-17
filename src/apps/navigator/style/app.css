@@ -2,54 +2,74 @@
   --navigator-padding: 0.375rem;
   --navigator-gap: 0.375rem;
   --navigator-lift: 5.25rem;
+  --navigator-button-size: 15rem;
+  --navigator-button-icon-size: 6rem;
 }
 
-.nv-nav {
+.nv-app {
+  flex-shrink: 0;
+}
+
+.nv-nav-container {
   padding: var(--navigator-padding);
-  flex-wrap: wrap;
 }
 
-.nv-nav:not(.nv-stand-alone) {
-  flex-direction: column;
-  gap: var(--navigator-gap);
+.nv-nav-container:not(.nv-stand-alone) {
   border-right: var(--bs-gray-300) 1px solid;
 }
 
-.nv-nav.nv-stand-alone {
-  width: calc(100vw - (2 * var(--navigator-padding)));
+.nv-nav-container > .nv-nav {
   gap: calc(2 * var(--navigator-gap));
 }
 
-.nv-nav > .btn {
-  display: inline-flex;
+.nv-nav-container:not(.nv-stand-alone) > .nv-nav {
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: var(--navigator-gap);
-  overflow: hidden;
 }
 
-.nv-nav > .btn:not(:hover) {
+.nv-nav-container > .nv-nav > .btn {
+  gap: var(--navigator-gap);
+}
+
+.nv-nav-container > .nv-nav > .btn:not(:hover) {
   transition: font-size 500ms ease, border-radius 500ms ease;
 }
 
-.nv-nav:not(.nv-stand-alone) > .btn:last-child {
+.nv-nav-container:not(.nv-stand-alone) > .nv-nav > .btn:last-child {
   margin-bottom: var(--navigator-lift);
 }
 
-.nv-nav.nv-stand-alone > .btn {
-  width: 15rem;
-  height: 15rem;
-  padding: 0.5rem !important;
+.nv-nav-container.nv-stand-alone > .nv-nav > .btn {
+  width: var(--navigator-button-size);
+  height: var(--navigator-button-size);
+  padding: calc(2 * var(--navigator-padding)) !important;
 }
 
-.nv-nav.nv-stand-alone > .btn > i {
-  font-size: 6rem;
+.nv-nav-container.nv-stand-alone > .nv-nav > .btn > i {
+  font-size: var(--navigator-button-icon-size);
 }
 
-.nv-nav.nv-stand-alone > .btn > span {
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+@media (max-width: 720px) {
+  :root {
+    --navigator-lift: 0;
+  }
+
+  .nv-nav-container:not(.nv-stand-alone) {
+    height: unset !important;
+    border-right: unset;
+    border-bottom: var(--bs-gray-300) 1px solid;
+  }
+
+  .nv-nav-container:not(.nv-stand-alone) > .nv-nav {
+    flex-direction: row;
+  }
+
+  .nv-nav-container.nv-stand-alone > .nv-nav > .btn {
+    width: calc(0.8 * var(--navigator-button-size));
+    height: calc(0.8 * var(--navigator-button-size));
+  }
+
+  .nv-nav-container.nv-stand-alone > .nv-nav > .btn > i {
+    font-size: calc(0.8 * var(--navigator-button-icon-size));
+  }
 }
