@@ -1,6 +1,8 @@
 :root {
   --navigator-padding: 0.375rem;
+  --navigator-padding-2x: 0.75rem;
   --navigator-gap: 0.375rem;
+  --navigator-gap-2x: 0.75rem;
   --navigator-lift: 5.25rem;
   --navigator-button-size: 15rem;
   --navigator-button-icon-size: 6rem;
@@ -19,7 +21,7 @@
 }
 
 .nv-nav-container > .nv-nav {
-  gap: calc(2 * var(--navigator-gap));
+  gap: var(--navigator-gap-2x);
 }
 
 .nv-nav-container:not(.nv-stand-alone) > .nv-nav {
@@ -42,16 +44,18 @@
 .nv-nav-container.nv-stand-alone > .nv-nav > .btn {
   width: var(--navigator-button-size);
   height: var(--navigator-button-size);
-  padding: calc(2 * var(--navigator-padding)) !important;
+  padding: var(--navigator-padding-2x) !important;
 }
 
 .nv-nav-container.nv-stand-alone > .nv-nav > .btn > i {
   font-size: var(--navigator-button-icon-size);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 959px) {
   :root {
     --navigator-lift: 0;
+    --navigator-button-size: 12rem;
+    --navigator-button-icon-size: 4.5rem;
   }
 
   .nv-nav-container:not(.nv-stand-alone) {
@@ -62,14 +66,5 @@
 
   .nv-nav-container:not(.nv-stand-alone) > .nv-nav {
     flex-direction: row;
-  }
-
-  .nv-nav-container.nv-stand-alone > .nv-nav > .btn {
-    width: calc(0.8 * var(--navigator-button-size));
-    height: calc(0.8 * var(--navigator-button-size));
-  }
-
-  .nv-nav-container.nv-stand-alone > .nv-nav > .btn > i {
-    font-size: calc(0.8 * var(--navigator-button-icon-size));
   }
 }
