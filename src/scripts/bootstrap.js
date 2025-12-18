@@ -21,8 +21,8 @@ function showLoader(autoHideTimeout = null) {
 
     const normalizedAutoHideTimeout = autoHideTimeout === null
         || typeof autoHideTimeout === 'number' && autoHideTimeout >= 0
-            ? autoHideTimeout
-            : 0;
+        ? autoHideTimeout
+        : 0;
 
     if (normalizedAutoHideTimeout === 0) {
         loader.style.display = 'none';

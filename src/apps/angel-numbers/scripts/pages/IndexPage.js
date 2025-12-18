@@ -1,7 +1,7 @@
 const IndexPage = {
     inject: ['uiService', 'filteringService'],
     template: `
-        <div class="an-container container d-flex flex-column">
+        <div class="an-container container h-100 overflow-auto">
             <div class="an-search-input-container position-sticky sticky-top px-3 pt-4">
                 <search-input :text="text"
                               :loading="loading"
@@ -9,12 +9,14 @@ const IndexPage = {
                               @update:text="onTextChange" />
             </div>
 
-            <div class="an-card card"
-                 v-for="item in visibleData"
-                 :key="item.number">
-                <div class="card-body">
-                    <h5 class="card-title" v-text="item.number"></h5>
-                    <p class="card-text" v-text="item.text"></p>
+            <div class="an-cards d-flex flex-column">
+                <div class="an-card card"
+                     v-for="item in visibleData"
+                     :key="item.number">
+                    <div class="card-body">
+                        <h5 class="card-title" v-text="item.number"></h5>
+                        <p class="card-text" v-text="item.text"></p>
+                    </div>
                 </div>
             </div>
 

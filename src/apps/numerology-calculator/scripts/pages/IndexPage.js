@@ -1,6 +1,6 @@
 const IndexPage = {
     template: `
-        <div class="container">
+        <div class="nc-container container h-100 overflow-auto">
             <div class="nc-search-input-spacer"
                  :style="{ 'padding-bottom': searchInputContainerSpace }">
             </div>
