@@ -1,21 +1,23 @@
+const _codePointsMap = {
+    '1': 1,
+    '2': 2,
+    '3': 3,
+    '4': 4,
+    '5': 5,
+    '6': 6,
+    '7': 7,
+    '8': 8,
+    '9': 9
+};
+
 class NumerologyDigitCalculatorService {
-    constructor(uiService) {
+    constructor(uiService, task) {
         this._uiService = uiService;
-        this._codePointsMap = {
-            '1': 1,
-            '2': 2,
-            '3': 3,
-            '4': 4,
-            '5': 5,
-            '6': 6,
-            '7': 7,
-            '8': 8,
-            '9': 9
-        };
+        this._task = task;
     }
 
     toDeltaInt(character) {
-        return this._codePointsMap[character] ?? 0;
+        return _codePointsMap[character] ?? 0;
     }
 
     toDeltaIntCollectionSequence(text) {
@@ -39,47 +41,39 @@ class NumerologyDigitCalculatorService {
     }
 
     calculate(text, cancellationSignal) {
-        return new Promise(
-            (resolve, reject) => {
-                setTimeout(() => {
-                    let digits = [...(text || '')]
-                        .filter(ch => /\d/.test(ch))
-                        .map(ch => this.toDeltaInt(ch));
+        return this._task.run(() => {
+            let digits = [...(text || '')]
+                .filter(ch => /\d/.test(ch))
+                .map(ch => this.toDeltaInt(ch));
 
-                    if (!digits.length) {
-                        return resolve({ result: '', steps: [] });
-                    }
-
-                    let result = '';
-                    const steps = [];
-
-                    let { sum, step } = this.calculateSumAndStep(
-                        digits,
-                        this._uiService.composeEntrySequence(digits)
-                    );
-
-                    result = sum;
-                    steps.push(step);
-
-                    while (result.length > 1) {
-                        digits = this.toDeltaIntCollectionSequence(result);
-                        let { sum, step } = this.calculateSumAndStep(
-                            digits,
-                            this._uiService.composeEntrySequence(digits)
-                        );
-
-                        result = sum;
-                        steps.push(step);
-                    }
-
-                    resolve({ result, steps });
-                });
-
-                cancellationSignal?.addEventListener('abort', () => {
-                    reject(new Error('Operation aborted'));
-                }, { once: true });
+            if (!digits.length) {
+                return { result: '', steps: [] };
             }
-        );
+
+            let result = '';
+            const steps = [];
+
+            let { sum, step } = this.calculateSumAndStep(
+                digits,
+                this._uiService.composeEntrySequence(digits)
+            );
+
+            result = sum;
+            steps.push(step);
+
+            while (result.length > 1) {
+                digits = this.toDeltaIntCollectionSequence(result);
+                let { sum, step } = this.calculateSumAndStep(
+                    digits,
+                    this._uiService.composeEntrySequence(digits)
+                );
+
+                result = sum;
+                steps.push(step);
+            }
+
+            return { result, steps };
+        }, cancellationSignal);
     }
 }
 

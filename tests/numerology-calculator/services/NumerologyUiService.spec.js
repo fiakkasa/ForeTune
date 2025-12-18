@@ -1,16 +1,17 @@
+import { task } from '../../../src/scripts/utils/task.js';
 import { NumerologyUiService } from '../../../src/apps/numerology-calculator/scripts/services/NumerologyUiService.js';
 
 describe('NumerologyUiService', function () {
     const config = {
         calculatorEquationSeparator: '+',
         calculatorEquationCombinedItemTemplate: '{0}:{1}',
-        maxInputChars: 5,
+        maxSearchInputChars: 5,
         uiDefaultDelay: 500
     };
     let service;
 
     beforeEach(function () {
-        service = new NumerologyUiService(config);
+        service = new NumerologyUiService(config, task);
     });
 
     describe('composeEntryEquation', function () {

@@ -1,7 +1,7 @@
+import { task } from '../../../src/scripts/utils/task.js';
 import { FilteringService } from '../../../src/apps/angel-numbers/scripts/services/FilteringService.js';
 
 describe('FilteringService', function () {
-    let service;
     const data = [
         {
             number: '00',
@@ -68,9 +68,10 @@ describe('FilteringService', function () {
             text: 'Three Hundred Twenty One',
         },
     ];
+    let service;
 
     beforeEach(function () {
-        service = new FilteringService();
+        service = new FilteringService(task);
     });
 
     describe('search', function () {

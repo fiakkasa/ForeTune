@@ -5,26 +5,6 @@
   background-repeat: no-repeat;
 }
 
-.an-loading:before {
-  animation: an-dots 1s infinite;
-  content: ".";
-  color: var(--bs-gray-500);
-}
-
-@keyframes an-dots {
-  0% {
-    content: ".";
-  }
-
-  33% {
-    content: "..";
-  }
-
-  67% {
-    content: "...";
-  }
-}
-
 .an-container {
   gap: 0.375rem;
 }

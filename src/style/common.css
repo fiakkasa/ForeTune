@@ -7,6 +7,26 @@ body {
   display: none;
 }
 
+.app-loading:before {
+  animation: app-dots 1s infinite;
+  content: ".";
+  color: var(--bs-gray-500);
+}
+
+@keyframes app-dots {
+  0% {
+    content: ".";
+  }
+
+  33% {
+    content: "..";
+  }
+
+  67% {
+    content: "...";
+  }
+}
+
 @media (max-width: 959px) {
   .apps-container {
     flex-direction: column;

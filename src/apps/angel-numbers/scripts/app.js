@@ -1,10 +1,11 @@
-import { SearchInputComponent } from './components/SearchInputComponent.js';
+import { SearchInputComponent } from '../../../../scripts/components/SearchInputComponent.js';
+import { task } from '../../../../scripts/utils/task.js';
 import { IndexPage } from './pages/IndexPage.js';
 import { FilteringService } from './services/FilteringService.js';
 import { UiService } from './services/UiService.js';
 
 const uiConfig = {
-    maxInputChars: 1000,
+    maxSearchInputChars: 1000,
     uiDefaultDelay: 250
 };
 
@@ -37,8 +38,8 @@ async function appInit(config = {}, storageService) {
         }
     });
 
-    const filteringService = new FilteringService();
-    const uiService = new UiService(uiConfig);
+    const filteringService = new FilteringService(task);
+    const uiService = new UiService(uiConfig, task);
 
     const app = Vue.createApp({
         template: `<router-view />`

@@ -1,4 +1,4 @@
-import { SearchInputComponent } from '../../../src/apps/angel-numbers/scripts/components/SearchInputComponent.js';
+import { SearchInputComponent } from '../../../src/scripts/components/SearchInputComponent.js';
 
 describe('SearchInputComponent', function () {
     function mountComponent(props = {}, uiConfigMock = {}, emitSpy = null) {
@@ -25,8 +25,8 @@ describe('SearchInputComponent', function () {
 
     const initialFocusDelay = () => new Promise((resolve) => setTimeout(() => resolve(true), 100));
 
-    it('sets input maxlength from uiConfig.maxInputChars', async function () {
-        const uiConfig = { maxInputChars: 7 };
+    it('sets input maxlength from uiConfig.maxSearchInputChars', async function () {
+        const uiConfig = { maxSearchInputChars: 7 };
         const { app, container } = mountComponent({ text: '' }, uiConfig);
 
         await initialFocusDelay();
@@ -41,8 +41,8 @@ describe('SearchInputComponent', function () {
         container.remove();
     });
 
-    it('emits update:text truncated to maxInputChars when typing', async function () {
-        const uiConfig = { maxInputChars: 5 };
+    it('emits update:text truncated to maxSearchInputChars when typing', async function () {
+        const uiConfig = { maxSearchInputChars: 5 };
         const spy = jasmine.createSpy('onUpdateText');
         const { app, container } = mountComponent({ text: '' }, uiConfig, spy);
 
@@ -69,7 +69,7 @@ describe('SearchInputComponent', function () {
     });
 
     it('clear button emits empty string and focuses the input', async function () {
-        const uiConfig = { maxInputChars: 10 };
+        const uiConfig = { maxSearchInputChars: 10 };
         const spy = jasmine.createSpy('onUpdateText');
         const { app, container } = mountComponent({ text: 'hello' }, uiConfig, spy);
 
@@ -91,7 +91,7 @@ describe('SearchInputComponent', function () {
     });
 
     it('focuses the input on mount when focusOnLoad is truthy', async function () {
-        const uiConfig = { maxInputChars: 10 };
+        const uiConfig = { maxSearchInputChars: 10 };
         const { app, container } = mountComponent({ text: '', focusOnLoad: true }, uiConfig);
 
         await initialFocusDelay();

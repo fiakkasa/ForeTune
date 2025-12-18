@@ -131,62 +131,56 @@ class FilteringService {
         }));
     }
 
+    constructor(task) {
+        this._task = task;
+    }
+
     async search(token, cancellationSignal) {
-        return new Promise(
-            (resolve, reject) => {
-                setTimeout(() => {
-                    if (!token || !this._data.length) {
-                        return resolve([]);
-                    }
-
-                    const { numericToken, textToken } = splitToken(token);
-
-                    if (!numericToken && !textToken) {
-                        resolve([]);
-
-                        return;
-                    }
-
-                    // simple numeric match
-                    const simpleNumericMatchResult = findSimpleNumericMatch(
-                        this._data,
-                        numericToken
-                    );
-                    // simple text match
-                    const simpleTextMatchResult = findSimpleTextMatch(
-                        this._data,
-                        textToken,
-                        simpleNumericMatchResult
-                    );
-                    // number tokenized match
-                    const tokenizedNumberResult = findTokenizedNumber(
-                        this._data,
-                        numericToken,
-                        simpleNumericMatchResult,
-                        simpleTextMatchResult
-                    );
-                    // text tokenized match
-                    const tokenizedTextResult = findTokenizedText(
-                        this._data,
-                        textToken,
-                        simpleNumericMatchResult,
-                        simpleTextMatchResult,
-                        tokenizedNumberResult
-                    );
-
-                    resolve([
-                        ...Object.values(simpleNumericMatchResult),
-                        ...Object.values(simpleTextMatchResult),
-                        ...Object.values(tokenizedNumberResult),
-                        ...Object.values(tokenizedTextResult)
-                    ]);
-                });
-
-                cancellationSignal?.addEventListener('abort', () => {
-                    reject(new Error('Operation aborted'));
-                }, { once: true });
+        return this._task.run(() => {
+            if (!token || !this._data.length) {
+                return [];
             }
-        );
+
+            const { numericToken, textToken } = splitToken(token);
+
+            if (!numericToken && !textToken) {
+                return [];
+            }
+
+            // simple numeric match
+            const simpleNumericMatchResult = findSimpleNumericMatch(
+                this._data,
+                numericToken
+            );
+            // simple text match
+            const simpleTextMatchResult = findSimpleTextMatch(
+                this._data,
+                textToken,
+                simpleNumericMatchResult
+            );
+            // number tokenized match
+            const tokenizedNumberResult = findTokenizedNumber(
+                this._data,
+                numericToken,
+                simpleNumericMatchResult,
+                simpleTextMatchResult
+            );
+            // text tokenized match
+            const tokenizedTextResult = findTokenizedText(
+                this._data,
+                textToken,
+                simpleNumericMatchResult,
+                simpleTextMatchResult,
+                tokenizedNumberResult
+            );
+
+            return [
+                ...Object.values(simpleNumericMatchResult),
+                ...Object.values(simpleTextMatchResult),
+                ...Object.values(tokenizedNumberResult),
+                ...Object.values(tokenizedTextResult)
+            ];
+        }, cancellationSignal);
     }
 }
 

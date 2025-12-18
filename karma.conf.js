@@ -5,6 +5,8 @@ module.exports = function (config) {
             { pattern: 'src/scripts/vue.global.prod.min.js' },
             { pattern: 'src/scripts/vue-router.global.min.js' },
             { pattern: 'src/scripts/vue-i18n.global.prod.js' },
+            { pattern: 'src/scripts/components/*.js', type: 'module' },
+            { pattern: 'src/scripts/utils/*.js', type: 'module' },
             { pattern: 'src/apps/**/scripts/components/*.js', type: 'module' },
             { pattern: 'src/apps/**/scripts/pages/*.js', type: 'module' },
             { pattern: 'src/apps/**/scripts/services/*.js', type: 'module' },

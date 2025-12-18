@@ -19,15 +19,25 @@ function showLoader(autoHideTimeout = null) {
         document.body.appendChild(loader);
     }
 
+    const normalizedAutoHideTimeout = autoHideTimeout === null
+        || typeof autoHideTimeout === 'number' && autoHideTimeout >= 0
+            ? autoHideTimeout
+            : 0;
+
+    if (normalizedAutoHideTimeout === 0) {
+        loader.style.display = 'none';
+        return;
+    }
+
     loader.style.display = 'unset';
 
-    if (autoHideTimeout === null) {
+    if (normalizedAutoHideTimeout === null) {
         return;
     }
 
     _loaderTimeoutRef = setTimeout(() => {
         loader.style.display = 'none';
-    }, autoHideTimeout)
+    }, normalizedAutoHideTimeout)
 }
 
 function getAppStylesCssSelector(id) {
@@ -99,7 +109,6 @@ function registerApp(
             return {
                 bootstrap: async () => setAppStyles(appConfig),
                 mount: async () => {
-                    showLoader();
                     setAppStyles(appConfig);
 
                     const { app, appInitError } = await appInit(appConfig, storageService)
@@ -107,16 +116,14 @@ function registerApp(
                         .catch(appInitError => ({ appInitError }));
 
                     if (appInitError) {
-                        return new Error(
+                        return await Promise.reject(new Error(
                             `Failed to initialize module for app with id: ${appConfig.id}`
-                        );
+                        ));
                     }
 
                     app.mount(`#${appConfig.id}`);
 
                     appRef = app;
-
-                    showLoader(uiConfig.loaderTimeout);
                 },
                 unmount: async () => {
                     appRef?.unmount();
@@ -157,7 +164,6 @@ function registerNavigatorApp(
             return {
                 bootstrap: async () => setAppStyles(appConfig),
                 mount: async () => {
-                    showLoader();
                     setAppStyles(appConfig);
 
                     const { app, appInitError } = await appInit(appConfig, appsConfig, storageService)
@@ -171,12 +177,9 @@ function registerNavigatorApp(
                     }
 
                     app.mount(`#${appConfig.id}`);
-
-                    showLoader(uiConfig.loaderTimeout);
                 },
                 unmount: async () => {
                     unsetAppStyles(appConfig);
-                    showLoader(uiConfig.loaderTimeout);
                 }
             };
         },
@@ -192,6 +195,7 @@ async function init() {
         urlConfig,
         uiConfig,
         storageConfig,
+        singleSpaConfig,
         initialConfigLoadError
     } = await import('./config.js').catch(initialConfigLoadError =>
         ({ initialConfigLoadError })
@@ -215,6 +219,42 @@ async function init() {
     }
 
     registerNavigatorApp(appsConfig.main, uiConfig, appsConfig, storageService);
+
+    singleSpa.setBootstrapMaxTime(
+        singleSpaConfig.bootstrapMaxTimeMillis,
+        singleSpaConfig.bootstrapMaxTimeDieOnTimeout,
+        singleSpaConfig.bootstrapMaxTimeWarningMillis
+    );
+    singleSpa.setMountMaxTime(
+        singleSpaConfig.mountMaxTimeMillis,
+        singleSpaConfig.mountMaxTimeDieOnTimeout,
+        singleSpaConfig.mountMaxTimeWarningMillis
+    );
+    singleSpa.setUnmountMaxTime(
+        singleSpaConfig.unmountMaxTimeMillis,
+        singleSpaConfig.unmountMaxTimeDieOnTimeout,
+        singleSpaConfig.unmountMaxTimeWarningMillis
+    );
+    singleSpa.setUnloadMaxTime(
+        singleSpaConfig.unloadMaxTimeMillis,
+        singleSpaConfig.unloadMaxTimeDieOnTimeout,
+        singleSpaConfig.unloadMaxTimeWarningMillis
+    );
+
+    window.addEventListener(
+        'single-spa:before-app-change',
+        () => showLoader()
+    );
+    window.addEventListener(
+        'single-spa:app-change',
+        event => {
+            const timeout = !event?.detail?.appsByNewStatus?.MOUNTED?.length
+                ? 0
+                : uiConfig.loaderTimeout;
+
+            showLoader(timeout);
+        }
+    );
 
     singleSpa.start();
 }

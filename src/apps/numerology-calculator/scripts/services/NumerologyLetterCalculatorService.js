@@ -1,32 +1,33 @@
+const _letterMap = {
+    A: 1, J: 1, S: 1,
+    B: 2, K: 2, T: 2,
+    C: 3, L: 3, U: 3,
+    D: 4, M: 4, V: 4,
+    E: 5, N: 5, W: 5,
+    F: 6, O: 6, X: 6,
+    G: 7, P: 7, Y: 7,
+    H: 8, Q: 8, Z: 8,
+    I: 9, R: 9
+};
+const _codePointsMap = {
+    '1': 1,
+    '2': 2,
+    '3': 3,
+    '4': 4,
+    '5': 5,
+    '6': 6,
+    '7': 7,
+    '8': 8,
+    '9': 9
+};
 class NumerologyLetterCalculatorService {
-    constructor(uiService) {
+    constructor(uiService, task) {
         this._uiService = uiService;
-        this._letterMap = {
-            A: 1, J: 1, S: 1,
-            B: 2, K: 2, T: 2,
-            C: 3, L: 3, U: 3,
-            D: 4, M: 4, V: 4,
-            E: 5, N: 5, W: 5,
-            F: 6, O: 6, X: 6,
-            G: 7, P: 7, Y: 7,
-            H: 8, Q: 8, Z: 8,
-            I: 9, R: 9
-        };
-        this._codePointsMap = {
-            '1': 1,
-            '2': 2,
-            '3': 3,
-            '4': 4,
-            '5': 5,
-            '6': 6,
-            '7': 7,
-            '8': 8,
-            '9': 9
-        };
+        this._task = task;
     }
 
     toDeltaInt(character) {
-        return this._codePointsMap[character] ?? 0;
+        return _codePointsMap[character] ?? 0;
     }
 
     toDeltaIntCollectionSequence(text) {
@@ -50,60 +51,54 @@ class NumerologyLetterCalculatorService {
     }
 
     calculate(text, cancellationSignal) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const uiService = this._uiService;
-                const letters = [];
-                const digits = [];
-                const composed = [];
+        return this._task.run(() => {
+            const uiService = this._uiService;
+            const letters = [];
+            const digits = [];
+            const composed = [];
 
-                for (const ch of (text || '').toUpperCase()) {
-                    if (!this._letterMap[ch]) {
-                        continue;
-                    }
-
-                    letters.push(ch);
-                    digits.push(this._letterMap[ch]);
-                    composed.push(
-                        uiService.composeCombinedItem(ch, this._letterMap[ch])
-                    );
+            for (const ch of (text || '').toUpperCase()) {
+                if (!_letterMap[ch]) {
+                    continue;
                 }
 
-                if (!digits.length) {
-                    return resolve({ result: '', steps: [] });
-                }
+                letters.push(ch);
+                digits.push(_letterMap[ch]);
+                composed.push(
+                    uiService.composeCombinedItem(ch, _letterMap[ch])
+                );
+            }
 
-                let result = '';
-                const steps = [];
+            if (!digits.length) {
+                return { result: '', steps: [] };
+            }
 
+            let result = '';
+            const steps = [];
+
+            let { sum, step } = this.calculateSumAndStep(
+                digits,
+                uiService.composeEntrySequence(letters),
+                uiService.composeEntryEquation(composed)
+            );
+
+            result = sum;
+            steps.push(step);
+
+            while (result.length > 1) {
+                const nextDigits = this.toDeltaIntCollectionSequence(result);
                 let { sum, step } = this.calculateSumAndStep(
-                    digits,
-                    uiService.composeEntrySequence(letters),
-                    uiService.composeEntryEquation(composed)
+                    nextDigits,
+                    uiService.composeEntrySequence(nextDigits),
+                    uiService.composeEntryEquation(nextDigits)
                 );
 
                 result = sum;
                 steps.push(step);
+            }
 
-                while (result.length > 1) {
-                    const nextDigits = this.toDeltaIntCollectionSequence(result);
-                    let { sum, step } = this.calculateSumAndStep(
-                        nextDigits,
-                        uiService.composeEntrySequence(nextDigits),
-                        uiService.composeEntryEquation(nextDigits)
-                    );
-
-                    result = sum;
-                    steps.push(step);
-                }
-
-                resolve({ result, steps });
-            });
-
-            cancellationSignal?.addEventListener('abort', () => {
-                reject(new Error('Operation aborted'));
-            }, { once: true });
-        });
+            return { result, steps };
+        }, cancellationSignal);
     }
 }
 

@@ -1,14 +1,15 @@
+import { task } from '../../../src/scripts/utils/task.js';
 import { UiService } from '../../../src/apps/angel-numbers/scripts/services/UiService.js';
 
 describe('UiService', function () {
     const config = {
-        maxInputChars: 1000,
+        maxSearchInputChars: 1000,
         uiDefaultDelay: 250
     };
     let service;
 
     beforeEach(function () {
-        service = new UiService(config);
+        service = new UiService(config, task);
     });
 
     describe('delay', function () {

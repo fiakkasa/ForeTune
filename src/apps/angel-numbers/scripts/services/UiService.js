@@ -1,17 +1,13 @@
 class UiService {
-    constructor(config) {
+    constructor(config, task) {
         this._config = config;
+        this._task = task;
     }
 
     delay(cancellationSignal) {
-        return new Promise(
-            (resolve, reject) => {
-                setTimeout(resolve, this._config.uiDefaultDelay);
-
-                cancellationSignal?.addEventListener('abort', () => {
-                    reject(new Error('Operation aborted'));
-                }, { once: true });
-            }
+        return this._task.delay(
+            this._config.maxSearchInputChars, 
+            cancellationSignal
         );
     }
 }

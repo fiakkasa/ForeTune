@@ -1,9 +1,10 @@
+import { SearchInputComponent } from '../../../../scripts/components/SearchInputComponent.js';
+import { task } from '../../../../scripts/utils/task.js';
 import { AdderTitleComponent } from './components/AdderTitleComponent.js';
 import { CalculationResultComponent } from './components/CalculationResultComponent.js';
 import { CalculationStepsComponent } from './components/CalculationStepsComponent.js';
 import { DigitAdderComponent } from './components/DigitAdderComponent.js';
 import { LetterAdderComponent } from './components/LetterAdderComponent.js';
-import { SearchInputComponent } from './components/SearchInputComponent.js';
 import { IndexPage } from './pages/IndexPage.js';
 import { NumerologyUiService } from './services/NumerologyUiService.js';
 import { NumerologyDigitCalculatorService } from './services/NumerologyDigitCalculatorService.js';
@@ -11,7 +12,7 @@ import { NumerologyLetterCalculatorService } from './services/NumerologyLetterCa
 import { NumerologyLinksService } from './services/NumerologyLinksService.js';
 
 const uiConfig = {
-    maxInputChars: 1000,
+    maxSearchInputChars: 1000,
     uiDefaultDelay: 250,
     calculatorEquationSeparator: ' + ',
     calculatorEquationCombinedItemTemplate: '({0}: {1})'
@@ -51,9 +52,9 @@ async function appInit(config = {}, storageService) {
         }
     });
 
-    const uiService = new NumerologyUiService(uiConfig);
-    const digitCalculatorService = new NumerologyDigitCalculatorService(uiService);
-    const letterCalculatorService = new NumerologyLetterCalculatorService(uiService);
+    const uiService = new NumerologyUiService(uiConfig, task);
+    const digitCalculatorService = new NumerologyDigitCalculatorService(uiService, task);
+    const letterCalculatorService = new NumerologyLetterCalculatorService(uiService, task);
     const linksService = new NumerologyLinksService(linksConfig);
 
     const app = Vue.createApp({

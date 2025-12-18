@@ -1,3 +1,4 @@
+import { task } from '../../../src/scripts/utils/task.js';
 import { NumerologyLetterCalculatorService } from '../../../src/apps/numerology-calculator/scripts/services/NumerologyLetterCalculatorService.js';
 
 describe('NumerologyLetterCalculatorService', function () {
@@ -11,7 +12,7 @@ describe('NumerologyLetterCalculatorService', function () {
             composeEntryEquation: jasmine.createSpy('composeEntryEquation').and.callFake(arr => arr.join('+'))
         };
 
-        service = new NumerologyLetterCalculatorService(uiServiceMock);
+        service = new NumerologyLetterCalculatorService(uiServiceMock, task);
     });
 
     describe('toDeltaInt', function () {

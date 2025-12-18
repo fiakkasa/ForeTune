@@ -6,7 +6,7 @@ const IndexPage = {
             </div>
 
             <div class="nc-search-input-container position-relative px-3 pt-4"
-                :class="{ 'position-sticky sticky-top': trimmedText }"
+                 :class="{ 'position-sticky sticky-top': trimmedText }"
                  ref="searchInputContainer">
                 <search-input :text="text"
                               :loading="loading"

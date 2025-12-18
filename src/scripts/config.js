@@ -39,4 +39,19 @@ const storageConfig = {
     storage: 'session'
 };
 
-export { appsConfig, urlConfig, uiConfig, storageConfig }
+const singleSpaConfig = {
+    bootstrapMaxTimeMillis: 3000,
+    bootstrapMaxTimeDieOnTimeout: false,
+    bootstrapMaxTimeWarningMillis: 10000,
+    mountMaxTimeMillis: 3000,
+    mountMaxTimeDieOnTimeout: false,
+    mountMaxTimeWarningMillis: 10000,
+    unmountMaxTimeMillis: 3000,
+    unmountMaxTimeDieOnTimeout: false,
+    unmountMaxTimeWarningMillis: 10000,
+    unloadMaxTimeMillis: 3000,
+    unloadMaxTimeDieOnTimeout: false,
+    unloadMaxTimeWarningMillis: 10000
+};
+
+export { appsConfig, urlConfig, uiConfig, storageConfig, singleSpaConfig }

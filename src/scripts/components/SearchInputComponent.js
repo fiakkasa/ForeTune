@@ -3,13 +3,13 @@ const SearchInputComponent = {
     props: ['text', 'loading', 'focusOnLoad'],
     emits: ['update:text'],
     template: `
-        <div class="input-group">
+        <div class="app-search-container input-group">
             <input type="text"
                 class="form-control"
                 :placeholder="$t('enter_your_values')"
                 :value="inputText"
                 ref="searchInput"
-                :maxlength="uiConfig.maxInputChars"
+                :maxlength="uiConfig.maxSearchInputChars"
                 @input="update($event.target.value)" />
 
             <button class="btn btn-outline-secondary"
@@ -20,10 +20,10 @@ const SearchInputComponent = {
         </div>
 
         <small class="d-flex text-muted mt-1">
-            <span v-if="loading" class="nc-loading"></span>
+            <span class="app-loading" v-if="loading"></span>
             <span class="flex-fill"></span>
             <span class="px-1 bg-white rounded"
-                  v-text="$t('characters_of_max_characters', { characters: text?.length || 0, maxCharacters: uiConfig.maxInputChars })"></span>
+                  v-text="$t('characters_of_max_characters', { characters: text?.length || 0, maxCharacters: uiConfig.maxSearchInputChars })"></span>
         </small>
     `,
     data() {
@@ -51,8 +51,8 @@ const SearchInputComponent = {
     },
     methods: {
         update(value) {
-            const text = value.length > this.uiConfig.maxInputChars
-                ? value.substring(0, this.uiConfig.maxInputChars)
+            const text = value.length > this.uiConfig.maxSearchInputChars
+                ? value.substring(0, this.uiConfig.maxSearchInputChars)
                 : value;
             this.inputText = text;
             this.$emit('update:text', text);

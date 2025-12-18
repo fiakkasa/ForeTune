@@ -1,6 +1,7 @@
 class NumerologyUiService {
-    constructor(config) {
+    constructor(config, task) {
         this._config = config;
+        this._task = task;
     }
 
     composeEntryEquation(collection) {
@@ -24,22 +25,17 @@ class NumerologyUiService {
             return '';
         }
 
-        if (normalizedText.length > this._config.maxInputChars) {
-            return normalizedText.slice(0, this._config.maxInputChars);
+        if (normalizedText.length > this._config.maxSearchInputChars) {
+            return normalizedText.slice(0, this._config.maxSearchInputChars);
         }
 
         return normalizedText;
     }
 
     delay(cancellationSignal) {
-        return new Promise(
-            (resolve, reject) => {
-                setTimeout(resolve, this._config.uiDefaultDelay);
-
-                cancellationSignal?.addEventListener('abort', () => {
-                    reject(new Error('Operation aborted'));
-                }, { once: true });
-            }
+        return this._task.delay(
+            this._config.uiDefaultDelay,
+            cancellationSignal
         );
     }
 }
