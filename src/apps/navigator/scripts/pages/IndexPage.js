@@ -67,7 +67,9 @@ const IndexPage = {
                 : [item.inactiveCssClass || 'btn-secondary', 'rounded-circle'];
         },
         navigateTo(urlFragment) {
-            this.$router.push(`/${urlFragment}`);
+            if (urlFragment !== this.$route.params.value) {
+                this.$router.push(`/${urlFragment}`);
+            }
         }
     }
 };

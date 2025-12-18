@@ -1,15 +1,15 @@
 const IndexPage = {
     inject: ['uiService', 'filteringService'],
     template: `
-        <div class="an-container container h-100 overflow-auto">
-            <div class="an-search-input-container position-sticky sticky-top px-3 pt-4">
+        <div class="an-app h-100 overflow-auto">
+            <div class="an-search-input-container container position-sticky sticky-top px-3 pt-4">
                 <search-input :text="text"
                               :loading="loading"
                               :focus-on-load="true"
                               @update:text="onTextChange" />
             </div>
 
-            <div class="an-cards d-flex flex-column">
+            <div class="an-cards container d-flex flex-column">
                 <div class="an-card card"
                      v-for="item in visibleData"
                      :key="item.number">
@@ -20,7 +20,7 @@ const IndexPage = {
                 </div>
             </div>
 
-            <small class="an-footer position-sticky sticky-bottom p-1 px-3 d-flex text-muted"
+            <small class="an-footer container position-sticky sticky-bottom p-1 px-3 d-flex text-muted"
                    v-if="!loading || visibleData.length"
                    :class="[visibleData.length ? 'justify-content-end' : 'justify-content-center']">
                 <span class="px-1 bg-white rounded"

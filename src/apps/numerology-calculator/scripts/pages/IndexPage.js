@@ -1,11 +1,11 @@
 const IndexPage = {
     template: `
-        <div class="nc-container container h-100 overflow-auto">
+    <div class="nc-app h-100 overflow-auto">
             <div class="nc-search-input-spacer"
                  :style="{ 'padding-bottom': searchInputContainerSpace }">
             </div>
 
-            <div class="nc-search-input-container position-relative px-3 pt-4"
+            <div class="nc-search-input-container container position-relative px-3 pt-4"
                  :class="{ 'position-sticky sticky-top': trimmedText }"
                  ref="searchInputContainer">
                 <search-input :text="text"
@@ -14,27 +14,29 @@ const IndexPage = {
                               @update:text="onTextChange" />
             </div>
 
-            <div class="px-3 pb-4" 
-                 :class="{ 'd-none': !trimmedText || !digitResult }">
-                <digit-adder :title="$t('digit_calculation')"
-                             :text="trimmedText"
-                             @busy="digitBusy = $event"
-                             @result="digitResult = $event" />
-            </div>
+            <div class="nc-cards container">
+                <div class="px-3 pb-4" 
+                    :class="{ 'd-none': !trimmedText || !digitResult }">
+                    <digit-adder :title="$t('digit_calculation')"
+                                :text="trimmedText"
+                                @busy="digitBusy = $event"
+                                @result="digitResult = $event" />
+                </div>
 
-            <div class="px-3 pb-4" 
-                 :class="{ 'd-none': !trimmedText || !letterResult }">
-                <letter-adder :title="$t('letter_calculation')"
-                              :text="trimmedText"
-                              @busy="letterBusy = $event"
-                              @result="letterResult = $event" />
-            </div>
+                <div class="px-3 pb-4" 
+                    :class="{ 'd-none': !trimmedText || !letterResult }">
+                    <letter-adder :title="$t('letter_calculation')"
+                                :text="trimmedText"
+                                @busy="letterBusy = $event"
+                                @result="letterResult = $event" />
+                </div>
 
-            <div class="px-3 pb-4" 
-                 :class="{ 'd-none': !combinedResult }">
-                <digit-adder :title="$t('combined_calculation')"
-                             :text="combinedResult"
-                             @busy="combinedBusy = $event" />
+                <div class="px-3 pb-4" 
+                    :class="{ 'd-none': !combinedResult }">
+                    <digit-adder :title="$t('combined_calculation')"
+                                :text="combinedResult"
+                                @busy="combinedBusy = $event" />
+                </div>
             </div>
         </div>
     `,
