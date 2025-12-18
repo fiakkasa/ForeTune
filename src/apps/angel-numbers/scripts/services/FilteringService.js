@@ -6,7 +6,7 @@ const splitToken = (token) => {
 };
 
 const findSimpleNumericMatch = (data, numericToken) => {
-    if (!numericToken) {
+    if (!numericToken || numericToken.length > 3) {
         return {};
     }
 
@@ -52,7 +52,7 @@ const findTokenizedNumber = (
     simpleNumericMatchResult,
     simpleTextMatchResult
 ) => {
-    if (!numericToken) {
+    if (!numericToken || numericToken.length > 3) {
         return {};
     }
 
@@ -68,10 +68,6 @@ const findTokenizedNumber = (
             {}
         )
     );
-
-    if (tokenizedNumber.length > 3) {
-        return {};
-    }
 
     return data.reduce(
         (acc, { number, text, processedText }) => {
@@ -140,7 +136,7 @@ class FilteringService {
             (resolve, reject) => {
                 setTimeout(() => {
                     if (!token || !this._data.length) {
-                        return Promise.resolve([]);
+                        return resolve([]);
                     }
 
                     const { numericToken, textToken } = splitToken(token);
