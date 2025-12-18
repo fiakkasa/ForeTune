@@ -33,8 +33,13 @@
   transition: font-size 500ms ease, border-radius 500ms ease;
 }
 
-.nv-nav-container:not(.nv-stand-alone) > .nv-nav > .btn:last-child {
-  margin-bottom: var(--navigator-lift);
+.nv-nav-container > .nv-nav-lift {
+  display: none;
+  max-height: var(--navigator-lift);
+}
+
+.nv-nav-container:not(.nv-stand-alone) > .nv-nav-lift {
+  display: unset;
 }
 
 .nv-nav-container.nv-stand-alone > .nv-nav > .btn {
@@ -47,7 +52,7 @@
   font-size: var(--navigator-button-icon-size);
 }
 
-@media (max-width: 959px) {
+@media (max-width: 575px) {
   :root {
     --navigator-lift: 0;
     --navigator-button-size: 12rem;
@@ -62,5 +67,9 @@
 
   .nv-nav-container:not(.nv-stand-alone) > .nv-nav {
     flex-direction: row;
+  }
+
+  .nv-nav-container:not(.nv-stand-alone) > .nv-nav-lift {
+    display: none;
   }
 }
