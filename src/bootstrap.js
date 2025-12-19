@@ -1,22 +1,23 @@
+const _loaderQuerySelector = '.loader';
+const _appIdentifierAttributeName = 'app-id';
 const _appStyleAttributeName = 'app-id';
-const _appStyleHrefPostFix = '/style/app.css';
-const _appScriptLinkPostFix = '/scripts/app.js';
+const _appStyleHrefPostFix = '/app.css';
+const _appScriptLinkPostFix = '/app.js';
 let _loaderTimeoutRef;
 
-function showLoader(autoHideTimeout = null) {
+const showLoader = (autoHideTimeout = null) => {
     if (_loaderTimeoutRef) {
         clearTimeout(_loaderTimeoutRef);
     }
 
-    let loader = document.getElementById('loader');
+    let loaderEl = document.querySelector(_loaderQuerySelector);
 
-    if (!loader) {
-        loader = document.createElement('div');
-        loader.id = 'loader';
-        loader.className = 'loader';
-        loader.innerHTML = '<div class="loader-animation"></div>';
+    if (!loaderEl) {
+        loaderEl = document.createElement('div');
+        loaderEl.className = 'loader';
+        loaderEl.innerHTML = '<div class="loader-animation"></div>';
 
-        document.body.appendChild(loader);
+        document.body.appendChild(loaderEl);
     }
 
     const normalizedAutoHideTimeout = autoHideTimeout === null
@@ -25,33 +26,35 @@ function showLoader(autoHideTimeout = null) {
         : 0;
 
     if (normalizedAutoHideTimeout === 0) {
-        loader.style.display = 'none';
+        loaderEl.style.display = 'none';
         return;
     }
 
-    loader.style.display = 'unset';
+    loaderEl.style.display = 'unset';
 
     if (normalizedAutoHideTimeout === null) {
         return;
     }
 
     _loaderTimeoutRef = setTimeout(() => {
-        loader.style.display = 'none';
+        loaderEl.style.display = 'none';
     }, normalizedAutoHideTimeout)
-}
+};
 
-function getAppStylesCssSelector(id) {
-    return `[${_appStyleAttributeName}="${id}"]`;
-}
+const getAppQuerySelector = (id) => `div[${_appIdentifierAttributeName}="${id}"]`;
 
-function setAppStyles(appConfig) {
+const getAppStylesQuerySelector = (id) => `link[${_appStyleAttributeName}="${id}"]`;
+
+const setAppStyles = (appConfig) => {
     const { id = '', path = '' } = appConfig || {};
 
     if (!id || !path) {
         return;
     }
 
-    const currentLinkEl = document.body.querySelector(getAppStylesCssSelector(id));
+    const currentLinkEl = document.body.querySelector(
+        getAppStylesQuerySelector(id)
+    );
 
     if (currentLinkEl) {
         return;
@@ -62,36 +65,44 @@ function setAppStyles(appConfig) {
     linkEl.setAttribute(_appStyleAttributeName, id);
     linkEl.href = path + _appStyleHrefPostFix;
 
-    document.body.appendChild(linkEl);
-}
+    document.body.append(linkEl);
+};
 
-function unsetAppStyles(appConfig) {
+const unsetAppStyles = (appConfig) => {
     const { id = '', path = '' } = appConfig || {};
 
     if (!id || !path) {
         return;
     }
 
-    const currentLinkEl = document.body.querySelector(getAppStylesCssSelector(id));
+    document.body.querySelector(
+        getAppStylesQuerySelector(id)
+    )?.remove();
+};
 
-    if (!currentLinkEl) {
-        return;
-    }
+const createAppEl = (appsQuerySelector, id) => {
+    const appElSelector = getAppQuerySelector(id);
+    document.body.querySelector(appElSelector)?.remove();
 
-    currentLinkEl.remove();
+    const appEl = document.createElement('div');
+    appEl.setAttribute(_appIdentifierAttributeName, id);
+    appEl.className = 'app-container h-100 overflow-hidden';
+
+    document.body.querySelector(appsQuerySelector)?.appendChild(appEl);
 }
 
-function registerApp(
+const registerApp = (
+    appsQuerySelector,
     appConfig,
     uiConfig,
     urlConfig,
     storageService
-) {
+) => {
     singleSpa.registerApplication(
         appConfig.id,
         async () => {
             const { appInit, appModuleLoadError } = await import(
-                `../${appConfig.path}/${_appScriptLinkPostFix}`
+                `./${appConfig.path}${_appScriptLinkPostFix}`
             ).catch(appModuleLoadError =>
                 ({ appModuleLoadError })
             );
@@ -121,7 +132,8 @@ function registerApp(
                         ));
                     }
 
-                    app.mount(`#${appConfig.id}`);
+                    createAppEl(appsQuerySelector, appConfig.id);
+                    app.mount(getAppQuerySelector(appConfig.id));
 
                     appRef = app;
                 },
@@ -135,20 +147,21 @@ function registerApp(
             urlConfig.baseUrlPrefix + appConfig.urlFragment
         )
     );
-}
+};
 
-function registerNavigatorApp(
+const registerNavigatorApp = (
+    navigatorQuerySelector,
     appConfig,
     uiConfig,
     appsConfig,
     storageService
-) {
+) => {
     singleSpa.registerApplication(
         appConfig.id,
         async () => {
             const appConfig = appsConfig.main;
             const { appInit, appModuleLoadError } = await import(
-                `../${appConfig.path}/${_appScriptLinkPostFix}`
+                `./${appConfig.path}${_appScriptLinkPostFix}`
             ).catch(appModuleLoadError =>
                 ({ appModuleLoadError })
             );
@@ -176,7 +189,7 @@ function registerNavigatorApp(
                         ));
                     }
 
-                    app.mount(`#${appConfig.id}`);
+                    app.mount(navigatorQuerySelector);
                 },
                 unmount: async () => {
                     unsetAppStyles(appConfig);
@@ -185,9 +198,12 @@ function registerNavigatorApp(
         },
         () => true
     );
-}
+};
 
-async function init() {
+const init = async (
+    navigatorQuerySelector,
+    appsQuerySelector
+) => {
     showLoader();
 
     const {
@@ -215,10 +231,22 @@ async function init() {
             continue;
         }
 
-        registerApp(appConfig, uiConfig, urlConfig, storageService);
+        registerApp(
+            appsQuerySelector,
+            appConfig,
+            uiConfig,
+            urlConfig,
+            storageService
+        );
     }
 
-    registerNavigatorApp(appsConfig.main, uiConfig, appsConfig, storageService);
+    registerNavigatorApp(
+        navigatorQuerySelector,
+        appsConfig.main,
+        uiConfig,
+        appsConfig,
+        storageService
+    );
 
     singleSpa.setBootstrapMaxTime(
         singleSpaConfig.bootstrapMaxTimeMillis,
@@ -257,4 +285,6 @@ async function init() {
     );
 
     singleSpa.start();
-}
+};
+
+export { init };

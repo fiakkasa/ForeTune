@@ -1,5 +1,5 @@
-import { task } from '../../../src/scripts/utils/task.js';
-import { UiService } from '../../../src/apps/angel-numbers/scripts/services/UiService.js';
+import { task } from '../../../src/utils/task.js';
+import { UiService } from '../../../src/apps/angel-numbers/services/UiService.js';
 
 describe('UiService', function () {
     const config = {

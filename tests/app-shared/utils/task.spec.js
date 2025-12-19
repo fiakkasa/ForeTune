@@ -1,4 +1,4 @@
-import { task } from '../../../src/scripts/utils/task.js';
+import { task } from '../../../src/utils/task.js';
 
 describe('task', function () {
     describe('run', function () {

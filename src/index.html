@@ -9,30 +9,24 @@
     <link href="style/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="style/fontawesome/css/all.min.css" rel="stylesheet" />
     <link href="style/common.css" rel="stylesheet" />
-    <link href="apps/navigator/style/app.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="favicon.png" />
 </head>
 
 <body>
-    <div id="loader" class="loader">
-        <div class="loader-animation"></div>
-    </div>
-
     <div class="apps-container d-flex vh-100 overflow-hidden">
-        <div id="navigator" class="nv-app flex-shrink-0"></div>
-        <div class="apps-panel flex-fill h-100 overflow-hidden">
-            <div id="numerology-calculator" class="app-container h-100 overflow-hidden"></div>
-            <div id="angel-numbers" class="app-container h-100 overflow-hidden"></div>
-        </div>
+        <div id="navigator" class="flex-shrink-0"></div>
+        <div id="apps" class="apps-panel flex-fill h-100 overflow-hidden"></div>
     </div>
 
-    <script src="scripts/single-spa.min.js"></script>
-    <script src="scripts/vue.global.prod.min.js"></script>
-    <script src="scripts/vue-router.global.min.js"></script>
-    <script src="scripts/vue-i18n.global.prod.js"></script>
-    <script src="scripts/vue-ls.min.js"></script>
-    <script src="scripts/bootstrap.js"></script>
-    <script type="module">init(); </script>
+    <script src="libs/single-spa.min.js"></script>
+    <script src="libs/vue.global.prod.min.js"></script>
+    <script src="libs/vue-router.global.min.js"></script>
+    <script src="libs/vue-i18n.global.prod.js"></script>
+    <script src="libs/vue-ls.min.js"></script>
+    <script type="module">
+        import { init } from './bootstrap.js';
+        init('#navigator', '#apps'); 
+    </script>
 </body>
 
 </html>

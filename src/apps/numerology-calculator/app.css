@@ -1,28 +1,26 @@
-.an-app {
+﻿.nc-app {
   position: relative;
-  background-image: url("../assets/angel-faded.png");
+  background-image: url("./assets/sun-faded.png");
   background-position: 50% 50%;
   background-repeat: no-repeat;
 }
 
-.an-cards {
-  gap: 0.375rem;
-}
-
-.an-card {
+.nc-card {
   position: relative;
 }
 
-.an-card,
-.an-search-input-container,
-.an-footer {
+.nc-card,
+.nc-search-input-container {
   background-color: transparent;
   overflow: hidden;
 }
 
-.an-card:after,
-.an-search-input-container:after,
-.an-footer:after {
+.nc-search-input-spacer {
+  transition: 375ms ease-in-out all;
+}
+
+.nc-card:after,
+.nc-search-input-container:after {
   content: " ";
   display: block;
   position: absolute;
@@ -38,9 +36,8 @@
   -webkit-filter: blur(8px) opacity(0.65);
 }
 
-.an-card > .card-body,
-.an-search-input-container > *,
-.an-footer > * {
+.nc-card > .card-body,
+.nc-search-input-container > * {
   position: relative;
   z-index: 10;
 }

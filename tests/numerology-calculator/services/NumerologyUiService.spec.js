@@ -1,5 +1,5 @@
-import { task } from '../../../src/scripts/utils/task.js';
-import { NumerologyUiService } from '../../../src/apps/numerology-calculator/scripts/services/NumerologyUiService.js';
+import { task } from '../../../src/utils/task.js';
+import { NumerologyUiService } from '../../../src/apps/numerology-calculator/services/NumerologyUiService.js';
 
 describe('NumerologyUiService', function () {
     const config = {

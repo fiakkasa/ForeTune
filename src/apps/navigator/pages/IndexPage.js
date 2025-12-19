@@ -1,7 +1,7 @@
 const IndexPage = {
     inject: ['appsConfig'],
     template: `
-        <div class="nv-nav-container position-relative d-flex flex-column align-items-center justify-content-center overflow-auto vh-100" 
+        <div class="nv-app position-relative d-flex flex-column align-items-center justify-content-center overflow-auto vh-100" 
              :class="{ 'nv-stand-alone vw-100' : standAlone }">
             <nav class="nv-nav d-flex flex-wrap align-items-center justify-content-center">
                 <button class="btn d-inline-flex flex-column align-items-center justify-content-center flex-shrink-0 overflow-hidden" 

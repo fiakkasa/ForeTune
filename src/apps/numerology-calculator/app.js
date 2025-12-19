@@ -1,5 +1,5 @@
-import { SearchInputComponent } from '../../../../scripts/components/SearchInputComponent.js';
-import { task } from '../../../../scripts/utils/task.js';
+import { SearchInputComponent } from '../../../components/SearchInputComponent.js';
+import { task } from '../../../utils/task.js';
 import { AdderTitleComponent } from './components/AdderTitleComponent.js';
 import { CalculationResultComponent } from './components/CalculationResultComponent.js';
 import { CalculationStepsComponent } from './components/CalculationStepsComponent.js';

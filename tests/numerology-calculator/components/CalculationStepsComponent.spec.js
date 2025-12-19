@@ -1,4 +1,4 @@
-import { CalculationStepsComponent } from '../../../src/apps/numerology-calculator/scripts/components/CalculationStepsComponent.js';
+import { CalculationStepsComponent } from '../../../src/apps/numerology-calculator/components/CalculationStepsComponent.js';
 
 describe('CalculationStepsComponent', function () {
     function mountComponent(props = {}, linksServiceMock = {}) {

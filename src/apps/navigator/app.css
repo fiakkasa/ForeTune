@@ -1,4 +1,4 @@
-:root {
+.nv-app {
   --navigator-padding: 0.375rem;
   --navigator-padding-2x: 0.75rem;
   --navigator-gap: 0.375rem;
@@ -6,70 +6,68 @@
   --navigator-lift: 5.25rem;
   --navigator-button-size: 15rem;
   --navigator-button-icon-size: 6rem;
-}
 
-.nv-nav-container {
   padding: var(--navigator-padding);
 }
 
-.nv-nav-container:not(.nv-stand-alone) {
+.nv-app:not(.nv-stand-alone) {
   border-right: var(--bs-gray-300) 1px solid;
 }
 
-.nv-nav-container > .nv-nav {
+.nv-app > .nv-nav {
   gap: var(--navigator-gap-2x);
 }
 
-.nv-nav-container:not(.nv-stand-alone) > .nv-nav {
+.nv-app:not(.nv-stand-alone) > .nv-nav {
   flex-direction: column;
   gap: var(--navigator-gap);
 }
 
-.nv-nav-container > .nv-nav > .btn {
+.nv-app > .nv-nav > .btn {
   gap: var(--navigator-gap);
 }
 
-.nv-nav-container > .nv-nav > .btn:not(:hover) {
+.nv-app > .nv-nav > .btn:not(:hover) {
   transition: font-size 500ms ease, border-radius 500ms ease;
 }
 
-.nv-nav-container > .nv-nav-lift {
+.nv-app > .nv-nav-lift {
   display: none;
   max-height: var(--navigator-lift);
 }
 
-.nv-nav-container:not(.nv-stand-alone) > .nv-nav-lift {
+.nv-app:not(.nv-stand-alone) > .nv-nav-lift {
   display: unset;
 }
 
-.nv-nav-container.nv-stand-alone > .nv-nav > .btn {
+.nv-app.nv-stand-alone > .nv-nav > .btn {
   width: var(--navigator-button-size);
   height: var(--navigator-button-size);
   padding: var(--navigator-padding-2x) !important;
 }
 
-.nv-nav-container.nv-stand-alone > .nv-nav > .btn > i {
+.nv-app.nv-stand-alone > .nv-nav > .btn > i {
   font-size: var(--navigator-button-icon-size);
 }
 
 @media (max-width: 575px) {
-  :root {
+  .nv-app {
     --navigator-lift: 0;
     --navigator-button-size: 12rem;
     --navigator-button-icon-size: 4.5rem;
   }
 
-  .nv-nav-container:not(.nv-stand-alone) {
+  .nv-app:not(.nv-stand-alone) {
     height: unset !important;
     border-right: unset;
     border-bottom: var(--bs-gray-300) 1px solid;
   }
 
-  .nv-nav-container:not(.nv-stand-alone) > .nv-nav {
+  .nv-app:not(.nv-stand-alone) > .nv-nav {
     flex-direction: row;
   }
 
-  .nv-nav-container:not(.nv-stand-alone) > .nv-nav-lift {
+  .nv-app:not(.nv-stand-alone) > .nv-nav-lift {
     display: none;
   }
 }

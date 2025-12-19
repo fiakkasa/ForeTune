@@ -1,4 +1,4 @@
-import { NumerologyLinksService } from '../../../src/apps/numerology-calculator/scripts/services/NumerologyLinksService.js';
+import { NumerologyLinksService } from '../../../src/apps/numerology-calculator/services/NumerologyLinksService.js';
 
 describe('NumerologyLinksService', function () {
     const config = {

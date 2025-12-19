@@ -1,5 +1,5 @@
-import { task } from '../../../src/scripts/utils/task.js';
-import { FilteringService } from '../../../src/apps/angel-numbers/scripts/services/FilteringService.js';
+import { task } from '../../../src/utils/task.js';
+import { FilteringService } from '../../../src/apps/angel-numbers/services/FilteringService.js';
 
 describe('FilteringService', function () {
     const data = [
@@ -113,6 +113,18 @@ describe('FilteringService', function () {
             expect(result.length).toBe(6);
             expect(result[0].number).toBe('00');
             expect(result[1].number).toBe('0');
+            expect(result[2].number).toBe('10');
+            expect(result[5].number).toBe('102');
+        });
+
+         it('returns results for numeric token 0 and numbers containing 0', async function () {
+            service.Data = data;
+
+            const result = await service.search('0');
+
+            expect(result.length).toBe(6);
+            expect(result[0].number).toBe('0');
+            expect(result[1].number).toBe('00');
             expect(result[2].number).toBe('10');
             expect(result[5].number).toBe('102');
         });

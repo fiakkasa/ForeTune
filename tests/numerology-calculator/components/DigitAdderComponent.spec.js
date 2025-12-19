@@ -1,4 +1,4 @@
-import { DigitAdderComponent } from '../../../src/apps/numerology-calculator/scripts/components/DigitAdderComponent.js';
+import { DigitAdderComponent } from '../../../src/apps/numerology-calculator/components/DigitAdderComponent.js';
 
 describe('DigitAdderComponent', function () {
     function delay() {

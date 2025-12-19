@@ -1,4 +1,4 @@
-import { AdderTitleComponent } from '../../../src/apps/numerology-calculator/scripts/components/AdderTitleComponent.js';
+import { AdderTitleComponent } from '../../../src/apps/numerology-calculator/components/AdderTitleComponent.js';
 
 describe('AdderTitleComponent', function () {
     function mountComponent(props = {}) {

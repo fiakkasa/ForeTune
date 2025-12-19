@@ -1,5 +1,5 @@
-import { task } from '../../../src/scripts/utils/task.js';
-import { NumerologyLetterCalculatorService } from '../../../src/apps/numerology-calculator/scripts/services/NumerologyLetterCalculatorService.js';
+import { task } from '../../../src/utils/task.js';
+import { NumerologyLetterCalculatorService } from '../../../src/apps/numerology-calculator/services/NumerologyLetterCalculatorService.js';
 
 describe('NumerologyLetterCalculatorService', function () {
     let uiServiceMock;

@@ -1,5 +1,5 @@
-import { SearchInputComponent } from '../../../../scripts/components/SearchInputComponent.js';
-import { task } from '../../../../scripts/utils/task.js';
+import { SearchInputComponent } from '../../../components/SearchInputComponent.js';
+import { task } from '../../../utils/task.js';
 import { IndexPage } from './pages/IndexPage.js';
 import { FilteringService } from './services/FilteringService.js';
 import { UiService } from './services/UiService.js';

@@ -1,15 +1,15 @@
-import { SearchInputComponent } from '../../../src/scripts/components/SearchInputComponent.js';
-import { task } from '../../../src/scripts/utils/task.js';
-import { IndexPage } from '../../../src/apps/numerology-calculator/scripts/pages/IndexPage.js';
-import { NumerologyUiService } from '../../../src/apps/numerology-calculator/scripts/services/NumerologyUiService.js';
-import { NumerologyDigitCalculatorService } from '../../../src/apps/numerology-calculator/scripts/services/NumerologyDigitCalculatorService.js';
-import { NumerologyLetterCalculatorService } from '../../../src/apps/numerology-calculator/scripts/services/NumerologyLetterCalculatorService.js';
-import { NumerologyLinksService } from '../../../src/apps/numerology-calculator/scripts/services/NumerologyLinksService.js';
-import { AdderTitleComponent } from '../../../src/apps/numerology-calculator/scripts/components/AdderTitleComponent.js';
-import { CalculationResultComponent } from '../../../src/apps/numerology-calculator/scripts/components/CalculationResultComponent.js';
-import { CalculationStepsComponent } from '../../../src/apps/numerology-calculator/scripts/components/CalculationStepsComponent.js';
-import { DigitAdderComponent } from '../../../src/apps/numerology-calculator/scripts/components/DigitAdderComponent.js';
-import { LetterAdderComponent } from '../../../src/apps/numerology-calculator/scripts/components/LetterAdderComponent.js';
+import { SearchInputComponent } from '../../../src/components/SearchInputComponent.js';
+import { task } from '../../../src/utils/task.js';
+import { IndexPage } from '../../../src/apps/numerology-calculator/pages/IndexPage.js';
+import { NumerologyUiService } from '../../../src/apps/numerology-calculator/services/NumerologyUiService.js';
+import { NumerologyDigitCalculatorService } from '../../../src/apps/numerology-calculator/services/NumerologyDigitCalculatorService.js';
+import { NumerologyLetterCalculatorService } from '../../../src/apps/numerology-calculator/services/NumerologyLetterCalculatorService.js';
+import { NumerologyLinksService } from '../../../src/apps/numerology-calculator/services/NumerologyLinksService.js';
+import { AdderTitleComponent } from '../../../src/apps/numerology-calculator/components/AdderTitleComponent.js';
+import { CalculationResultComponent } from '../../../src/apps/numerology-calculator/components/CalculationResultComponent.js';
+import { CalculationStepsComponent } from '../../../src/apps/numerology-calculator/components/CalculationStepsComponent.js';
+import { DigitAdderComponent } from '../../../src/apps/numerology-calculator/components/DigitAdderComponent.js';
+import { LetterAdderComponent } from '../../../src/apps/numerology-calculator/components/LetterAdderComponent.js';
 
 describe('IndexPage', function () {
     const uiConfig = {

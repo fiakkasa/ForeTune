@@ -1,4 +1,4 @@
-import { LetterAdderComponent } from '../../../src/apps/numerology-calculator/scripts/components/LetterAdderComponent.js';
+import { LetterAdderComponent } from '../../../src/apps/numerology-calculator/components/LetterAdderComponent.js';
 
 describe('LetterAdderComponent', function () {
     function delay() {

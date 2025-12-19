@@ -1,4 +1,4 @@
-import { SearchInputComponent } from '../../../src/scripts/components/SearchInputComponent.js';
+import { SearchInputComponent } from '../../../src/components/SearchInputComponent.js';
 
 describe('SearchInputComponent', function () {
     function mountComponent(props = {}, uiConfigMock = {}, emitSpy = null) {

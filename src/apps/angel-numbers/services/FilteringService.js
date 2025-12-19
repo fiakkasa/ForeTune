@@ -1,3 +1,5 @@
+const _keyPrefix = '_';
+
 const splitToken = (token) => {
     const numericToken = token.replace(/[^\d]/gi, '');
     const textToken = token.replace(/[\d]/gi, '').toLowerCase().trim();
@@ -12,13 +14,16 @@ const findSimpleNumericMatch = (data, numericToken) => {
 
     return data.reduce(
         (acc, { number, text, processedText }) => {
+            const key = _keyPrefix + number;
+
             if (numericToken && number === numericToken) {
-                acc[number] = {
+                acc[key] = {
                     number,
                     text,
                     processedText
                 };
             }
+
             return acc;
         },
         {}
@@ -32,14 +37,19 @@ const findSimpleTextMatch = (data, textToken, simpleNumericMatchResult) => {
 
     return data.reduce(
         (acc, { number, text, processedText }) => {
-            if (!simpleNumericMatchResult[number]
-                && textToken && processedText.includes(textToken)) {
-                acc[number] = {
+            const key = _keyPrefix + number;
+
+            if (
+                !simpleNumericMatchResult[key]
+                && textToken && processedText.includes(textToken)
+            ) {
+                acc[key] = {
                     number,
                     text,
                     processedText
                 };
             }
+
             return acc;
         },
         {}
@@ -58,9 +68,9 @@ const findTokenizedNumber = (
 
     const tokenizedNumber = Object.keys(
         numericToken.split('').reduce(
-            (acc, v) => {
-                if (!acc[v]) {
-                    acc[v] = v;
+            (acc, digit) => {
+                if (!acc[digit]) {
+                    acc[digit] = digit;
                 }
 
                 return acc;
@@ -71,15 +81,19 @@ const findTokenizedNumber = (
 
     return data.reduce(
         (acc, { number, text, processedText }) => {
-            if (!simpleNumericMatchResult[number]
-                && !simpleTextMatchResult[number]
+            const key = _keyPrefix + number;
+
+            if (
+                !simpleNumericMatchResult[key]
+                && !simpleTextMatchResult[key]
                 && tokenizedNumber.every(fragment => number.includes(fragment))) {
-                acc[number] = {
+                acc[key] = {
                     number,
                     text,
                     processedText
                 };
             }
+
             return acc;
         },
         {}
@@ -101,16 +115,20 @@ const findTokenizedText = (
 
     return data.reduce(
         (acc, { number, text, processedText }) => {
-            if (!simpleNumericMatchResult[number]
-                && !simpleTextMatchResult[number]
-                && !tokenizedNumberResult[number]
+            const key = _keyPrefix + number;
+
+            if (
+                !simpleNumericMatchResult[key]
+                && !simpleTextMatchResult[key]
+                && !tokenizedNumberResult[key]
                 && tokenizedText.every(fragment => processedText.includes(fragment))) {
-                acc[number] = {
+                acc[key] = {
                     number,
                     text,
                     processedText
                 };
             }
+
             return acc;
         },
         {}
