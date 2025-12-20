@@ -16,7 +16,7 @@ describe('CalculationStepsComponent', function () {
     }
 
     it('does not render when steps is empty or falsy', async function () {
-        const linksServiceMock = { isEligible: () => false, getUrl: () => '#' };
+        const linksServiceMock = { isEligible: () => false, getRoute: () => '#' };
         const { app, container } = mountComponent({ steps: [] }, linksServiceMock);
         await Vue.nextTick();
 
@@ -33,7 +33,7 @@ describe('CalculationStepsComponent', function () {
         ];
         const linksServiceMock = {
             isEligible: (text) => text === '11' || text === '4',
-            getUrl: (text) => `https://example.com/${text}`
+            getRoute: (text) => `/other-app/${text}`
         };
         const { app, container } = mountComponent({ steps }, linksServiceMock);
         await Vue.nextTick();
@@ -43,10 +43,9 @@ describe('CalculationStepsComponent', function () {
 
         const firstEl = itemsEls[0];
         expect(firstEl.querySelector('.nc-count').textContent).toBe('1.');
-        const firstEquationEl = firstEl.querySelector('a.nc-equation');
+        const firstEquationEl = firstEl.querySelector('div.btn.nc-equation');
         expect(firstEquationEl).toBeTruthy();
         expect(firstEquationEl.textContent).toBe('1+1');
-        expect(firstEquationEl.href).toContain('https://example.com/11');
 
         const firstSumEl = firstEl.querySelector('div.nc-sum');
         expect(firstSumEl).toBeTruthy();
@@ -58,10 +57,9 @@ describe('CalculationStepsComponent', function () {
         expect(secondEquationEl).toBeTruthy();
         expect(secondEquationEl.textContent).toBe('2+2');
 
-        const secondSumEl = secondEl.querySelector('a.nc-sum');
+        const secondSumEl = secondEl.querySelector('div.btn.nc-sum');
         expect(secondSumEl).toBeTruthy();
         expect(secondSumEl.textContent).toBe('4');
-        expect(secondSumEl.href).toContain('https://example.com/4');
 
         app.unmount();
         container.remove();

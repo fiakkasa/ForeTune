@@ -226,7 +226,7 @@ const init = async (
 
     const storageService = VueStorage.useStorage(storageConfig).ls;
 
-    for (let appConfig of Object.values(appsConfig)) {
+    for (const appConfig of Object.values(appsConfig)) {
         if (appConfig.id === appsConfig.main.id) {
             continue;
         }

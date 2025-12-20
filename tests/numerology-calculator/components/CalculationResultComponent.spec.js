@@ -17,7 +17,7 @@ describe('CalculationResultComponent', function () {
     }
 
     it('renders an anchor when linksService.isEligible returns true', async function () {
-        const mockUrl = 'https://example.com/item/42';
+        const mockUrl = '/other-app/42';
         const linksServiceMock = {
             isEligible: (text) => true,
             getUrl: (text) => mockUrl
@@ -25,12 +25,10 @@ describe('CalculationResultComponent', function () {
         const { app, container } = mountComponent({ text: '42' }, linksServiceMock);
         await Vue.nextTick();
 
-        const el = container.querySelector('a.nc-result');
+        const el = container.querySelector('div.btn.nc-result');
 
         expect(el).toBeTruthy();
         expect(el.textContent).toBe('42');
-        expect(el.getAttribute('target')).toBe('_blank');
-        expect(el.href).toContain(mockUrl);
 
         app.unmount();
         container.remove();
@@ -44,7 +42,7 @@ describe('CalculationResultComponent', function () {
         const { app, container } = mountComponent({ text: 'NoLink' }, linksServiceMock);
         await Vue.nextTick();
 
-        const anchorEl = container.querySelector('a.nc-result');
+        const anchorEl = container.querySelector('div.btn.nc-result');
         expect(anchorEl).toBeNull();
 
         const divEl = container.querySelector('div.nc-result');

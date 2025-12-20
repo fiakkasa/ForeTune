@@ -1,7 +1,7 @@
 import { task } from '../../../src/utils/task.js';
-import { NumerologyUiService } from '../../../src/apps/numerology-calculator/services/NumerologyUiService.js';
+import { UiService } from '../../../src/apps/numerology-calculator/services/UiService.js';
 
-describe('NumerologyUiService', function () {
+describe('UiService', function () {
     const config = {
         calculatorEquationSeparator: '+',
         calculatorEquationCombinedItemTemplate: '{0}:{1}',
@@ -11,7 +11,7 @@ describe('NumerologyUiService', function () {
     let service;
 
     beforeEach(function () {
-        service = new NumerologyUiService(config, task);
+        service = new UiService(config, task);
     });
 
     describe('composeEntryEquation', function () {

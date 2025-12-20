@@ -14,11 +14,10 @@ const CalculationStepsComponent = {
                     </div>
 
                     <template v-if="linksService.isEligible(s.sequence)">
-                        <a :href="linksService.getUrl(s.sequence)"
-                           target="_blank"
-                           class="nc-equation btn p-1 border-0 text-secondary text-break"
-                           v-text="s.equation">
-                        </a>
+                        <div class="nc-equation btn p-1 border-0 text-secondary text-break"
+                             v-text="s.equation"
+                             @click="$router.push(linksService.getRoute(s.sequence))">
+                        </div>
                     </template>
                     <template v-else>
                         <div class="nc-equation p-1 text-secondary text-break"
@@ -29,13 +28,12 @@ const CalculationStepsComponent = {
                     <div class="nc-equation-symbol text-success">=</div>
 
                     <template v-if="linksService.isEligible(s.sum)">
-                        <a :href="linksService.getUrl(s.sum)"
-                           target="_blank"
-                           class="nc-sum btn p-1 border-0 text-secondary">
+                        <div class="nc-sum btn p-1 border-0 text-secondary"
+                             @click="$router.push(linksService.getRoute(s.sum))">
                             <span class="sum text-secondary font-monospace"
                                   v-text="s.sum">
                             </span>
-                        </a>
+                        </div>
                     </template>
                     <template v-else>
                         <div class="nc-sum p-1 text-secondary font-monospace"

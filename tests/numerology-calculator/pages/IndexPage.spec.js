@@ -1,10 +1,10 @@
 import { SearchInputComponent } from '../../../src/components/SearchInputComponent.js';
 import { task } from '../../../src/utils/task.js';
 import { IndexPage } from '../../../src/apps/numerology-calculator/pages/IndexPage.js';
-import { NumerologyUiService } from '../../../src/apps/numerology-calculator/services/NumerologyUiService.js';
-import { NumerologyDigitCalculatorService } from '../../../src/apps/numerology-calculator/services/NumerologyDigitCalculatorService.js';
-import { NumerologyLetterCalculatorService } from '../../../src/apps/numerology-calculator/services/NumerologyLetterCalculatorService.js';
-import { NumerologyLinksService } from '../../../src/apps/numerology-calculator/services/NumerologyLinksService.js';
+import { UiService } from '../../../src/apps/numerology-calculator/services/UiService.js';
+import { DigitCalculatorService } from '../../../src/apps/numerology-calculator/services/DigitCalculatorService.js';
+import { LetterCalculatorService } from '../../../src/apps/numerology-calculator/services/LetterCalculatorService.js';
+import { LinksService } from '../../../src/apps/numerology-calculator/services/LinksService.js';
 import { AdderTitleComponent } from '../../../src/apps/numerology-calculator/components/AdderTitleComponent.js';
 import { CalculationResultComponent } from '../../../src/apps/numerology-calculator/components/CalculationResultComponent.js';
 import { CalculationStepsComponent } from '../../../src/apps/numerology-calculator/components/CalculationStepsComponent.js';
@@ -40,10 +40,10 @@ describe('IndexPage', function () {
             history: VueRouter.createWebHashHistory(),
             routes
         });
-        const uiService = new NumerologyUiService(uiConfig, task);
-        const digitCalculatorService = new NumerologyDigitCalculatorService(uiService, task);
-        const letterCalculatorService = new NumerologyLetterCalculatorService(uiService, task);
-        const linksService = new NumerologyLinksService(linksConfig, task);
+        const uiService = new UiService(uiConfig, task);
+        const digitCalculatorService = new DigitCalculatorService(uiService, task);
+        const letterCalculatorService = new LetterCalculatorService(uiService, task);
+        const linksService = new LinksService(linksConfig, task);
 
         const app = Vue.createApp({
             template: `<router-view />`

@@ -6,10 +6,10 @@ import { CalculationStepsComponent } from './components/CalculationStepsComponen
 import { DigitAdderComponent } from './components/DigitAdderComponent.js';
 import { LetterAdderComponent } from './components/LetterAdderComponent.js';
 import { IndexPage } from './pages/IndexPage.js';
-import { NumerologyUiService } from './services/NumerologyUiService.js';
-import { NumerologyDigitCalculatorService } from './services/NumerologyDigitCalculatorService.js';
-import { NumerologyLetterCalculatorService } from './services/NumerologyLetterCalculatorService.js';
-import { NumerologyLinksService } from './services/NumerologyLinksService.js';
+import { UiService } from './services/UiService.js';
+import { DigitCalculatorService } from './services/DigitCalculatorService.js';
+import { LetterCalculatorService } from './services/LetterCalculatorService.js';
+import { LinksService } from './services/LinksService.js';
 
 const uiConfig = {
     maxSearchInputChars: 1000,
@@ -19,7 +19,8 @@ const uiConfig = {
 };
 
 const linksConfig = {
-    url: 'https:/number.academy/numerology/{0}'
+    url: '/angel-numbers',
+    queryParameterName: 'text'
 };
 
 const routes = [
@@ -52,10 +53,10 @@ async function appInit(config = {}, storageService) {
         }
     });
 
-    const uiService = new NumerologyUiService(uiConfig, task);
-    const digitCalculatorService = new NumerologyDigitCalculatorService(uiService, task);
-    const letterCalculatorService = new NumerologyLetterCalculatorService(uiService, task);
-    const linksService = new NumerologyLinksService(linksConfig);
+    const uiService = new UiService(uiConfig, task);
+    const digitCalculatorService = new DigitCalculatorService(uiService, task);
+    const letterCalculatorService = new LetterCalculatorService(uiService, task);
+    const linksService = new LinksService(linksConfig);
 
     const app = Vue.createApp({
         template: `<router-view />`
