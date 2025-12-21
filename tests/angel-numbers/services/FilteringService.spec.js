@@ -68,10 +68,13 @@ describe('FilteringService', function () {
             text: 'Three Hundred Twenty One',
         },
     ];
+    const config = {
+        maxChars: 1000
+    };
     let service;
 
     beforeEach(function () {
-        service = new FilteringService(task);
+        service = new FilteringService(config, task);
     });
 
     describe('search', function () {
@@ -161,6 +164,17 @@ describe('FilteringService', function () {
             expect(result.length).toBe(3);
             expect(result[0].number).toBe('231');
             expect(result[1].number).toBe('123');
+            expect(result[2].number).toBe('321');
+        });
+
+        it('returns results for large numeric token and numbers with the same digits using distinct characters', async function () {
+            service.Data = data;
+
+            const result = await service.search('111111222222333333111111222222333333111111222222333333111111222222333333');
+
+            expect(result.length).toBe(3);
+            expect(result[0].number).toBe('123');
+            expect(result[1].number).toBe('231');
             expect(result[2].number).toBe('321');
         });
 

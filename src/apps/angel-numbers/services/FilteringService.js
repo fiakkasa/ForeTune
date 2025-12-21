@@ -58,11 +58,12 @@ const findSimpleTextMatch = (data, textToken, simpleNumericMatchResult) => {
 
 const findTokenizedNumber = (
     data,
+    config,
     numericToken,
     simpleNumericMatchResult,
     simpleTextMatchResult
 ) => {
-    if (!numericToken || numericToken.length > 3) {
+    if (!numericToken || numericToken.length > config.maxChars) {
         return {};
     }
 
@@ -102,16 +103,30 @@ const findTokenizedNumber = (
 
 const findTokenizedText = (
     data,
+    config,
     textToken,
     simpleNumericMatchResult,
     simpleTextMatchResult,
     tokenizedNumberResult
 ) => {
-    if (!textToken) {
+    if (!textToken || textToken.length > config.maxChars) {
         return {};
     }
 
-    const tokenizedText = textToken.split(' ');
+    const tokenizedText = Object.keys(
+        textToken.split(' ').reduce(
+            (acc, v) => {
+                const normalizedValue = v.toLowerCase();
+
+                if (!acc[normalizedValue]) {
+                    acc[normalizedValue] = true;
+                }
+
+                return acc;
+            },
+            {}
+        )
+    );
 
     return data.reduce(
         (acc, { number, text, processedText }) => {
@@ -149,7 +164,8 @@ class FilteringService {
         }));
     }
 
-    constructor(task) {
+    constructor(config, task) {
+        this._config = config;
         this._task = task;
     }
 
@@ -179,6 +195,7 @@ class FilteringService {
             // number tokenized match
             const tokenizedNumberResult = findTokenizedNumber(
                 this._data,
+                this._config,
                 numericToken,
                 simpleNumericMatchResult,
                 simpleTextMatchResult
@@ -186,6 +203,7 @@ class FilteringService {
             // text tokenized match
             const tokenizedTextResult = findTokenizedText(
                 this._data,
+                this._config,
                 textToken,
                 simpleNumericMatchResult,
                 simpleTextMatchResult,

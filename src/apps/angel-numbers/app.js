@@ -9,6 +9,10 @@ const uiConfig = {
     uiDefaultDelay: 250
 };
 
+const filteringConfig = {
+    maxChars: uiConfig.maxSearchInputChars
+};
+
 const routes = [
     { path: '/:value', component: IndexPage },
     { path: '/', component: IndexPage }
@@ -38,7 +42,7 @@ async function appInit(config = {}, storageService) {
         }
     });
 
-    const filteringService = new FilteringService(task);
+    const filteringService = new FilteringService(filteringConfig, task);
     const uiService = new UiService(uiConfig, task);
 
     const app = Vue.createApp({
