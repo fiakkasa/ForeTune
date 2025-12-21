@@ -207,6 +207,16 @@ describe('FilteringService', function () {
             expect(result[1].text).toBe('Three Hundred Twenty One');
         });
 
+        it('returns results for duplicate partial words in mixed case', async function () {
+            service.Data = data;
+
+            const result = await service.search('ree RED one ree red ONE REE red one rEe rEd oNe');
+
+            expect(result.length).toBe(2);
+            expect(result[0].text).toBe('One Hundred Twenty Three');
+            expect(result[1].text).toBe('Three Hundred Twenty One');
+        });
+
         it('returns results for mixed numbers and partial words and ignores non alphanumeric', async function () {
             service.Data = data;
 
