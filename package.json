@@ -21,12 +21,13 @@
   "homepage": "https://github.com/fiakkasa/ForeTune#readme",
   "devDependencies": {
     "jasmine-core": "^5.13.0",
+    "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
     "karma-jasmine": "^5.1.0",
     "karma-junit-reporter": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
-    "karma": "^6.4.4",
     "lite-server": "^2.6.1",
-    "puppeteer": "^24.32.0"
+    "puppeteer": "^24.32.0",
+    "pwa-asset-generator": "^8.1.2"
   }
 }
