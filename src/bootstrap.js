@@ -200,6 +200,18 @@ const registerNavigatorApp = (
     );
 };
 
+const registerServiceWorker = async (serviceWorkerConfig) => {
+    try {
+        const { path, scope, type } = serviceWorkerConfig;
+
+        if ('serviceWorker' in navigator) {
+            await navigator.serviceWorker.register(path, { scope, type });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 const init = async (
     navigatorQuerySelector,
     appsQuerySelector
@@ -212,6 +224,7 @@ const init = async (
         uiConfig,
         storageConfig,
         singleSpaConfig,
+        serviceWorkerConfig,
         initialConfigLoadError
     } = await import('./config.js').catch(initialConfigLoadError =>
         ({ initialConfigLoadError })
@@ -276,15 +289,17 @@ const init = async (
     window.addEventListener(
         'single-spa:app-change',
         event => {
-            const timeout = !event?.detail?.appsByNewStatus?.MOUNTED?.length
-                ? 0
-                : uiConfig.loaderTimeout;
+            const timeout = event?.detail?.appsByNewStatus?.MOUNTED?.length
+                ? uiConfig.loaderTimeout
+                : 0;
 
             showLoader(timeout);
         }
     );
 
     singleSpa.start();
+
+    await registerServiceWorker(serviceWorkerConfig);
 };
 
 export { init };

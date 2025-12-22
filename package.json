@@ -28,6 +28,7 @@
     "karma-mocha-reporter": "^2.2.5",
     "lite-server": "^2.6.1",
     "puppeteer": "^24.32.0",
-    "pwa-asset-generator": "^8.1.2"
+    "pwa-asset-generator": "^8.1.2",
+    "workbox-cli": "^7.4.0"
   }
 }

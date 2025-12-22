@@ -38,7 +38,6 @@ const storageConfig = {
     name: 'ls',
     storage: 'session'
 };
-
 const singleSpaConfig = {
     bootstrapMaxTimeMillis: 3000,
     bootstrapMaxTimeDieOnTimeout: false,
@@ -53,5 +52,11 @@ const singleSpaConfig = {
     unloadMaxTimeDieOnTimeout: false,
     unloadMaxTimeWarningMillis: 10000
 };
+// note: ensure scope and start_url in manifest.json are aligned
+const serviceWorkerConfig = {
+    path: './sw.js',
+    scope: './',
+    type: 'classic' // or 'module'
+};
 
-export { appsConfig, urlConfig, uiConfig, storageConfig, singleSpaConfig }
+export { appsConfig, urlConfig, uiConfig, storageConfig, singleSpaConfig, serviceWorkerConfig }

@@ -20,7 +20,13 @@ Install packages by running: `npm i`
 
 Run unit tests by running: `npm run tests`
 
-## PWA Assets
+## PWA
+
+### Service Worker
+
+Under the root folder run: `npx workbox-cli generateSW ./workbox-config.js`
+
+### Assets
 
 Under the src folder run: `npx pwa-asset-generator ../Material/icon-512x512.png -i ./index.html -m ./manifest.json`
 
@@ -31,3 +37,4 @@ Under the src folder run: `npx pwa-asset-generator ../Material/icon-512x512.png 
 - https://github.com/johnpapa/lite-server
 - https://single-spa.js.org
 - https://github.com/elegantapp/pwa-asset-generator
+- https://web.dev/learn/pwa/workbox/
