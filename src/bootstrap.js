@@ -204,7 +204,10 @@ const registerServiceWorker = async (serviceWorkerConfig) => {
     try {
         const { path, scope, type } = serviceWorkerConfig;
 
-        if ('serviceWorker' in navigator) {
+        if (
+            ['classic', 'module'].includes(type)
+            && 'serviceWorker' in navigator
+        ) {
             await navigator.serviceWorker.register(path, { scope, type });
         }
     } catch (error) {
