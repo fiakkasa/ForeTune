@@ -208,7 +208,19 @@ const registerServiceWorker = async (serviceWorkerConfig) => {
             ['classic', 'module'].includes(type)
             && 'serviceWorker' in navigator
         ) {
-            await navigator.serviceWorker.register(path, { scope, type });
+            await navigator.serviceWorker.register(path, { scope, type }).then(reg => {
+                const serviceWorker = reg.installing;
+
+                if (!serviceWorker) {
+                    return;
+                }
+
+                window.dispatchEvent(new Event(`service-worker:init`));
+
+                serviceWorker.addEventListener('statechange', () => {
+                    window.dispatchEvent(new Event(`service-worker:${serviceWorker.state}`));
+                });
+            });
         }
     } catch (error) {
         console.error(error);

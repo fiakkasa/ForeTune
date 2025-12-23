@@ -16,14 +16,26 @@ const IndexPage = {
             </nav>
             <div class="nv-nav-lift flex-fill flex-shrink-1"></div>
         </div>
+        <div class="nv-cache-status d-inline-flex justify-content-center align-align-items-center"
+             v-if="serviceWorkerInitializing > 0 && serviceWorkerInitializing < 100"
+             :title="$t('preparing_offline_support')">
+            <i class="fa-solid fa-download text-primary"></i>
+        </div>
     `,
     data() {
         return {
             standAlone: false,
+            serviceWorkerInitializing: 0,
             pageUrlFragments: {}
         };
     },
     beforeMount() {
+        window.addEventListener('service-worker:init', () => {
+            this.serviceWorkerInitializing = 1;
+        }, { once: true });
+        window.addEventListener('service-worker:installed', () => {
+            this.serviceWorkerInitializing = 100;
+        }, { once: true });
         this.pageUrlFragments = Object.values(this.appsConfig)
             .reduce(
                 (acc, { urlFragment }) => {

@@ -50,6 +50,33 @@
   font-size: var(--navigator-button-icon-size);
 }
 
+.nv-cache-status {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 1030;
+  height: 2rem;
+  width: 2rem;
+  overflow: hidden;
+  font-size: 1.8rem;
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0% {
+    opacity: 0.2;
+    font-size: 1.6rem;
+  }
+  50% {
+    opacity: 1;
+    font-size: 1.8rem;
+  }
+  100% {
+    opacity: 0.2;
+    font-size: 1.6rem;
+  }
+}
+
 @media (max-width: 575px) {
   .nv-app {
     --navigator-lift: 0;
