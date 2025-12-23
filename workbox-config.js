@@ -1,7 +1,14 @@
 module.exports = {
     globDirectory: 'src/',
     globPatterns: [
-        '**/*.{html,js,css,png,jpg,svg,ico,json,woff2}'
+        '**/*.{html,js,css,png,jpg,svg,ico,json,woff2}',
+    ],
+    globIgnores: [
+        '**/apple-icon*.{png,jpg}',
+        '**/apple-splash*.{png,jpg}',
+        '**/node_modules/**/*',
+        'sw.js',
+        'workbox-*.js'
     ],
     swDest: 'src/sw.js',
     cleanupOutdatedCaches: true,
