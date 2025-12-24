@@ -18,9 +18,8 @@ const routes = [
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(config = {}, storageService) {
+async function appInit(config, storageService) {
     const {
-        id = 'angel-numbers',
         path = 'apps/angel-numbers',
         urlFragment = 'angel-numbers'
     } = config;
@@ -60,36 +59,26 @@ async function appInit(config = {}, storageService) {
 
     app.provide('filteringService', filteringService);
     app.provide('uiService', uiService);
+    app.provide('storageService', storageService);
 
     const locale = 'en-US';
-    const localeStorageKey = `${id}__localization[${locale}]`;
-    let messages = storageService.get(localeStorageKey) || {};
-
-    if (!Object.values(messages).length) {
-        messages = await fetch(`${path}/localization/${locale}.json`)
+    const [messages, data] = await Promise.all([
+        fetch(`${path}/localization/${locale}.json`)
             .then(response => response.json())
             .catch(error => {
                 console.error(error);
                 return {};
-            });
-        storageService.set(localeStorageKey, messages);
-    }
-
-    i18n.global.setLocaleMessage(locale, messages);
-    i18n.global.locale.value = locale;
-
-    const dataStorageKey = `${id}__data`;
-    let data = storageService.get(dataStorageKey) || [];
-
-    if (!data.length) {
-        data = await fetch(`${path}/assets/data.json`)
+            }),
+        fetch(`${path}/assets/data.json`)
             .then(response => response.json())
             .catch(error => {
                 console.error(error);
                 return [];
-            });
-        storageService.set(dataStorageKey, data);
-    }
+            })
+    ]);
+
+    i18n.global.setLocaleMessage(locale, messages);
+    i18n.global.locale.value = locale;
     filteringService.Data = data;
 
     return app;

@@ -28,9 +28,8 @@ const routes = [
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(config = {}, storageService) {
+async function appInit(config, storageService) {
     const {
-        id = 'numerology-calculator',
         path = 'apps/numerology-calculator',
         urlFragment = 'numerology-calculator'
     } = config;
@@ -75,24 +74,20 @@ async function appInit(config = {}, storageService) {
 
     app.provide('appConfig', config);
     app.provide('uiConfig', uiConfig);
+
     app.provide('linksService', linksService);
     app.provide('uiService', uiService);
     app.provide('digitCalculatorService', digitCalculatorService);
     app.provide('letterCalculatorService', letterCalculatorService);
+    app.provide('storageService', storageService);
 
     const locale = 'en-US';
-    const localeStorageKey = `${id}__localization[${locale}]`;
-    let messages = storageService.get(localeStorageKey) || {};
-
-    if (!Object.values(messages).length) {
-        messages = await fetch(`${path}/localization/${locale}.json`)
-            .then(response => response.json())
-            .catch(error => {
-                console.error(error);
-                return {};
-            });
-        storageService.set(localeStorageKey, messages);
-    }
+    const messages = await fetch(`${path}/localization/${locale}.json`)
+        .then(response => response.json())
+        .catch(error => {
+            console.error(error);
+            return {};
+        });
 
     i18n.global.setLocaleMessage(locale, messages);
     i18n.global.locale.value = locale;

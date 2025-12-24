@@ -36,7 +36,7 @@ const uiConfig = {
 const storageConfig = {
     namespace: 'foretune__',
     name: 'ls',
-    storage: 'session'
+    storage: 'local' // 'session' or 'local'
 };
 const singleSpaConfig = {
     bootstrapMaxTimeMillis: 3000,

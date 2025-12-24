@@ -5,9 +5,8 @@ const routes = [
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(config = {}, appsConfig = {}, storageService) {
+async function appInit(config, appsConfig, storageService) {
     const {
-        id = 'navigator',
         path = 'apps/navigator',
         urlFragment = ''
     } = config;
@@ -23,7 +22,8 @@ async function appInit(config = {}, appsConfig = {}, storageService) {
             en: {
                 main: 'Home',
                 numerology_calculator: 'Numerology Calculator',
-                angel_numbers: 'Angel Numbers'
+                angel_numbers: 'Angel Numbers',
+                preparing_offline_support: 'Preparing offline support..'
             }
         }
     });
@@ -36,22 +36,19 @@ async function appInit(config = {}, appsConfig = {}, storageService) {
     app.use(i18n);
 
     app.component('index-page', IndexPage);
+
     app.provide('appConfig', config);
     app.provide('appsConfig', appsConfig);
 
-    const locale = 'en-US';
-    const localeStorageKey = `${id}__localization[${locale}]`;
-    let messages = storageService.get(localeStorageKey) || {};
+    app.provide('storageService', storageService);
 
-    if (!Object.values(messages).length) {
-        messages = await fetch(`${path}/localization/${locale}.json`)
-            .then(response => response.json())
-            .catch(error => {
-                console.error(error);
-                return {};
-            });
-        storageService.set(localeStorageKey, messages);
-    }
+    const locale = 'en-US';
+    const messages = await fetch(`${path}/localization/${locale}.json`)
+        .then(response => response.json())
+        .catch(error => {
+            console.error(error);
+            return {};
+        });
 
     i18n.global.setLocaleMessage(locale, messages);
     i18n.global.locale.value = locale;
