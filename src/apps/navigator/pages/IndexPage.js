@@ -51,7 +51,7 @@ const IndexPage = {
     },
     beforeUnmount() {
         this.timeoutRef && clearTimeout(this.timeoutRef);
-        this.serviceWorker?.removeEventListener('statechange', serviceWorkerEventHandler);
+        this.serviceWorker?.removeEventListener('statechange', this.serviceWorkerEventHandler);
     },
     watch: {
         $route(to, from) {
