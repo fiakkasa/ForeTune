@@ -1,5 +1,5 @@
 const IndexPage = {
-    inject: ['appsConfig', 'uiConfig'],
+    inject: ['appsConfig', 'uiConfig', 'serviceWorkerConfig'],
     template: `
         <div class="nv-app position-relative d-flex flex-column align-items-center justify-content-center overflow-auto vh-100" 
              :class="{ 'nv-stand-alone vw-100' : standAlone }">
@@ -30,7 +30,8 @@ const IndexPage = {
             standAlone: false,
             serviceWorkerProgress: 0,
             pageUrlFragments: {},
-            timeoutRef: null
+            timeoutRef: null,
+            serviceWorker: null
         };
     },
     beforeMount() {
@@ -50,6 +51,7 @@ const IndexPage = {
     },
     beforeUnmount() {
         this.timeoutRef && clearTimeout(this.timeoutRef);
+        this.serviceWorker?.removeEventListener('statechange', serviceWorkerEventHandler);
     },
     watch: {
         $route(to, from) {
@@ -57,31 +59,61 @@ const IndexPage = {
         }
     },
     methods: {
-        setServiceWorkerEvents() {
-            window.addEventListener('service-worker:init', () => {
-                if (this.serviceWorkerProgress === 0) {
-                    this.serviceWorkerProgress = 1;
-                }
-            }, { once: true });
-            window.addEventListener('service-worker:installed', () => {
-                if (this.serviceWorkerProgress === 1) {
-                    this.serviceWorkerProgress = 80;
-                }
-            }, { once: true });
-            window.addEventListener('service-worker:activating', () => {
-                if (this.serviceWorkerProgress === 80) {
-                    this.serviceWorkerProgress = 90;
-                }
-            }, { once: true });
-            window.addEventListener('service-worker:activated', () => {
-                if (this.serviceWorkerProgress !== 0) {
-                    this.serviceWorkerProgress = 99;
+        async setServiceWorkerEvents() {
+            if (!('serviceWorker' in navigator)) {
+                return;
+            }
+
+            const { serviceWorker } = await navigator.serviceWorker.getRegistration(
+                this.serviceWorkerConfig.path
+            )
+                .then(registration => ({ serviceWorker: registration?.installing }))
+                .catch(_ => ({ serviceWorker: null }));
+
+            if (!serviceWorker) {
+                return;
+            }
+
+            this.serviceWorker = serviceWorker;
+
+            this.serviceWorkerProgress = 1;
+
+            this.serviceWorker.addEventListener('statechange', this.serviceWorkerEventHandler);
+        },
+        serviceWorkerEventHandler(e) {
+            const eligibleStates = {
+                installing: 10,
+                installed: 80,
+                activating: 90,
+                activated: 99
+            };
+
+            if (
+                this.serviceWorkerProgress >= eligibleStates.activated
+                || eligibleStates[e?.target?.state] < eligibleStates.installing
+            ) {
+                return;
+            }
+
+            switch (e.target.state) {
+                case 'installing':
+                    this.serviceWorkerProgress = eligibleStates.installing;
+                    break;
+                case 'installed':
+                    this.serviceWorkerProgress = eligibleStates.installed;
+                    break;
+                case 'activating':
+                    this.serviceWorkerProgress = eligibleStates.activating;
+                    break;
+                case 'activated':
+                    this.serviceWorkerProgress = eligibleStates.activated;
                     this.timeoutRef = setTimeout(
                         () => this.serviceWorkerProgress = 100,
                         this.uiConfig.serviceWorkerDoneNotificationDelay
                     );
-                }
-            }, { once: true });
+                    this.serviceWorker?.removeEventListener('statechange', this.serviceWorkerEventHandler);
+                    break;
+            }
         },
         setIsStandAlone() {
             this.standAlone = !this.$route.params.value

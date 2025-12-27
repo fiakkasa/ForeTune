@@ -22,6 +22,16 @@ describe('IndexPage', function () {
         }
     };
 
+    const uiConfig = {
+        serviceWorkerDoneNotificationDelay: 750
+    };
+
+    const serviceWorkerConfig = {
+        path: './sw.js',
+        scope: './',
+        type: 'classic' // or 'module'
+    };
+
     const routes = [
         { path: '/:value', component: IndexPage },
         { path: '/', component: IndexPage }
@@ -49,6 +59,8 @@ describe('IndexPage', function () {
         app.component('index-page', IndexPage);
         app.provide('config', appsConfig.main);
         app.provide('appsConfig', appsConfig);
+        app.provide('uiConfig', uiConfig);
+        app.provide('serviceWorkerConfig', serviceWorkerConfig);
 
         app.config.globalProperties.$t = (k) => k;
 

@@ -1,7 +1,7 @@
 import { IndexPage } from './pages/IndexPage.js';
 
 const uiConfig = {
-    serviceWorkerDoneNotificationDelay: 500
+    serviceWorkerDoneNotificationDelay: 750
 };
 
 const routes = [
@@ -9,7 +9,7 @@ const routes = [
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(config, appsConfig, storageService) {
+async function appInit(config, appsConfig, serviceWorkerConfig, storageService) {
     const {
         path = 'apps/navigator',
         urlFragment = ''
@@ -44,6 +44,7 @@ async function appInit(config, appsConfig, storageService) {
     app.provide('appConfig', config);
     app.provide('appsConfig', appsConfig);
     app.provide('uiConfig', uiConfig);
+    app.provide('serviceWorkerConfig', serviceWorkerConfig);
 
     app.provide('storageService', storageService);
 

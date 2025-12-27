@@ -154,6 +154,7 @@ const registerNavigatorApp = (
     appConfig,
     uiConfig,
     appsConfig,
+    serviceWorkerConfig,
     storageService
 ) => {
     singleSpa.registerApplication(
@@ -179,7 +180,12 @@ const registerNavigatorApp = (
                 mount: async () => {
                     setAppStyles(appConfig);
 
-                    const { app, appInitError } = await appInit(appConfig, appsConfig, storageService)
+                    const { app, appInitError } = await appInit(
+                        appConfig,
+                        appsConfig,
+                        serviceWorkerConfig,
+                        storageService
+                    )
                         .then(app => ({ app }))
                         .catch(appInitError => ({ appInitError }));
 
@@ -208,19 +214,7 @@ const registerServiceWorker = async (serviceWorkerConfig) => {
             ['classic', 'module'].includes(type)
             && 'serviceWorker' in navigator
         ) {
-            await navigator.serviceWorker.register(path, { scope, type }).then(reg => {
-                const serviceWorker = reg.installing;
-
-                if (!serviceWorker) {
-                    return;
-                }
-
-                window.dispatchEvent(new Event(`service-worker:init`));
-
-                serviceWorker.addEventListener('statechange', () => {
-                    window.dispatchEvent(new Event(`service-worker:${serviceWorker.state}`));
-                });
-            });
+            await navigator.serviceWorker.register(path, { scope, type });
         }
     } catch (error) {
         console.error(error);
@@ -273,6 +267,7 @@ const init = async (
         appsConfig.main,
         uiConfig,
         appsConfig,
+        serviceWorkerConfig,
         storageService
     );
 
@@ -312,9 +307,9 @@ const init = async (
         }
     );
 
-    singleSpa.start();
-
     await registerServiceWorker(serviceWorkerConfig);
+
+    singleSpa.start();
 };
 
 export { init };
