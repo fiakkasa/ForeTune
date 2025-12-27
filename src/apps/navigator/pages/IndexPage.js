@@ -19,7 +19,9 @@ const IndexPage = {
         <div class="nv-cache-status d-inline-flex justify-content-center align-align-items-center"
              v-if="serviceWorkerInitializing > 0 && serviceWorkerInitializing < 100"
              :title="$t('preparing_offline_support')">
-            <i class="fa-solid fa-download text-primary"></i>
+            <i class="fa-solid fa-download"
+               :class="[serviceWorkerInitializing < 90 ? 'text-primary' : 'text-success' ]">
+            </i>
         </div>
     `,
     data() {
@@ -30,12 +32,7 @@ const IndexPage = {
         };
     },
     beforeMount() {
-        window.addEventListener('service-worker:init', () => {
-            this.serviceWorkerInitializing = 1;
-        }, { once: true });
-        window.addEventListener('service-worker:installed', () => {
-            this.serviceWorkerInitializing = 100;
-        }, { once: true });
+        this.setServiceWorkerEvents();
         this.pageUrlFragments = Object.values(this.appsConfig)
             .reduce(
                 (acc, { urlFragment }) => {
@@ -55,6 +52,29 @@ const IndexPage = {
         }
     },
     methods: {
+        setServiceWorkerEvents() {
+            window.addEventListener('service-worker:init', () => {
+                if (this.serviceWorkerInitializing === 0) {
+                    this.serviceWorkerInitializing = 1;
+                }
+            }, { once: true });
+            window.addEventListener('service-worker:installed', () => {
+                if (this.serviceWorkerInitializing === 1) {
+                    this.serviceWorkerInitializing = 90;
+                }
+            }, 250);
+            window.addEventListener('service-worker:activating', () => {
+                if (this.serviceWorkerInitializing === 90) {
+                    this.serviceWorkerInitializing = 95;
+                }
+            }, { once: true });
+            window.addEventListener('service-worker:activated', () => {
+                if (this.serviceWorkerInitializing !== 0) {
+                    this.serviceWorkerInitializing = 100;
+                    console.log(this.serviceWorkerInitializing);
+                }
+            }, { once: true });
+        },
         setIsStandAlone() {
             this.standAlone = !this.$route.params.value
                 || !this.pageUrlFragments[this.$route.params.value];
