@@ -1,5 +1,9 @@
 import { IndexPage } from './pages/IndexPage.js';
 
+const uiConfig = {
+    serviceWorkerDoneNotificationDelay: 500
+};
+
 const routes = [
     { path: '/:value', component: IndexPage },
     { path: '/', component: IndexPage }
@@ -39,6 +43,7 @@ async function appInit(config, appsConfig, storageService) {
 
     app.provide('appConfig', config);
     app.provide('appsConfig', appsConfig);
+    app.provide('uiConfig', uiConfig);
 
     app.provide('storageService', storageService);
 

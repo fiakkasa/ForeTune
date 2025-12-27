@@ -1,5 +1,5 @@
 const IndexPage = {
-    inject: ['appsConfig'],
+    inject: ['appsConfig', 'uiConfig'],
     template: `
         <div class="nv-app position-relative d-flex flex-column align-items-center justify-content-center overflow-auto vh-100" 
              :class="{ 'nv-stand-alone vw-100' : standAlone }">
@@ -17,18 +17,20 @@ const IndexPage = {
             <div class="nv-nav-lift flex-fill flex-shrink-1"></div>
         </div>
         <div class="nv-cache-status d-inline-flex justify-content-center align-align-items-center"
-             v-if="serviceWorkerInitializing > 0 && serviceWorkerInitializing < 100"
+             v-if="serviceWorkerProgress > 0 && serviceWorkerProgress < 100"
+             :key="'service-worker-progress' + serviceWorkerProgress"
              :title="$t('preparing_offline_support')">
             <i class="fa-solid fa-download"
-               :class="[serviceWorkerInitializing < 90 ? 'text-primary' : 'text-success' ]">
+               :class="[serviceWorkerProgress < 90 ? 'text-primary' : 'text-success' ]">
             </i>
         </div>
     `,
     data() {
         return {
             standAlone: false,
-            serviceWorkerInitializing: 0,
-            pageUrlFragments: {}
+            serviceWorkerProgress: 0,
+            pageUrlFragments: {},
+            timeoutRef: null
         };
     },
     beforeMount() {
@@ -46,6 +48,9 @@ const IndexPage = {
             );
         this.setIsStandAlone();
     },
+    beforeUnmount() {
+        this.timeoutRef && clearTimeout(this.timeoutRef);
+    },
     watch: {
         $route(to, from) {
             this.setIsStandAlone();
@@ -54,24 +59,27 @@ const IndexPage = {
     methods: {
         setServiceWorkerEvents() {
             window.addEventListener('service-worker:init', () => {
-                if (this.serviceWorkerInitializing === 0) {
-                    this.serviceWorkerInitializing = 1;
+                if (this.serviceWorkerProgress === 0) {
+                    this.serviceWorkerProgress = 1;
                 }
             }, { once: true });
             window.addEventListener('service-worker:installed', () => {
-                if (this.serviceWorkerInitializing === 1) {
-                    this.serviceWorkerInitializing = 90;
+                if (this.serviceWorkerProgress === 1) {
+                    this.serviceWorkerProgress = 80;
                 }
-            }, 250);
+            }, { once: true });
             window.addEventListener('service-worker:activating', () => {
-                if (this.serviceWorkerInitializing === 90) {
-                    this.serviceWorkerInitializing = 95;
+                if (this.serviceWorkerProgress === 80) {
+                    this.serviceWorkerProgress = 90;
                 }
             }, { once: true });
             window.addEventListener('service-worker:activated', () => {
-                if (this.serviceWorkerInitializing !== 0) {
-                    this.serviceWorkerInitializing = 100;
-                    console.log(this.serviceWorkerInitializing);
+                if (this.serviceWorkerProgress !== 0) {
+                    this.serviceWorkerProgress = 99;
+                    this.timeoutRef = setTimeout(
+                        () => this.serviceWorkerProgress = 100,
+                        this.uiConfig.serviceWorkerDoneNotificationDelay
+                    );
                 }
             }, { once: true });
         },
