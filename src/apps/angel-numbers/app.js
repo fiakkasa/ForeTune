@@ -18,7 +18,7 @@ const routes = [
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(config, storageService) {
+async function appInit(config) {
     const {
         path = 'apps/angel-numbers',
         urlFragment = 'angel-numbers'
@@ -59,7 +59,6 @@ async function appInit(config, storageService) {
 
     app.provide('filteringService', filteringService);
     app.provide('uiService', uiService);
-    app.provide('storageService', storageService);
 
     const locale = 'en-US';
     const [messages, data] = await Promise.all([

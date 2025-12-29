@@ -28,7 +28,7 @@ const routes = [
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(config, storageService) {
+async function appInit(config) {
     const {
         path = 'apps/numerology-calculator',
         urlFragment = 'numerology-calculator'
@@ -79,7 +79,6 @@ async function appInit(config, storageService) {
     app.provide('uiService', uiService);
     app.provide('digitCalculatorService', digitCalculatorService);
     app.provide('letterCalculatorService', letterCalculatorService);
-    app.provide('storageService', storageService);
 
     const locale = 'en-US';
     const messages = await fetch(`${path}/localization/${locale}.json`)

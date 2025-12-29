@@ -9,7 +9,12 @@ const routes = [
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(config, appsConfig, serviceWorkerConfig, storageService) {
+async function appInit(
+    config,
+    appsConfig,
+    serviceWorkerConfig,
+    navigatorService
+) {
     const {
         path = 'apps/navigator',
         urlFragment = ''
@@ -46,7 +51,7 @@ async function appInit(config, appsConfig, serviceWorkerConfig, storageService) 
     app.provide('uiConfig', uiConfig);
     app.provide('serviceWorkerConfig', serviceWorkerConfig);
 
-    app.provide('storageService', storageService);
+    app.provide('navigatorService', navigatorService);
 
     const locale = 'en-US';
     const messages = await fetch(`${path}/localization/${locale}.json`)

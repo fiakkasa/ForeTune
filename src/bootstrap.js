@@ -80,6 +80,11 @@ const unsetAppStyles = (appConfig) => {
     )?.remove();
 };
 
+const removeAppEl = (id) => {
+    const appElSelector = getAppQuerySelector(id);
+    document.body.querySelector(appElSelector)?.remove();
+}
+
 const createAppEl = (appsQuerySelector, id) => {
     const appElSelector = getAppQuerySelector(id);
     document.body.querySelector(appElSelector)?.remove();
@@ -95,9 +100,10 @@ const registerApp = (
     appsQuerySelector,
     appConfig,
     uiConfig,
-    urlConfig,
-    storageService
+    urlConfig
 ) => {
+    const urlMatch = urlConfig.baseUrlPrefix + appConfig.urlFragment;
+
     singleSpa.registerApplication(
         appConfig.id,
         async () => {
@@ -122,7 +128,7 @@ const registerApp = (
                 mount: async () => {
                     setAppStyles(appConfig);
 
-                    const { app, appInitError } = await appInit(appConfig, storageService)
+                    const { app, appInitError } = await appInit(appConfig)
                         .then(app => ({ app }))
                         .catch(appInitError => ({ appInitError }));
 
@@ -139,13 +145,15 @@ const registerApp = (
                 },
                 unmount: async () => {
                     appRef?.unmount();
+                    removeAppEl(appConfig.id);
                     unsetAppStyles(appConfig);
                 }
             };
         },
-        location => location.hash.startsWith(
-            urlConfig.baseUrlPrefix + appConfig.urlFragment
-        )
+        location =>
+            location.hash.includes('?')
+                ? location.hash.split('?')[0] === urlMatch
+                : location.hash === urlMatch
     );
 };
 
@@ -155,7 +163,7 @@ const registerNavigatorApp = (
     uiConfig,
     appsConfig,
     serviceWorkerConfig,
-    storageService
+    navigatorService
 ) => {
     singleSpa.registerApplication(
         appConfig.id,
@@ -184,7 +192,7 @@ const registerNavigatorApp = (
                         appConfig,
                         appsConfig,
                         serviceWorkerConfig,
-                        storageService
+                        navigatorService
                     )
                         .then(app => ({ app }))
                         .catch(appInitError => ({ appInitError }));
@@ -211,7 +219,7 @@ const registerServiceWorker = async (serviceWorkerConfig) => {
         const { path, scope, type } = serviceWorkerConfig;
 
         if (
-            ['classic', 'module'].includes(type)
+            type === 'classic'
             && 'serviceWorker' in navigator
         ) {
             await navigator.serviceWorker.register(path, { scope, type });
@@ -231,7 +239,6 @@ const init = async (
         appsConfig,
         urlConfig,
         uiConfig,
-        storageConfig,
         singleSpaConfig,
         serviceWorkerConfig,
         initialConfigLoadError
@@ -246,8 +253,6 @@ const init = async (
         return;
     }
 
-    const storageService = VueStorage.useStorage(storageConfig).ls;
-
     for (const appConfig of Object.values(appsConfig)) {
         if (appConfig.id === appsConfig.main.id) {
             continue;
@@ -257,8 +262,7 @@ const init = async (
             appsQuerySelector,
             appConfig,
             uiConfig,
-            urlConfig,
-            storageService
+            urlConfig
         );
     }
 
@@ -268,7 +272,7 @@ const init = async (
         uiConfig,
         appsConfig,
         serviceWorkerConfig,
-        storageService
+        navigator
     );
 
     singleSpa.setBootstrapMaxTime(

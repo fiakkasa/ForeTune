@@ -33,11 +33,6 @@ const urlConfig = {
 const uiConfig = {
     loaderTimeout: 375
 };
-const storageConfig = {
-    namespace: 'foretune__',
-    name: 'ls',
-    storage: 'local' // 'session' or 'local'
-};
 const singleSpaConfig = {
     bootstrapMaxTimeMillis: 3000,
     bootstrapMaxTimeDieOnTimeout: false,
@@ -56,7 +51,7 @@ const singleSpaConfig = {
 const serviceWorkerConfig = {
     path: './sw.js',
     scope: './',
-    type: 'classic' // or 'module'
+    type: 'classic' // 'classic' or 'none' to disable
 };
 
-export { appsConfig, urlConfig, uiConfig, storageConfig, singleSpaConfig, serviceWorkerConfig }
+export { appsConfig, urlConfig, uiConfig, singleSpaConfig, serviceWorkerConfig }

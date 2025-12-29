@@ -1,9 +1,17 @@
 const IndexPage = {
-    inject: ['appsConfig', 'uiConfig', 'serviceWorkerConfig'],
+    inject: ['appsConfig', 'uiConfig', 'serviceWorkerConfig', 'navigatorService'],
     template: `
-        <div class="nv-app position-relative d-flex flex-column align-items-center justify-content-center overflow-auto vh-100" 
-             :class="{ 'nv-stand-alone vw-100' : standAlone }">
-            <nav class="nv-nav d-flex flex-wrap align-items-center justify-content-center">
+        <div class="nv-app position-relative d-flex align-items-center justify-content-center overflow-auto" 
+             :class="{ 'nv-sidebar': !standAlone }">
+
+             <div class="nv-indicators-counter-weight d-flex flex-shrink-0" 
+                  v-if="showIndicators && !standAlone">
+                <div class="nv-indicator" v-if="showOfflinePreparationIndicator"></div>
+             </div>
+
+            <div class="flex-fill start flex-shrink-1" v-if="!standAlone"></div>
+            
+            <nav class="nv-nav d-flex">
                 <button class="btn d-inline-flex flex-column align-items-center justify-content-center flex-shrink-0 overflow-hidden" 
                     v-for="item of appsConfig"
                     :class="getButtonClass(item)"
@@ -14,15 +22,20 @@ const IndexPage = {
                           v-if="standAlone" v-text="$t(item.title)"></span>
                 </button>
             </nav>
-            <div class="nv-nav-lift flex-fill flex-shrink-1"></div>
-        </div>
-        <div class="nv-cache-status d-inline-flex justify-content-center align-align-items-center"
-             v-if="serviceWorkerProgress > 0 && serviceWorkerProgress < 100"
-             :key="'service-worker-progress' + serviceWorkerProgress"
-             :title="$t('preparing_offline_support')">
-            <i class="fa-solid fa-download"
-               :class="[serviceWorkerProgress < 90 ? 'text-primary' : 'text-success' ]">
-            </i>
+            <div class="nv-nav-lift flex-fill flex-shrink-1" v-if="!standAlone"></div>
+
+            <div class="flex-fill start flex-shrink-1" v-if="!standAlone"></div>
+
+            <div class="nv-indicators-container d-flex flex-shrink-0" v-if="showIndicators">
+                <div class="nv-indicator nv-cache-status d-inline-flex justify-content-center align-items-center overflow-hidden flex-shrink-0"
+                     v-if="showOfflinePreparationIndicator"
+                     :key="'service-worker-progress' + serviceWorkerProgress"
+                     :title="$t('preparing_offline_support')">
+                    <i class="fa-solid fa-download"
+                       :class="[ serviceWorkerProgress < 90 ? 'text-primary' : 'text-success' ]">
+                    </i>
+                </div>
+            </div>
         </div>
     `,
     data() {
@@ -58,13 +71,21 @@ const IndexPage = {
             this.setIsStandAlone();
         }
     },
+    computed: {
+        showIndicators() {
+            return this.showOfflinePreparationIndicator;
+        },
+        showOfflinePreparationIndicator() {
+            return this.serviceWorkerProgress > 0 && this.serviceWorkerProgress < 100;
+        }
+    },
     methods: {
         async setServiceWorkerEvents() {
-            if (!('serviceWorker' in navigator)) {
+            if (!('serviceWorker' in this.navigatorService)) {
                 return;
             }
 
-            const { serviceWorker } = await navigator.serviceWorker.getRegistration(
+            const { serviceWorker } = await this.navigatorService.serviceWorker.getRegistration(
                 this.serviceWorkerConfig.path
             )
                 .then(registration => ({ serviceWorker: registration?.installing }))
