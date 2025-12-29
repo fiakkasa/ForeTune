@@ -3,8 +3,25 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.app-container:empty {
+.apps-main-container {
+  display: grid;
+  grid-template-columns: max-content auto;
+  grid-template-rows: auto;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.apps-main-container > .apps-container {
+  overflow: hidden;
+}
+
+.apps-main-container > .apps-container > .app-container:empty {
   display: none;
+}
+
+.apps-main-container > .apps-navigator {
+  overflow: hidden;
 }
 
 .app-loading:before {
@@ -28,7 +45,8 @@ body {
 }
 
 @media (max-width: 575px) {
-  .apps-container {
-    flex-direction: column;
+  .apps-main-container {
+    grid-template-columns: auto;
+    grid-template-rows: max-content auto;
   }
 }

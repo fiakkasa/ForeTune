@@ -1,33 +1,27 @@
 const IndexPage = {
     inject: ['appsConfig', 'uiConfig', 'serviceWorkerConfig', 'navigatorService'],
     template: `
-        <div class="nv-app position-relative d-flex align-items-center justify-content-center overflow-auto" 
-             :class="{ 'nv-sidebar': !standAlone }">
+        <div class="nv-app overflow-auto" 
+             :class="{ 
+                'nv-sidebar': !standAlone,
+                'nv-with-indicators': showIndicators
+            }">
 
-             <div class="nv-indicators-counter-weight d-flex flex-shrink-0" 
-                  v-if="showIndicators && !standAlone">
-                <div class="nv-indicator" v-if="showOfflinePreparationIndicator"></div>
-             </div>
-
-            <div class="flex-fill start flex-shrink-1" v-if="!standAlone"></div>
-            
-            <nav class="nv-nav d-flex">
-                <button class="btn d-inline-flex flex-column align-items-center justify-content-center flex-shrink-0 overflow-hidden" 
-                    v-for="item of appsConfig"
-                    :class="getButtonClass(item)"
-                    :title="$t(item.title)"
-                    @click="navigateTo(item.urlFragment)">
+            <nav class="nv-nav">
+                <button class="btn d-flex flex-column align-items-center justify-content-center flex-shrink-0 overflow-hidden" 
+                        v-for="item of appsConfig"
+                        :class="getButtonClass(item)"
+                        :title="$t(item.title)"
+                        @click="navigateTo(item.urlFragment)">
                     <i v-if="item.icon" :class="item.icon"></i>
                     <span class="mw-100 overflow-hidden text-nowrap text-truncate"
                           v-if="standAlone" v-text="$t(item.title)"></span>
                 </button>
             </nav>
-            <div class="nv-nav-lift flex-fill flex-shrink-1" v-if="!standAlone"></div>
+            <div class="nv-nav-lift"></div>
 
-            <div class="flex-fill start flex-shrink-1" v-if="!standAlone"></div>
-
-            <div class="nv-indicators-container d-flex flex-shrink-0" v-if="showIndicators">
-                <div class="nv-indicator nv-cache-status d-inline-flex justify-content-center align-items-center overflow-hidden flex-shrink-0"
+            <div class="nv-indicators-container" v-if="showIndicators">
+                <div class="nv-indicator nv-cache-status d-flex flex-column align-items-center justify-content-center flex-shrink-0 overflow-hidden"
                      v-if="showOfflinePreparationIndicator"
                      :key="'service-worker-progress' + serviceWorkerProgress"
                      :title="$t('preparing_offline_support')">
@@ -36,6 +30,7 @@ const IndexPage = {
                     </i>
                 </div>
             </div>
+
         </div>
     `,
     data() {

@@ -6,33 +6,86 @@
   --navigator-gap: 0.375rem;
   --navigator-gap-2x: 0.75rem;
   --navigator-lift: 5.25rem;
-  --navigator-button-size: 15rem;
-  --navigator-button-icon-size: 6rem;
+  --navigator-large-button-size: 15rem;
+  --navigator-large-button-icon-size: 6rem;
+  --navigator-button-height: 3rem;
+  --navigator-button-width: 3.3rem;
+  --navigator-indicator-height: 2.2rem;
+  --navigator-indicator-width: 3rem;
+  --navigator-indicator-font-size: 1.5rem;
+
+  display: grid;
 
   padding: var(--navigator-padding);
   height: var(--navigator-height);
 }
 
 .nv-app.nv-sidebar {
-  flex-direction: column;
-  gap: var(--navigator-gap);
+  grid-template-rows:
+    minmax(0, 1fr)
+    max-content
+    minmax(0, var(--navigator-lift))
+    minmax(var(--navigator-indicator-height), 1fr);
   border-right: var(--bs-gray-300) var(--bs-border-width) var(--bs-border-style);
 }
 
 .nv-app:not(.nv-sidebar) {
-  flex-direction: row;
+  grid-auto-flow: column;
   width: var(--navigator-stand-alone-width);
 }
 
-.nv-app > .nv-indicators-counter-weight,
-.nv-app > .nv-indicators-container {
-  flex-direction: column;
+.nv-app > .nv-nav {
+  display: grid;
+  place-items: center;
 }
 
-.nv-app.nv-sidebar > .nv-indicators-counter-weight,
+.nv-app.nv-sidebar > .nv-nav {
+  grid-auto-flow: row;
+  gap: var(--navigator-gap);
+}
+
+.nv-app:not(.nv-sidebar) > .nv-nav {
+  grid-template-columns: repeat(auto-fit, var(--navigator-large-button-size));
+  gap: var(--navigator-gap-2x);
+  place-content: center;
+}
+
+.nv-app > .nv-nav > .btn {
+  gap: var(--navigator-gap);
+  padding: var(--navigator-padding-2x) !important;
+}
+
+.nv-app.nv-sidebar > .nv-nav > .btn {
+  width: var(--navigator-button-width);
+  height: var(--navigator-button-height);
+}
+
+.nv-app:not(.nv-sidebar) > .nv-nav > .btn {
+  width: var(--navigator-large-button-size);
+  height: var(--navigator-large-button-size);
+}
+
+.nv-app:not(.nv-sidebar) > .nv-nav > .btn:not(:hover) {
+  transition: font-size 500ms ease, border-radius 500ms ease;
+}
+
+.nv-app:not(.nv-sidebar) > .nv-nav > .btn > i {
+  font-size: var(--navigator-large-button-icon-size);
+}
+
+.nv-app.nv-sidebar > .nv-nav-lift {
+  max-height: var(--navigator-lift);
+}
+
+.nv-app:not(.nv-sidebar) > .nv-nav-lift {
+  display: none;
+}
+
 .nv-app.nv-sidebar > .nv-indicators-container {
-  align-items: center;
-  justify-content: end;
+  display: grid;
+  grid-auto-flow: row;
+  align-self: end;
+  justify-self: center;
 }
 
 .nv-app:not(.nv-sidebar) > .nv-indicators-container {
@@ -42,100 +95,76 @@
   z-index: 1030;
   max-height: 100%;
   overflow: hidden;
-  justify-content: flex-end;
   align-items: center;
   background-color: var(--bs-white);
   border-top-right-radius: var(--bs-border-radius);
+  padding: var(--navigator-padding);
 }
 
-.nv-app > .nv-indicators-counter-weight > .nv-indicator,
+.nv-app:not(.nv-sidebar) > .nv-indicators-container > .nv-indicator {
+  min-width: var(--navigator-button-width);
+}
+
+.nv-app.nv-sidebar::before,
+.nv-app.nv-sidebar:not(.nv-with-indicators)::after {
+  content: " ";
+}
+
 .nv-app > .nv-indicators-container > .nv-indicator {
-  height: 2.2rem;
-  width: 3rem;
-  font-size: 1.5rem;
+  height: var(--navigator-indicator-height);
+  width: var(--navigator-indicator-width);
+  font-size: var(--navigator-indicator-font-size);
 }
 
-.nv-app > .nv-indicators-container > .nv-indicator.nv-cache-status {
-  animation: glow 2s ease-in-out infinite;
+.nv-app > .nv-indicators-container > .nv-indicator.nv-cache-status > i {
+  animation: nv-indicator-pulse 2s ease-in-out infinite;
 }
 
-@keyframes glow {
+@keyframes nv-indicator-pulse {
   0% {
-    opacity: 0.2;
-    font-size: 1.4rem;
+    opacity: 0.25;
+    scale: 0.95;
   }
   50% {
     opacity: 1;
-    font-size: 1.6rem;
+    scale: 1.1;
   }
   100% {
-    opacity: 0.2;
-    font-size: 1.4rem;
+    opacity: 0.25;
+    scale: 0.95;
   }
-}
-
-.nv-app.nv-sidebar > .nv-nav {
-  flex-direction: column;
-  gap: var(--navigator-gap);
-}
-
-.nv-app:not(.nv-sidebar) > .nv-nav {
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--navigator-gap-2x);
-  max-height: 100%;
-  overflow: visible;
-}
-
-.nv-app > .nv-nav > .btn {
-  gap: var(--navigator-gap);
-}
-
-.nv-app > .nv-nav > .btn:not(:hover) {
-  transition: font-size 500ms ease, border-radius 500ms ease;
-}
-
-.nv-app:not(.nv-sidebar) > .nv-nav > .btn {
-  width: var(--navigator-button-size);
-  height: var(--navigator-button-size);
-  padding: var(--navigator-padding-2x) !important;
-}
-
-.nv-app:not(.nv-sidebar) > .nv-nav > .btn > i {
-  font-size: var(--navigator-button-icon-size);
-}
-
-.nv-app > .nv-nav-lift {
-  max-height: var(--navigator-lift);
 }
 
 @media (max-width: 575px) {
   .nv-app {
     --navigator-lift: 0;
-    --navigator-button-size: 12rem;
-    --navigator-button-icon-size: 4.5rem;
+    --navigator-large-button-size: 12rem;
+    --navigator-large-button-icon-size: 4.5rem;
   }
 
   .nv-app.nv-sidebar {
-    flex-direction: row;
-    height: unset !important;
+    grid-template-rows: unset;
+    grid-template-columns:
+      minmax(0, 1fr)
+      max-content
+      minmax(var(--navigator-indicator-width), 1fr);
+    height: unset;
     border-right: unset;
-    border-bottom: var(--bs-gray-300) var(--bs-border-width) var(--bs-border-style);
+    border-bottom: var(--bs-gray-300) var(--bs-border-width)
+      var(--bs-border-style);
   }
 
   .nv-app.nv-sidebar > .nv-nav {
-    flex-direction: row;
+    grid-auto-flow: column;
   }
 
   .nv-app > .nv-nav-lift {
     display: none;
   }
 
-  .nv-app.nv-sidebar > .nv-indicators-counter-weight,
   .nv-app.nv-sidebar > .nv-indicators-container {
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    grid-auto-flow: column;
+    align-self: center;
+    justify-self: end;
   }
 }
