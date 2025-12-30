@@ -45,9 +45,7 @@ const getAppQuerySelector = (id) => `div[${_appIdentifierAttributeName}="${id}"]
 
 const getAppStylesQuerySelector = (id) => `link[${_appStyleAttributeName}="${id}"]`;
 
-const setAppStyles = (appConfig) => {
-    const { id = '', path = '' } = appConfig || {};
-
+const setAppStyles = (id = '', path = '') => {
     if (!id || !path) {
         return;
     }
@@ -68,9 +66,7 @@ const setAppStyles = (appConfig) => {
     document.body.append(linkEl);
 };
 
-const unsetAppStyles = (appConfig) => {
-    const { id = '', path = '' } = appConfig || {};
-
+const unsetAppStyles = (id = '', path = '') => {
     if (!id || !path) {
         return;
     }
@@ -98,17 +94,26 @@ const createAppEl = (appsQuerySelector, id) => {
 
 const registerApp = (
     appsQuerySelector,
-    appConfig,
-    uiConfig,
-    urlConfig
+    configuration,
+    services
 ) => {
-    const urlMatch = urlConfig.baseUrlPrefix + appConfig.urlFragment;
+    const {
+        appConfig,
+        uiConfig,
+        urlConfig
+    } = configuration;
+    const {
+        id,
+        path,
+        urlFragment
+    } = appConfig;
+    const urlMatch = urlConfig.baseUrlPrefix + urlFragment;
 
     singleSpa.registerApplication(
-        appConfig.id,
+        id,
         async () => {
             const { appInit, appModuleLoadError } = await import(
-                `./${appConfig.path}${_appScriptLinkPostFix}`
+                `./${path}${_appScriptLinkPostFix}`
             ).catch(appModuleLoadError =>
                 ({ appModuleLoadError })
             );
@@ -117,60 +122,69 @@ const registerApp = (
                 showLoader(uiConfig.loaderTimeout);
 
                 return await Promise.reject(new Error(
-                    `Failed to load module for app with id: ${appConfig.id}`
+                    `Failed to load module for app with id: ${id}`
                 ));
             }
 
             let appRef;
 
             return {
-                bootstrap: async () => setAppStyles(appConfig),
+                bootstrap: async () => setAppStyles(id, path),
                 mount: async () => {
-                    setAppStyles(appConfig);
+                    setAppStyles(id, path);
 
-                    const { app, appInitError } = await appInit(appConfig)
+                    const { app, appInitError } = await appInit(configuration, services)
                         .then(app => ({ app }))
                         .catch(appInitError => ({ appInitError }));
 
                     if (appInitError) {
                         return await Promise.reject(new Error(
-                            `Failed to initialize module for app with id: ${appConfig.id}`
+                            `Failed to initialize module for app with id: ${id}`
                         ));
                     }
 
-                    createAppEl(appsQuerySelector, appConfig.id);
-                    app.mount(getAppQuerySelector(appConfig.id));
+                    createAppEl(appsQuerySelector, id);
+                    app.mount(getAppQuerySelector(id));
 
                     appRef = app;
                 },
                 unmount: async () => {
                     appRef?.unmount();
-                    removeAppEl(appConfig.id);
-                    unsetAppStyles(appConfig);
+                    removeAppEl(id);
+                    unsetAppStyles(id, path);
                 }
             };
         },
-        location =>
-            location.hash.includes('?')
-                ? location.hash.split('?')[0] === urlMatch
-                : location.hash === urlMatch
+        location => {
+            const queryIndex = location.hash.indexOf('?');
+            const resolvedUrl = queryIndex === -1
+                ? location.hash
+                : location.hash.slice(0, queryIndex);
+
+            return resolvedUrl === urlMatch;
+        }
     );
 };
 
 const registerNavigatorApp = (
     navigatorQuerySelector,
-    appConfig,
-    uiConfig,
-    appsConfig,
-    serviceWorkerConfig,
-    navigatorService
+    configuration,
+    services
 ) => {
+    const {
+        appConfig,
+        uiConfig
+    } = configuration;
+    const {
+        id,
+        path
+    } = appConfig;
+
     singleSpa.registerApplication(
-        appConfig.id,
+        id,
         async () => {
-            const appConfig = appsConfig.main;
             const { appInit, appModuleLoadError } = await import(
-                `./${appConfig.path}${_appScriptLinkPostFix}`
+                `./${path}${_appScriptLinkPostFix}`
             ).catch(appModuleLoadError =>
                 ({ appModuleLoadError })
             );
@@ -179,34 +193,32 @@ const registerNavigatorApp = (
                 showLoader(uiConfig.loaderTimeout);
 
                 return await Promise.reject(new Error(
-                    `Failed to load module for app with id: ${appConfig.id}`
+                    `Failed to load module for app with id: ${id}`
                 ));
             }
 
             return {
-                bootstrap: async () => setAppStyles(appConfig),
+                bootstrap: async () => setAppStyles(id, path),
                 mount: async () => {
-                    setAppStyles(appConfig);
+                    setAppStyles(id, path);
 
                     const { app, appInitError } = await appInit(
-                        appConfig,
-                        appsConfig,
-                        serviceWorkerConfig,
-                        navigatorService
+                        configuration,
+                        services
                     )
                         .then(app => ({ app }))
                         .catch(appInitError => ({ appInitError }));
 
                     if (appInitError) {
                         return await Promise.reject(new Error(
-                            `Failed to initialize module for app with id: ${appConfig.id}`
+                            `Failed to initialize module for app with id: ${id}`
                         ));
                     }
 
                     app.mount(navigatorQuerySelector);
                 },
                 unmount: async () => {
-                    unsetAppStyles(appConfig);
+                    unsetAppStyles(id, path);
                 }
             };
         },
@@ -253,6 +265,10 @@ const init = async (
         return;
     }
 
+    const sharedServices = {
+        navigatorService: navigator
+    };
+
     for (const appConfig of Object.values(appsConfig)) {
         if (appConfig.id === appsConfig.main.id) {
             continue;
@@ -260,19 +276,26 @@ const init = async (
 
         registerApp(
             appsQuerySelector,
-            appConfig,
-            uiConfig,
-            urlConfig
+            Object.freeze({
+                uiConfig,
+                urlConfig,
+                serviceWorkerConfig,
+                appConfig
+            }),
+            sharedServices
         );
     }
 
     registerNavigatorApp(
         navigatorQuerySelector,
-        appsConfig.main,
-        uiConfig,
-        appsConfig,
-        serviceWorkerConfig,
-        navigator
+        Object.freeze({
+            uiConfig,
+            urlConfig,
+            serviceWorkerConfig,
+            appConfig: appsConfig.main,
+            appsConfig
+        }),
+        sharedServices
     );
 
     singleSpa.setBootstrapMaxTime(

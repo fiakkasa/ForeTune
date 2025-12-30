@@ -18,15 +18,27 @@
 
   padding: var(--navigator-padding);
   height: var(--navigator-height);
+  gap: var(--navigator-gap);
 }
 
 .nv-app.nv-sidebar {
+  border-right: var(--bs-gray-300) var(--bs-border-width) var(--bs-border-style);
+}
+
+.nv-app.nv-sidebar.nv-with-indicators {
   grid-template-rows:
     minmax(0, 1fr)
     max-content
     minmax(0, var(--navigator-lift))
     minmax(var(--navigator-indicator-height), 1fr);
-  border-right: var(--bs-gray-300) var(--bs-border-width) var(--bs-border-style);
+}
+
+.nv-app.nv-sidebar:not(.nv-with-indicators) {
+  grid-template-rows:
+    minmax(0, 1fr)
+    max-content
+    minmax(0, var(--navigator-lift))
+    minmax(0, 1fr);
 }
 
 .nv-app:not(.nv-sidebar) {
@@ -143,15 +155,26 @@
   }
 
   .nv-app.nv-sidebar {
+    height: unset;
+    border-right: unset;
+    border-bottom: var(--bs-gray-300) var(--bs-border-width)
+      var(--bs-border-style);
+  }
+
+  .nv-app.nv-sidebar.nv-with-indicators {
     grid-template-rows: unset;
     grid-template-columns:
       minmax(0, 1fr)
       max-content
       minmax(var(--navigator-indicator-width), 1fr);
-    height: unset;
-    border-right: unset;
-    border-bottom: var(--bs-gray-300) var(--bs-border-width)
-      var(--bs-border-style);
+  }
+
+  .nv-app.nv-sidebar:not(.nv-with-indicators) {
+    grid-template-rows: unset;
+    grid-template-columns:
+      minmax(0, 1fr)
+      max-content
+      minmax(0, 1fr);
   }
 
   .nv-app.nv-sidebar > .nv-nav {

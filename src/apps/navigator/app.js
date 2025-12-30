@@ -9,16 +9,19 @@ const routes = [
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(
-    config,
-    appsConfig,
-    serviceWorkerConfig,
-    navigatorService
-) {
+async function appInit(configuration, services) {
+    const {
+        appConfig,
+        appsConfig,
+        serviceWorkerConfig,
+    } = configuration;
+    const {
+        navigatorService
+    } = services;
     const {
         path = 'apps/navigator',
         urlFragment = ''
-    } = config;
+    } = appConfig;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
         routes
@@ -46,7 +49,7 @@ async function appInit(
 
     app.component('index-page', IndexPage);
 
-    app.provide('appConfig', config);
+    app.provide('appConfig', appConfig);
     app.provide('appsConfig', appsConfig);
     app.provide('uiConfig', uiConfig);
     app.provide('serviceWorkerConfig', serviceWorkerConfig);

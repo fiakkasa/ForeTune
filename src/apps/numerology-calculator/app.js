@@ -28,11 +28,12 @@ const routes = [
     { path: '/', component: IndexPage }
 ];
 
-async function appInit(config) {
+async function appInit(configuration, services) {
+    const { appConfig } = configuration;
     const {
         path = 'apps/numerology-calculator',
         urlFragment = 'numerology-calculator'
-    } = config;
+    } = appConfig;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
         routes
@@ -72,7 +73,7 @@ async function appInit(config) {
     app.component('search-input', SearchInputComponent);
     app.component('index-page', IndexPage);
 
-    app.provide('appConfig', config);
+    app.provide('appConfig', appConfig);
     app.provide('uiConfig', uiConfig);
 
     app.provide('linksService', linksService);
