@@ -22,7 +22,7 @@ const SearchInputComponent = {
         <small class="d-flex text-muted mt-1">
             <span class="app-loading" v-if="loading"></span>
             <span class="flex-fill"></span>
-            <span class="px-1 bg-white rounded"
+            <span class="px-1 bg-body rounded"
                   v-text="$t('characters_of_max_characters', { characters: text?.length || 0, maxCharacters: uiConfig.maxSearchInputChars })"></span>
         </small>
     `,

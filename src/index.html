@@ -5,6 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>ForeTune</title>
+  <script src="libs/theme-management.js"></script>
   <link href="style/loader.css" rel="stylesheet" />
   <link href="style/bootstrap/bootstrap.min.css" rel="stylesheet" />
   <link href="style/fontawesome/css/fontawesome.min.css" rel="stylesheet" />
@@ -99,11 +100,16 @@
     media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" />
 </head>
 
-<body>
+<body data-bs-theme="light">
+  <div class="loader">
+    <div class="loader-animation"></div>
+  </div>
+
   <div class="apps-main-container">
     <div id="navigator" class="apps-navigator"></div>
     <div id="apps" class="apps-container"></div>
   </div>
+
   <script src="libs/single-spa.min.js"></script>
   <script src="libs/vue.global.prod.min.js"></script>
   <script src="libs/vue-router.global.min.js"></script>

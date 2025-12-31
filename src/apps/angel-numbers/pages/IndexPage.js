@@ -23,7 +23,7 @@ const IndexPage = {
             <small class="an-footer container position-sticky sticky-bottom p-1 px-3 d-flex text-muted"
                    v-if="!loading || visibleData.length"
                    :class="[visibleData.length ? 'justify-content-end' : 'justify-content-center']">
-                <span class="px-1 bg-white rounded"
+                <span class="px-1 bg-body rounded"
                       v-if="visibleData.length"
                       v-text="$t('items_of_total', { items: visibleData.length, total: filteringService.Data.length })">
                 </span>

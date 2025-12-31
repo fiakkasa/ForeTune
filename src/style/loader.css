@@ -2,7 +2,7 @@
   position: fixed;
   top: calc(50vh - 25px);
   left: calc(50vw - 25px);
-  z-index: 999;
+  z-index: 9999;
   height: 0;
   width: 0;
 }

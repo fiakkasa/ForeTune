@@ -20,10 +20,7 @@ const routes = [
 
 async function appInit(configuration, services) {
     const { appConfig } = configuration;
-    const {
-        path = 'apps/angel-numbers',
-        urlFragment = 'angel-numbers'
-    } = appConfig;
+    const { path = 'apps/angel-numbers', urlFragment = 'angel-numbers' } = appConfig;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
         routes

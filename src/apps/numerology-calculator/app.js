@@ -30,10 +30,7 @@ const routes = [
 
 async function appInit(configuration, services) {
     const { appConfig } = configuration;
-    const {
-        path = 'apps/numerology-calculator',
-        urlFragment = 'numerology-calculator'
-    } = appConfig;
+    const { path = 'apps/numerology-calculator', urlFragment = 'numerology-calculator' } = appConfig;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
         routes

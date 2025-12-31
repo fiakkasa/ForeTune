@@ -29,7 +29,7 @@
   z-index: 1;
   width: 100%;
   height: 100%;
-  background-color: var(--bs-white);
+  background-color: var(--bs-body-bg);
   background-position: 50% 50%;
   background-repeat: no-repeat;
   filter: blur(8px) opacity(0.5);

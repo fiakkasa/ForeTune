@@ -79,7 +79,7 @@ const unsetAppStyles = (id = '', path = '') => {
 const removeAppEl = (id) => {
     const appElSelector = getAppQuerySelector(id);
     document.body.querySelector(appElSelector)?.remove();
-}
+};
 
 const createAppEl = (appsQuerySelector, id) => {
     const appElSelector = getAppQuerySelector(id);
@@ -90,23 +90,11 @@ const createAppEl = (appsQuerySelector, id) => {
     appEl.className = 'app-container h-100 overflow-hidden';
 
     document.body.querySelector(appsQuerySelector)?.appendChild(appEl);
-}
+};
 
-const registerApp = (
-    appsQuerySelector,
-    configuration,
-    services
-) => {
-    const {
-        appConfig,
-        uiConfig,
-        urlConfig
-    } = configuration;
-    const {
-        id,
-        path,
-        urlFragment
-    } = appConfig;
+const registerApp = (querySelector, configuration, services) => {
+    const { appConfig, uiConfig, urlConfig } = configuration;
+    const { id, path, urlFragment } = appConfig;
     const urlMatch = urlConfig.baseUrlPrefix + urlFragment;
 
     singleSpa.registerApplication(
@@ -143,7 +131,7 @@ const registerApp = (
                         ));
                     }
 
-                    createAppEl(appsQuerySelector, id);
+                    createAppEl(querySelector, id);
                     app.mount(getAppQuerySelector(id));
 
                     appRef = app;
@@ -166,19 +154,9 @@ const registerApp = (
     );
 };
 
-const registerNavigatorApp = (
-    navigatorQuerySelector,
-    configuration,
-    services
-) => {
-    const {
-        appConfig,
-        uiConfig
-    } = configuration;
-    const {
-        id,
-        path
-    } = appConfig;
+const registerNavigatorApp = (querySelector, configuration, services) => {
+    const { appConfig, uiConfig } = configuration;
+    const { id, path } = appConfig;
 
     singleSpa.registerApplication(
         id,
@@ -215,7 +193,7 @@ const registerNavigatorApp = (
                         ));
                     }
 
-                    app.mount(navigatorQuerySelector);
+                    app.mount(querySelector);
                 },
                 unmount: async () => {
                     unsetAppStyles(id, path);
@@ -241,10 +219,7 @@ const registerServiceWorker = async (serviceWorkerConfig) => {
     }
 };
 
-const init = async (
-    navigatorQuerySelector,
-    appsQuerySelector
-) => {
+const init = async (navigatorQuerySelector, appsQuerySelector) => {
     showLoader();
 
     const {

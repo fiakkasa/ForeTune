@@ -10,18 +10,9 @@ const routes = [
 ];
 
 async function appInit(configuration, services) {
-    const {
-        appConfig,
-        appsConfig,
-        serviceWorkerConfig,
-    } = configuration;
-    const {
-        navigatorService
-    } = services;
-    const {
-        path = 'apps/navigator',
-        urlFragment = ''
-    } = appConfig;
+    const { appConfig, appsConfig, serviceWorkerConfig, } = configuration;
+    const { navigatorService } = services;
+    const { path = 'apps/navigator', urlFragment = '' } = appConfig;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
         routes
