@@ -1,27 +1,30 @@
 const _darkModePreferenceQuery = '(prefers-color-scheme: dark)';
 const _darkModePreferenceQueryList = window.matchMedia(_darkModePreferenceQuery);
 const _themeAttribute = 'data-bs-theme';
-const _darkTheme = 'dark';
-const _lightTheme = 'light';
+const _darkThemeKey = 'dark';
+const _lightThemeKey = 'light';
 const _supportedThemes = {
-    dark: _darkTheme,
-    light: _lightTheme
+    [_darkThemeKey]: 'dark',
+    [_lightThemeKey]: 'light'
 };
 
-const setTheme = (theme) => {
+const setTheme = (themeKey) => {
     try {
-        const resolvedTheme = _supportedThemes[theme];
+        const theme = _supportedThemes[themeKey];
 
-        if (!resolvedTheme) {
+        if (!theme) {
             return;
         }
 
-        if (document.body.getAttribute(_themeAttribute) === resolvedTheme) {
+        if (
+            document.body.getAttribute(_themeAttribute) === theme
+        ) {
             return;
         }
 
-        document.body.setAttribute(_themeAttribute, resolvedTheme);
-    } catch {
+        document.body.setAttribute(_themeAttribute, theme);
+    } catch (error) {
+        console.log(error);
     }
 };
 
@@ -29,9 +32,9 @@ const resolveThemePreference = () => {
     try {
         const prefersDarkMode = window.matchMedia(_darkModePreferenceQuery)?.matches === true;
 
-        return prefersDarkMode ? _darkTheme : _lightTheme;
+        return prefersDarkMode ? _darkThemeKey : _lightThemeKey;
     } catch {
-        return _darkTheme;
+        return _darkThemeKey;
     }
 };
 
