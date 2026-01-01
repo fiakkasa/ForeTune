@@ -51,7 +51,12 @@ const singleSpaConfig = Object.freeze({
 const serviceWorkerConfig = Object.freeze({
     path: './sw.js',
     scope: './',
-    type: 'classic' // 'classic' or 'none' to disable
+    type: 'none' // 'classic' or 'none' to disable
+});
+const storageConfig = Object.freeze({
+    namespace: 'foretune__',
+    name: 'ls',
+    storage: 'local' // 'session' or 'local'
 });
 
-export { appsConfig, urlConfig, uiConfig, singleSpaConfig, serviceWorkerConfig }
+export { appsConfig, urlConfig, uiConfig, singleSpaConfig, serviceWorkerConfig, storageConfig }

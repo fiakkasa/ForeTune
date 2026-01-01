@@ -2,5 +2,7 @@
     "enter_your_values": "Enter numbers and/or letters..",
     "characters_of_max_characters": "{characters} / {maxCharacters}",
     "items_of_total": "{items} of {total}",
-    "nothing_found": "No items matched your search token.."
+    "nothing_found": "No items matched your search token..",
+    "clear_bookmarks": "Clear bookmarks",
+    "view_only_bookmarks": "View only bookmarks"
 }

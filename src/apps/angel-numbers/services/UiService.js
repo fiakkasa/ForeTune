@@ -6,7 +6,7 @@ class UiService {
 
     delay(cancellationSignal) {
         return this._task.delay(
-            this._config.maxSearchInputChars, 
+            this._config.uiDefaultDelay, 
             cancellationSignal
         );
     }

@@ -228,6 +228,7 @@ const init = async (navigatorQuerySelector, appsQuerySelector) => {
         uiConfig,
         singleSpaConfig,
         serviceWorkerConfig,
+        storageConfig,
         initialConfigLoadError
     } = await import('./config.js').catch(initialConfigLoadError =>
         ({ initialConfigLoadError })
@@ -241,7 +242,8 @@ const init = async (navigatorQuerySelector, appsQuerySelector) => {
     }
 
     const sharedServices = {
-        navigatorService: navigator
+        navigatorService: navigator,
+        storageService: VueStorage.useStorage(storageConfig).ls
     };
 
     for (const appConfig of Object.values(appsConfig)) {

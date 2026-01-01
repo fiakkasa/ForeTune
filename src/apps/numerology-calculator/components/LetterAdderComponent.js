@@ -18,8 +18,11 @@ const LetterAdderComponent = {
             currentText: '',
             steps: [],
             result: '',
-            abortController: null
+            abortController: new AbortController()
         };
+    },
+    beforeUnmount() {
+        this.abortController.abort();
     },
     watch: {
         text: {
@@ -29,10 +32,7 @@ const LetterAdderComponent = {
 
                 this.$emit('busy', true);
 
-                if (this.abortController) {
-                    this.abortController.abort();
-                }
-
+                this.abortController.abort();
                 this.abortController = new AbortController();
                 this.currentText = value;
 

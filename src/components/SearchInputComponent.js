@@ -12,18 +12,27 @@ const SearchInputComponent = {
                 :maxlength="uiConfig.maxSearchInputChars"
                 @input="update($event.target.value)" />
 
-            <button class="btn btn-outline-secondary"
-                    :disabled="!text"
+            <slot name="controls" />
+
+            <button type="button"
+                    class="btn btn-outline-secondary px-2"
+                    v-if="inputText"
                     @click="clear">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
-        <small class="d-flex text-muted mt-1">
-            <span class="app-loading" v-if="loading"></span>
-            <span class="flex-fill"></span>
-            <span class="px-1 bg-body rounded"
-                  v-text="$t('characters_of_max_characters', { characters: text?.length || 0, maxCharacters: uiConfig.maxSearchInputChars })"></span>
+        <small class="d-flex text-body-secondary py-1">
+            <div class="app-loading" v-if="loading"></div>
+            <div class="flex-fill"></div>
+            <div class="px-1 bg-body rounded"
+                  v-text="$t(
+                    'characters_of_max_characters',
+                    {
+                        characters: text?.length || 0,
+                        maxCharacters: uiConfig.maxSearchInputChars 
+                    })">
+            </div>
         </small>
     `,
     data() {

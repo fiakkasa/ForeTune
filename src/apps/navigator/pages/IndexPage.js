@@ -8,7 +8,8 @@ const IndexPage = {
             }">
 
             <nav class="nv-nav">
-                <button class="btn d-flex flex-column align-items-center justify-content-center flex-shrink-0 overflow-hidden" 
+                <button type="button"
+                        class="btn d-flex flex-column align-items-center justify-content-center flex-shrink-0 overflow-hidden"
                         v-for="item of appsConfig"
                         :class="getButtonClass(item)"
                         :title="$t(item.title)"

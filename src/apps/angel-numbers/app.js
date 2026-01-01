@@ -1,12 +1,13 @@
 import { SearchInputComponent } from '../../components/SearchInputComponent.js';
 import { task } from '../../utils/task.js';
 import { IndexPage } from './pages/IndexPage.js';
+import { BookmarksService } from './services/BookmarksService.js';
 import { FilteringService } from './services/FilteringService.js';
 import { UiService } from './services/UiService.js';
 
 const uiConfig = {
     maxSearchInputChars: 1000,
-    uiDefaultDelay: 250
+    uiDefaultDelay: 500
 };
 
 const filteringConfig = {
@@ -20,6 +21,7 @@ const routes = [
 
 async function appInit(configuration, services) {
     const { appConfig } = configuration;
+    const { storageService } = services;
     const { path = 'apps/angel-numbers', urlFragment = 'angel-numbers' } = appConfig;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
@@ -34,12 +36,15 @@ async function appInit(configuration, services) {
                 enter_your_values: 'Enter your values..',
                 characters_of_max_characters: '{characters} / {maxCharacters}',
                 items_of_total: '{items} of {total}',
-                nothing_found: 'No items matched your search token..'
+                nothing_found: 'No items matched your search token..',
+                clear_bookmarks: 'Clear bookmarks',
+                view_only_bookmarks: 'View only bookmarks'
             }
         }
     });
 
     const filteringService = new FilteringService(filteringConfig, task);
+    const bookmarksService = new BookmarksService(storageService, task);
     const uiService = new UiService(uiConfig, task);
 
     const app = Vue.createApp({
@@ -56,6 +61,7 @@ async function appInit(configuration, services) {
     app.provide('uiConfig', uiConfig);
 
     app.provide('filteringService', filteringService);
+    app.provide('bookmarksService', bookmarksService);
     app.provide('uiService', uiService);
 
     const locale = 'en-US';
@@ -71,7 +77,8 @@ async function appInit(configuration, services) {
             .catch(error => {
                 console.error(error);
                 return [];
-            })
+            }),
+        bookmarksService.init()
     ]);
 
     i18n.global.setLocaleMessage(locale, messages);
