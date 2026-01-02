@@ -3,6 +3,10 @@ const { ref } = Vue;
 class BookmarksService {
     _data = ref(new Set());
 
+    get Count() {
+        return this._data.value.size;
+    }
+
     get HasData() {
         return this._data.value.size > 0;
     }

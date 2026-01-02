@@ -42,7 +42,10 @@ async function appInit(configuration, services) {
                 items_of_total: '{items} of {total}',
                 nothing_found: 'No items matched your search token..',
                 clear_bookmarks: 'Clear bookmarks',
-                view_only_bookmarks: 'View only bookmarks'
+                view_only_bookmarks: 'View only bookmarks',
+                x_bookmarks_will_be_removed: '| {count} bookmark will be removed! | {count} bookmarks will be removed!',
+                ok: 'OK',
+                cancel: 'Cancel'
             }
         }
     });
@@ -61,6 +64,7 @@ async function appInit(configuration, services) {
 
     app.use(router);
     app.use(i18n);
+    app.use(VuejsDialog.PromiseDialog, { animation: 'bounce' });
 
     app.component('search-input', SearchInputComponent);
     app.component('index-page', IndexPage);

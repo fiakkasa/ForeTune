@@ -37,4 +37,11 @@ Under the project root folder run: `npx workbox-cli generateSW ./workbox-config.
 - https://github.com/johnpapa/lite-server
 - https://single-spa.js.org
 - https://github.com/elegantapp/pwa-asset-generator
-- https://web.dev/learn/pwa/workbox/
+- https://web.dev/learn/pwa/workboxvue
+- https://vuejs.org
+- https://github.com/vuejs/router
+- https://github.com/intlify/vue-i18n
+- https://github.com/RobinCK/vue-ls
+- https://godofbrowser.github.io/vuejs-dialog
+- https://getbootstrap.com
+- https://bootswatch.com

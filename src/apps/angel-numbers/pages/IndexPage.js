@@ -11,7 +11,7 @@ const IndexPage = {
                         <template v-if="bookmarksService.HasData">
                             <button type="button"
                                     class="btn d-flex position-relative align-items-start justify-content-start p-2"
-                                    :class="[viewOnlyBookmarks ? 'btn-info' : 'btn-outline-info']"
+                                    :class="[viewOnlyBookmarks ? 'btn-info' : 'btn-secondary']"
                                     :title="$t('view_only_bookmarks')"
                                     @click="toggleViewOnlyBookmarks">
                                 <i class="fa fa-bookmark z-0"></i>
@@ -21,6 +21,18 @@ const IndexPage = {
                                     class="btn btn-danger position-relative d-flex align-items-start justify-content-start p-2"
                                     v-if="bookmarksService.HasData"
                                     :title="$t('clear_bookmarks')"
+                                    v-confirm="{
+                                        okText: $t('ok'),
+                                        cancelText: $t('cancel'),
+                                        message: $t('x_bookmarks_will_be_removed', { count: bookmarksService.Count }),
+                                        customClass: {
+                                            mainContent: 'card',
+                                            body: 'card-body',
+                                            footer: 'card-footer d-flex justify-content-between',
+                                            ok: 'btn btn-danger',
+                                            cancel: 'btn btn-secondary'
+                                        }
+                                    }"
                                     @click="clearBookmarks">
                                 <i class="fa fa-bookmark"></i>
                                 <i class="fa fa-trash-can small position-absolute top-50 start-50 z-1"></i>
