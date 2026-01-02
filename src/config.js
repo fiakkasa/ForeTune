@@ -51,7 +51,7 @@ const singleSpaConfig = Object.freeze({
 const serviceWorkerConfig = Object.freeze({
     path: './sw.js',
     scope: './',
-    type: 'none' // 'classic' or 'none' to disable
+    type: 'classic' // 'classic' or 'none' to disable
 });
 const storageConfig = Object.freeze({
     namespace: 'foretune__',

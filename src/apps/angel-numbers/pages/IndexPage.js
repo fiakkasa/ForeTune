@@ -35,10 +35,10 @@ const IndexPage = {
                 <div class="an-card card"
                      v-for="(item, index) in visibleData"
                      :style="{
-                         order:
-                             bookmarksService.isBookmarked(item.number)
-                                 ? index
-                                 : 10000 + index
+                        order:
+                            bookmarksService.isBookmarked(item.number)
+                                ? index
+                                : 10000 + index
                      }"
                      :key="item.number">
                     <div class="card-body">
@@ -103,24 +103,25 @@ const IndexPage = {
     },
     methods: {
         async toggleBookmark(number) {
+            this.loading = true;
+
             this.bookmarkAbortController.abort();
+            this.bookmarkAbortController = new AbortController();
 
             await this.bookmarksService.toggleBookmark(
                 number,
                 this.bookmarkAbortController.signal
             );
 
-            if (!this.viewOnlyBookmarks) {
-                return;
+            if (this.viewOnlyBookmarks) {
+                await this.filterBookmarkedVisibleData();
             }
 
-            this.visibleData = await this.bookmarksService.filterBookmarks(
-                this.visibleData,
-                this.findAbortController.signal
-            );
+            this.loading = false;
         },
         async clearBookmarks() {
             this.loading = true;
+
             this.bookmarkAbortController.abort();
             this.bookmarkAbortController = new AbortController();
 
@@ -137,8 +138,28 @@ const IndexPage = {
             await this.find();
         },
         async toggleViewOnlyBookmarks() {
-            this.viewOnlyBookmarks = !this.viewOnlyBookmarks;
-            await this.find();
+            this.loading = true;
+
+            if (this.viewOnlyBookmarks) {
+                this.viewOnlyBookmarks = false;
+                await this.find();
+
+                return;
+            }
+
+            this.viewOnlyBookmarks = true;
+
+            await this.filterBookmarkedVisibleData();
+            this.loading = false;
+        },
+        async filterBookmarkedVisibleData() {
+            this.findAbortController.abort();
+            this.findAbortController = new AbortController();
+
+            this.visibleData = await this.bookmarksService.filterBookmarks(
+                this.visibleData,
+                this.findAbortController.signal
+            );
         },
         async find() {
             this.loading = true;
