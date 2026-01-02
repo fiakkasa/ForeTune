@@ -5,14 +5,18 @@ import { BookmarksService } from './services/BookmarksService.js';
 import { FilteringService } from './services/FilteringService.js';
 import { UiService } from './services/UiService.js';
 
-const uiConfig = {
+const uiConfig = Object.freeze({
     maxSearchInputChars: 1000,
     uiDefaultDelay: 500
-};
+});
 
-const filteringConfig = {
+const filteringConfig = Object.freeze({
     maxChars: uiConfig.maxSearchInputChars
-};
+});
+
+const bookmarksConfig = Object.freeze({
+    storageKey: 'angel-numbers.bookmarks'
+});
 
 const routes = [
     { path: '/:value', component: IndexPage },
@@ -44,7 +48,11 @@ async function appInit(configuration, services) {
     });
 
     const filteringService = new FilteringService(filteringConfig, task);
-    const bookmarksService = new BookmarksService(storageService, task);
+    const bookmarksService = new BookmarksService(
+        bookmarksConfig,
+        storageService,
+        task
+    );
     const uiService = new UiService(uiConfig, task);
 
     const app = Vue.createApp({

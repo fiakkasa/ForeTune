@@ -11,17 +11,17 @@ import { DigitCalculatorService } from './services/DigitCalculatorService.js';
 import { LetterCalculatorService } from './services/LetterCalculatorService.js';
 import { LinksService } from './services/LinksService.js';
 
-const uiConfig = {
+const uiConfig = Object.freeze({
     maxSearchInputChars: 1000,
     uiDefaultDelay: 250,
     calculatorEquationSeparator: ' + ',
     calculatorEquationCombinedItemTemplate: '({0}: {1})'
-};
+});
 
-const linksConfig = {
+const linksConfig = Object.freeze({
     url: '/angel-numbers',
     queryParameterName: 'text'
-};
+});
 
 const routes = [
     { path: '/:value', component: IndexPage },

@@ -12,27 +12,24 @@ const setTheme = (themeKey) => {
     try {
         const theme = _supportedThemes[themeKey];
 
-        if (!theme) {
-            return;
-        }
-
         if (
-            document.body.getAttribute(_themeAttribute) === theme
+            !theme
+            || document.body.getAttribute(_themeAttribute) === theme
         ) {
             return;
         }
 
         document.body.setAttribute(_themeAttribute, theme);
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 };
 
 const resolveThemePreference = () => {
     try {
-        const prefersDarkMode = window.matchMedia(_darkModePreferenceQuery)?.matches === true;
-
-        return prefersDarkMode ? _darkThemeKey : _lightThemeKey;
+        return window.matchMedia(_darkModePreferenceQuery)?.matches === true
+            ? _darkThemeKey
+            : _lightThemeKey;
     } catch {
         return _darkThemeKey;
     }

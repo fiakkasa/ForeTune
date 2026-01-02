@@ -32,40 +32,50 @@ const IndexPage = {
 
             <div class="an-cards container d-flex flex-column"
                  v-if="visibleData.length">
-                <div class="an-card card"
-                     v-for="(item, index) in visibleData"
-                     :style="{
-                        order:
-                            bookmarksService.isBookmarked(item.number)
-                                ? index
-                                : 10000 + index
-                     }"
-                     :key="item.number">
-                    <div class="card-body">
-                        <h5 class="card-title d-flex align-items-center justify-content-between">
-                            <div v-text="item.number"></div>
-                            <button type="button"
-                                    class="btn btn-default d-flex align-items-center justify-content-center p-1"
-                                    :class="[
-                                        bookmarksService.isBookmarked(item.number)
-                                            ? 'text-success'
-                                            : 'text-secondary'
-                                    ]"
-                                    @click="toggleBookmark(item.number)">
-                                <i class="fa fa-bookmark"></i>
-                            </button>
-                        </h5>
-                        <p class="card-text" v-text="item.text"></p>
+                <template v-for="item in visibleData">
+                    <div class="an-card card"
+                         v-if="bookmarksService.isBookmarked(item.key)"
+                         :key="item.key">
+                        <div class="card-body">
+                            <h5 class="card-title d-flex align-items-center justify-content-between">
+                                <div v-text="item.number"></div>
+                                <button type="button"
+                                        class="btn btn-default text-success d-flex align-items-center justify-content-center p-1"
+                                        @click="toggleBookmark(item.key)">
+                                    <i class="fa fa-bookmark"></i>
+                                </button>
+                            </h5>
+                            <p class="card-text" v-text="item.text"></p>
+                        </div>
                     </div>
-                </div>
+                </template>
+                <template v-if="!viewOnlyBookmarks">
+                    <template v-for="item in visibleData">
+                        <div class="an-card card"
+                             v-if="!bookmarksService.isBookmarked(item.key)"
+                             :key="item.key">
+                            <div class="card-body">
+                                <h5 class="card-title d-flex align-items-center justify-content-between">
+                                    <div v-text="item.number"></div>
+                                    <button type="button"
+                                            class="btn btn-default text-secondary d-flex align-items-center justify-content-center p-1"
+                                            @click="toggleBookmark(item.key)">
+                                        <i class="fa fa-bookmark"></i>
+                                    </button>
+                                </h5>
+                                <p class="card-text" v-text="item.text"></p>
+                            </div>
+                        </div>
+                    </template>
+                </template>
             </div>
 
             <small class="an-footer container position-sticky sticky-bottom p-1 px-3 d-flex text-body-secondary"
-                   v-if="!loading || visibleData.length"
-                   :class="[visibleData.length ? 'justify-content-end' : 'justify-content-center']">
+                   v-if="!loading || visibleDataCount"
+                   :class="[visibleDataCount ? 'justify-content-end' : 'justify-content-center']">
                 <span class="px-1 bg-body rounded"
-                      v-if="visibleData.length"
-                      v-text="$t('items_of_total', { items: visibleData.length, total: filteringService.Data.length })">
+                      v-if="visibleDataCount"
+                      v-text="$t('items_of_total', { items: visibleDataCount, total: filteringService.Data.length })">
                 </span>
                 <span v-else-if="filteringService.Data.length" v-text="$t('nothing_found')"></span>
             </small>
@@ -77,6 +87,7 @@ const IndexPage = {
             trimmedText: '',
             loading: false,
             visibleData: [],
+            visibleBookmarksCount: 0,
             timeoutRef: null,
             viewOnlyBookmarks: false,
             findAbortController: new AbortController(),
@@ -101,7 +112,17 @@ const IndexPage = {
             this.find();
         }
     },
+    computed: {
+        visibleDataCount() {
+            return this.viewOnlyBookmarks
+                ? this.visibleBookmarksCount
+                : this.visibleData.length;
+        }
+    },
     methods: {
+        toggleViewOnlyBookmarks() {
+            this.viewOnlyBookmarks = !this.viewOnlyBookmarks;
+        },
         async toggleBookmark(number) {
             this.loading = true;
 
@@ -113,53 +134,29 @@ const IndexPage = {
                 this.bookmarkAbortController.signal
             );
 
-            if (this.viewOnlyBookmarks) {
-                await this.filterBookmarkedVisibleData();
-            }
-
+            this.setVisibleBookmarksCount();
             this.loading = false;
         },
         async clearBookmarks() {
             this.loading = true;
+            this.visibleBookmarksCount = 0;
 
             this.bookmarkAbortController.abort();
             this.bookmarkAbortController = new AbortController();
 
             await this.bookmarksService.clear(this.bookmarkAbortController.signal);
 
-            if (!this.viewOnlyBookmarks) {
-                this.viewOnlyBookmarks = false;
-                this.loading = false;
-
-                return;
-            }
-
             this.viewOnlyBookmarks = false;
-            await this.find();
-        },
-        async toggleViewOnlyBookmarks() {
-            this.loading = true;
-
-            if (this.viewOnlyBookmarks) {
-                this.viewOnlyBookmarks = false;
-                await this.find();
-
-                return;
-            }
-
-            this.viewOnlyBookmarks = true;
-
-            await this.filterBookmarkedVisibleData();
             this.loading = false;
         },
-        async filterBookmarkedVisibleData() {
-            this.findAbortController.abort();
-            this.findAbortController = new AbortController();
+        setVisibleBookmarksCount() {
+            let count = 0;
 
-            this.visibleData = await this.bookmarksService.filterBookmarks(
-                this.visibleData,
-                this.findAbortController.signal
-            );
+            for (const { key } of this.visibleData) {
+                this.bookmarksService.isBookmarked(key) && count++;
+            }
+
+            this.visibleBookmarksCount = count;
         },
         async find() {
             this.loading = true;
@@ -168,12 +165,8 @@ const IndexPage = {
             this.findAbortController = new AbortController();
 
             if (!this.trimmedText) {
-                this.visibleData = this.viewOnlyBookmarks
-                    ? await this.bookmarksService.filterBookmarks(
-                        this.filteringService.Data,
-                        this.findAbortController.signal
-                    )
-                    : this.filteringService.Data;
+                this.visibleData = this.filteringService.Data;
+                this.setVisibleBookmarksCount();
                 this.loading = false;
 
                 return;
@@ -191,12 +184,8 @@ const IndexPage = {
                 return;
             }
 
-            this.visibleData = this.viewOnlyBookmarks
-                ? await this.bookmarksService.filterBookmarks(
-                    result,
-                    this.findAbortController.signal
-                )
-                : result;
+            this.visibleData = result;
+            this.setVisibleBookmarksCount();
             this.loading = false;
         },
         setTextItemsFromRoute() {

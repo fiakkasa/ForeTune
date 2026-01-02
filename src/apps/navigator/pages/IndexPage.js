@@ -38,24 +38,14 @@ const IndexPage = {
         return {
             standAlone: false,
             serviceWorkerProgress: 0,
-            pageUrlFragments: {},
+            pageUrlFragments: new Set(),
             timeoutRef: null,
             serviceWorker: null
         };
     },
     beforeMount() {
         this.setServiceWorkerEvents();
-        this.pageUrlFragments = Object.values(this.appsConfig)
-            .reduce(
-                (acc, { urlFragment }) => {
-                    if (urlFragment !== this.appsConfig.main.urlFragment) {
-                        acc[urlFragment] = urlFragment;
-                    }
-
-                    return acc;
-                },
-                {}
-            );
+        this.setPageUrlFragments();
         this.setIsStandAlone();
     },
     beforeUnmount() {
@@ -76,6 +66,14 @@ const IndexPage = {
         }
     },
     methods: {
+        setPageUrlFragments() {
+            for (const key in this.appsConfig) {
+                const urlFragment = this.appsConfig[key].urlFragment;
+                if (urlFragment !== this.appsConfig.main.urlFragment) {
+                    this.pageUrlFragments.add(urlFragment);
+                }
+            }
+        },
         async setServiceWorkerEvents() {
             if (!('serviceWorker' in this.navigatorService)) {
                 return;
@@ -134,7 +132,7 @@ const IndexPage = {
         },
         setIsStandAlone() {
             this.standAlone = !this.$route.params.value
-                || !this.pageUrlFragments[this.$route.params.value];
+                || !this.pageUrlFragments.has(this.$route.params.value);
         },
         isActive(item) {
             return item.urlFragment === this.$route.params.value

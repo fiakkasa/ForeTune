@@ -1,8 +1,8 @@
 import { IndexPage } from './pages/IndexPage.js';
 
-const uiConfig = {
+const uiConfig = Object.freeze({
     serviceWorkerDoneNotificationDelay: 750
-};
+});
 
 const routes = [
     { path: '/:value', component: IndexPage },

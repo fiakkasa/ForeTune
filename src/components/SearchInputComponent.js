@@ -12,14 +12,14 @@ const SearchInputComponent = {
                 :maxlength="uiConfig.maxSearchInputChars"
                 @input="update($event.target.value)" />
 
-            <slot name="controls" />
-
             <button type="button"
                     class="btn btn-outline-secondary px-2"
                     v-if="inputText"
                     @click="clear">
                 <i class="fa-solid fa-xmark"></i>
             </button>
+
+            <slot name="controls" />
         </div>
 
         <small class="d-flex text-body-secondary py-1">

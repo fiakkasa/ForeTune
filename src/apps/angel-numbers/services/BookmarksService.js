@@ -1,72 +1,57 @@
 const { ref } = Vue;
-const _storageKey = 'angel-numbers.bookmarks';
-const _keyPrefix = 'b';
 
 class BookmarksService {
-    _data = ref({});
+    _data = ref(new Set());
 
-    constructor(storageService, task) {
+    get HasData() {
+        return this._data.value.size > 0;
+    }
+
+    constructor(config, storageService, task) {
+        this.config = config;
         this.storageService = storageService;
         this.task = task;
     }
 
-    get HasData() {
-        return Object.keys(this._data.value).length > 0;
-    }
-
     async init(cancellationSignal) {
         await this.task.run(() => {
-            const savedData = this.storageService.get(_storageKey);
+            const persistedData = this.storageService.get(this.config.storageKey);
 
-            if (!savedData || !Object.values(savedData).length) {
+            if (
+                !persistedData
+                || !Array.isArray(persistedData)
+                || !persistedData.length
+            ) {
                 return;
             }
 
-            this._data.value = savedData;
+            this._data.value = new Set(persistedData);
         }, cancellationSignal);
     }
 
     async persistToStorage(cancellationSignal) {
         await this.task.run(() => {
             this.storageService.set(
-                _storageKey,
-                this._data.value
+                this.config.storageKey,
+                [...this._data.value]
             );
         }, cancellationSignal);
     }
 
-    isBookmarked(number) {
-        return this._data.value[_keyPrefix + number];
-    }
-
-    filterBookmarks(data, cancellationSignal) {
-        return this.task.run(() =>
-            data.filter(item => this.isBookmarked(item.number)),
-            cancellationSignal
-        );
+    isBookmarked(key) {
+        return !!this._data.value.has(key);
     }
 
     async clear(cancellationSignal) {
-        this._data.value = {};
+        this._data.value.clear();
         await this.persistToStorage(cancellationSignal);
     }
 
-    async toggleBookmark(number, cancellationSignal) {
-        if (
-            number !== '00'
-            && (
-                number > 999
-                || number < 0
-            )
-
-        ) {
-            return;
-        }
-
-        if (this.isBookmarked(number)) {
-            delete this._data.value[_keyPrefix + number];
+    async toggleBookmark(key, cancellationSignal) {
+        if (this.isBookmarked(key)) {
+            this._data.value.delete(key);
         } else {
-            this._data.value[_keyPrefix + number] = true;
+            this._data.value.add(key);
         }
 
         await this.persistToStorage(cancellationSignal);
