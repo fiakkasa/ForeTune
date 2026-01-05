@@ -1,116 +1,221 @@
 import { task } from '../../../src/utils/task.js';
 import { FilteringService } from '../../../src/apps/angel-numbers/services/FilteringService.js';
 
-describe('FilteringService', function () {
-    const data = [
-        {
-            number: '00',
-            text: 'Zero Zero ',
-        },
-        {
-            number: '0',
-            text: 'Zero',
-        },
-        {
-            number: '1',
-            text: 'One',
-        },
-        {
-            number: '2',
-            text: 'Two',
-        },
-        {
-            number: '10',
-            text: 'Ten',
-        },
-        {
-            number: '11',
-            text: 'Eleven',
-        },
-        {
-            number: '12',
-            text: 'Twelve',
-        },
-        {
-            number: '13',
-            text: 'Thirteen',
-        },
-        {
-            number: '100',
-            text: 'One Hundred',
-        },
-        {
-            number: '101',
-            text: 'One Hundred One',
-        },
-        {
-            number: '102',
-            text: 'One Hundred Two',
-        },
-        {
-            number: '111',
-            text: 'One Hundred Eleven',
-        },
-        {
-            number: '112',
-            text: 'One Hundred Twelve',
-        },
-        {
-            number: '123',
-            text: 'One Hundred Twenty Three',
-        },
-        {
-            number: '231',
-            text: 'Two Hundred Thirty One',
-        },
-        {
-            number: '321',
-            text: 'Three Hundred Twenty One',
-        },
-    ];
-    const config = {
+describe('FilteringService', () => {
+    const config = Object.freeze({
         maxChars: 1000
-    };
+    });
+    const httpClientFactory = (result) => ({
+        getJson: jasmine.createSpy().and.returnValue(
+            result instanceof Error
+                ? Promise.reject(result)
+                : Promise.resolve(result)
+        )
+    });
     let service;
 
-    beforeEach(function () {
-        service = new FilteringService(config, task);
-    });
+    describe('init', () => {
+        it('set empty Data when no data received', async () => {
+            const httpClient = httpClientFactory([]);
+            service = new FilteringService(config, httpClient, task);
 
-    describe('search', function () {
-        it('returns empty on falsy token', async function () {
-            service.Data = data;
+            await service.init();
 
-            const result = await service.search();
-
-            expect(result.length).toBe(0);
+            expect(service.Data.length).toBe(0);
+            expect(httpClient.getJson).toHaveBeenCalledWith(
+                config.dataUrl,
+                null
+            );
         });
 
-        it('returns empty when no data', async function () {
+        it('set empty Data on error', async () => {
+            const httpClient = httpClientFactory(new Error('Splash!'));
+            service = new FilteringService(config, httpClient, task);
+
+            await service.init();
+
+            expect(service.Data.length).toBe(0);
+            expect(httpClient.getJson).toHaveBeenCalledWith(
+                config.dataUrl,
+                null
+            );
+        });
+
+        it('handles cancellation via AbortSignal', async () => {
+            const httpClient = {
+                getJson: jasmine.createSpy().and.callFake((url, cancellationSignal = null) =>
+                    new Promise((resolve, reject) => {
+                        setTimeout(() =>
+                            resolve([{ number: '1', text: 'One' }]),
+                            1000
+                        );
+                        cancellationSignal?.addEventListener('abort', () => {
+                            reject(new Error('Operation aborted'));
+                        }, { once: true });
+                    })
+                )
+            }
+            service = new FilteringService(
+                config,
+                httpClient,
+                task
+            );
+            const abortController = new AbortController();
+
+            setTimeout(() => abortController.abort());
+            await service.init(abortController.signal);
+
+            expect(service.Data.length).toBe(0);
+            expect(httpClient.getJson).toHaveBeenCalledWith(
+                config.dataUrl,
+                abortController.signal
+            );
+        });
+
+        it('set received Data on success', async () => {
+            const httpClient = httpClientFactory([
+                {
+                    number: '0',
+                    text: 'Zero',
+                },
+                {
+                    number: '1',
+                    text: ' OnE ',
+                }
+            ]);
+            service = new FilteringService(config, httpClient, task);
+
+            await service.init();
+
+            expect(service.Data.length).toBe(2);
+            expect(service.Data[0]).toEqual({
+                key: '_0',
+                ordinal: 0,
+                number: '0',
+                text: 'Zero',
+                processedText: 'zero'
+            });
+            expect(service.Data[1]).toEqual({
+                key: '_1',
+                ordinal: 1,
+                number: '1',
+                text: ' OnE ',
+                processedText: 'one'
+            });
+            expect(httpClient.getJson).toHaveBeenCalledWith(
+                config.dataUrl,
+                null
+            );
+        });
+    });
+
+    describe('search', () => {
+        const data = [
+            {
+                number: '00',
+                text: 'Zero Zero',
+            },
+            {
+                number: '0',
+                text: 'Zero',
+            },
+            {
+                number: '1',
+                text: 'One',
+            },
+            {
+                number: '2',
+                text: 'Two',
+            },
+            {
+                number: '10',
+                text: 'Ten',
+            },
+            {
+                number: '11',
+                text: 'Eleven',
+            },
+            {
+                number: '12',
+                text: 'Twelve',
+            },
+            {
+                number: '13',
+                text: 'Thirteen',
+            },
+            {
+                number: '100',
+                text: 'One Hundred',
+            },
+            {
+                number: '101',
+                text: 'One Hundred One',
+            },
+            {
+                number: '102',
+                text: 'One Hundred Two',
+            },
+            {
+                number: '111',
+                text: 'One Hundred Eleven',
+            },
+            {
+                number: '112',
+                text: 'One Hundred Twelve',
+            },
+            {
+                number: '123',
+                text: 'One Hundred Twenty Three',
+            },
+            {
+                number: '231',
+                text: 'Two Hundred Thirty One',
+            },
+            {
+                number: '321',
+                text: 'Three Hundred Twenty One',
+            },
+        ];
+        const httpClient = httpClientFactory(data);
+
+        beforeEach(async () => {
+            service = new FilteringService(config, httpClient, task);
+
+            await service.init();
+        });
+
+        it('returns empty when no data', async () => {
+            service = new FilteringService(
+                config,
+                httpClientFactory([]),
+                task
+            );
+            await service.init();
+
             const result = await service.search('test');
 
             expect(result.length).toBe(0);
         });
 
-        it('returns empty when token does not contain numbers or letters', async function () {
-            service.Data = data;
+        it('returns empty on falsy token', async () => {
+            const result = await service.search();
 
+            expect(result.length).toBe(0);
+        });
+
+        it('returns empty when token does not contain numbers or letters', async () => {
             const result = await service.search('% ^ &');
 
             expect(result.length).toBe(0);
         });
 
-        it('returns empty results for numeric token longer than 3 characters', async function () {
-            service.Data = data;
-
+        it('returns empty results for numeric token longer than 3 characters', async () => {
             const result = await service.search('1234');
 
             expect(result.length).toBe(0);
         });
 
-        it('returns results for numeric token 00 and numbers containing 0', async function () {
-            service.Data = data;
-
+        it('returns results for numeric token 00 and numbers containing 0', async () => {
             const result = await service.search('00');
 
             expect(result.length).toBe(6);
@@ -120,9 +225,7 @@ describe('FilteringService', function () {
             expect(result[5].number).toBe('102');
         });
 
-         it('returns results for numeric token 0 and numbers containing 0', async function () {
-            service.Data = data;
-
+        it('returns results for numeric token 0 and numbers containing 0', async () => {
             const result = await service.search('0');
 
             expect(result.length).toBe(6);
@@ -132,9 +235,7 @@ describe('FilteringService', function () {
             expect(result[5].number).toBe('102');
         });
 
-        it('returns results for exact numeric token match and numbers partially matching the distinct token of 1 character', async function () {
-            service.Data = data;
-
+        it('returns results for exact numeric token match and numbers partially matching the distinct token of 1 character', async () => {
             const result = await service.search('111');
 
             expect(result.length).toBe(13);
@@ -144,9 +245,7 @@ describe('FilteringService', function () {
             expect(result[12].number).toBe('321');
         });
 
-        it('returns results for exact numeric token match and numbers partially matching using the distinct token of 2 characters', async function () {
-            service.Data = data;
-
+        it('returns results for exact numeric token match and numbers partially matching using the distinct token of 2 characters', async () => {
             const result = await service.search('112');
 
             expect(result.length).toBe(6);
@@ -156,9 +255,7 @@ describe('FilteringService', function () {
             expect(result[5].number).toBe('321');
         });
 
-        it('returns results for exact numeric token match and numbers with the same digits using distinct characters', async function () {
-            service.Data = data;
-
+        it('returns results for exact numeric token match and numbers with the same digits using distinct characters', async () => {
             const result = await service.search('231');
 
             expect(result.length).toBe(3);
@@ -167,9 +264,7 @@ describe('FilteringService', function () {
             expect(result[2].number).toBe('321');
         });
 
-        it('returns results for large numeric token and numbers with the same digits using distinct characters', async function () {
-            service.Data = data;
-
+        it('returns results for large numeric token and numbers with the same digits using distinct characters', async () => {
             const result = await service.search('111111222222333333111111222222333333111111222222333333111111222222333333');
 
             expect(result.length).toBe(3);
@@ -178,18 +273,14 @@ describe('FilteringService', function () {
             expect(result[2].number).toBe('321');
         });
 
-        it('returns results for exact word', async function () {
-            service.Data = data;
-
+        it('returns results for exact word', async () => {
             const result = await service.search('Thirty');
 
             expect(result.length).toBe(1);
             expect(result[0].text).toBe('Two Hundred Thirty One');
         });
 
-        it('returns results for partial word', async function () {
-            service.Data = data;
-
+        it('returns results for partial word', async () => {
             const result = await service.search('red');
 
             expect(result.length).toBe(8);
@@ -197,9 +288,7 @@ describe('FilteringService', function () {
             expect(result[7].text).toBe('Three Hundred Twenty One');
         });
 
-        it('returns results for partial words', async function () {
-            service.Data = data;
-
+        it('returns results for partial words', async () => {
             const result = await service.search('ree red one');
 
             expect(result.length).toBe(2);
@@ -207,9 +296,7 @@ describe('FilteringService', function () {
             expect(result[1].text).toBe('Three Hundred Twenty One');
         });
 
-        it('returns results for duplicate partial words in mixed case', async function () {
-            service.Data = data;
-
+        it('returns results for duplicate partial words in mixed case', async () => {
             const result = await service.search('ree RED one ree red ONE REE red one rEe rEd oNe');
 
             expect(result.length).toBe(2);
@@ -217,9 +304,7 @@ describe('FilteringService', function () {
             expect(result[1].text).toBe('Three Hundred Twenty One');
         });
 
-        it('returns results for mixed numbers and partial words and ignores non alphanumeric', async function () {
-            service.Data = data;
-
+        it('returns results for mixed numbers and partial words and ignores non alphanumeric', async () => {
             const result = await service.search('ree|1red3|one');
 
             expect(result.length).toBe(4);
@@ -229,22 +314,16 @@ describe('FilteringService', function () {
             expect(result[3].text).toBe('Three Hundred Twenty One');
         });
 
-        it('handles cancellation via AbortSignal', async function () {
-            service.Data = data;
-
+        it('handles cancellation via AbortSignal', async () => {
             const abortController = new AbortController();
 
-            const resultPromise = service.search('One', abortController.signal);
+            setTimeout(() => abortController.abort());
+            const result = await service
+                .search('One', abortController.signal)
+                .catch(error => error);
 
-            abortController.abort();
-
-            try {
-                await resultPromise;
-                fail('Expected search to be aborted');
-            } catch (error) {
-                expect(error).toBeDefined();
-                expect(error.message).toBe('Operation aborted');
-            }
+            expect(result).toBeInstanceOf(Error);
+            expect(result.message).toBe('Operation aborted');
         });
     });
 });

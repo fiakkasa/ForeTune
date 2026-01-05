@@ -4,7 +4,7 @@ class UiService {
         this._task = task;
     }
 
-    delay(cancellationSignal) {
+    delay(cancellationSignal = null) {
         return this._task.delay(
             this._config.uiDefaultDelay, 
             cancellationSignal

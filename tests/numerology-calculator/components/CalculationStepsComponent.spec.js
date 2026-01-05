@@ -1,7 +1,7 @@
 import { CalculationStepsComponent } from '../../../src/apps/numerology-calculator/components/CalculationStepsComponent.js';
 
-describe('CalculationStepsComponent', function () {
-    function mountComponent(props = {}, linksServiceMock = {}) {
+describe('CalculationStepsComponent', () => {
+    const mountComponent = (props = {}, linksServiceMock = {}) => {
         const container = document.createElement('div');
         document.body.appendChild(container);
 
@@ -13,9 +13,9 @@ describe('CalculationStepsComponent', function () {
         app.mount(container);
 
         return { app, container };
-    }
+    };
 
-    it('does not render when steps is empty or falsy', async function () {
+    it('does not render when steps is empty or falsy', async () => {
         const linksServiceMock = { isEligible: () => false, getRoute: () => '#' };
         const { app, container } = mountComponent({ steps: [] }, linksServiceMock);
         await Vue.nextTick();
@@ -26,7 +26,7 @@ describe('CalculationStepsComponent', function () {
         container.remove();
     });
 
-    it('renders multiple steps and honors linksService for sequence and sum', async function () {
+    it('renders multiple steps and honors linksService for sequence and sum', async () => {
         const steps = [
             { equation: '1+1', sequence: '11', sum: '2' },
             { equation: '2+2', sequence: '22', sum: '4' }

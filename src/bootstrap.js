@@ -1,3 +1,6 @@
+import { task } from './utils/task.js';
+import { httpClient } from './utils/httpClient.js';
+
 const _loaderQuerySelector = '.loader';
 const _appIdentifierAttributeName = 'app-id';
 const _appStyleAttributeName = 'app-id';
@@ -243,7 +246,9 @@ const init = async (navigatorQuerySelector, appsQuerySelector) => {
 
     const sharedServices = {
         navigatorService: navigator,
-        storageService: VueStorage.useStorage(storageConfig).ls
+        storageService: VueStorage.useStorage(storageConfig).ls,
+        task,
+        httpClient
     };
 
     for (const appConfig of Object.values(appsConfig)) {

@@ -133,22 +133,30 @@ class FilteringService {
     get Data() {
         return this._data;
     }
-    set Data(value) {
-        this._data = (value || []).map(({ number, text }, index) => ({
-            key: _keyPrefix + number,
-            ordinal: index,
-            number,
-            text,
-            processedText: text.toLowerCase().replaceAll(' ', '')
-        }));
-    }
 
-    constructor(config, task) {
+    constructor(config, httpClient, task) {
         this._config = config;
+        this._httpClient = httpClient;
         this._task = task;
     }
 
-    search(token, cancellationSignal) {
+    async init(cancellationSignal = null) {
+        this._data = await this._httpClient
+            .getJson(this._config.dataUrl, cancellationSignal)
+            .then(data => data.map(({ number, text }, index) => ({
+                key: _keyPrefix + number,
+                ordinal: index,
+                number,
+                text,
+                processedText: text.toLowerCase().replaceAll(' ', '')
+            })))
+            .catch(error => {
+                console.error(error);
+                return [];
+            });
+    }
+
+    search(token, cancellationSignal = null) {
         return this._task.run(() => {
             if (!token || !this._data.length) {
                 return [];

@@ -1,5 +1,4 @@
 import { SearchInputComponent } from '../../components/SearchInputComponent.js';
-import { task } from '../../utils/task.js';
 import { IndexPage } from './pages/IndexPage.js';
 import { BookmarksService } from './services/BookmarksService.js';
 import { FilteringService } from './services/FilteringService.js';
@@ -11,6 +10,7 @@ const uiConfig = Object.freeze({
 });
 
 const filteringConfig = Object.freeze({
+    dataUrl: 'apps/angel-numbers/assets/data.json',
     maxChars: uiConfig.maxSearchInputChars
 });
 
@@ -25,7 +25,7 @@ const routes = [
 
 async function appInit(configuration, services) {
     const { appConfig } = configuration;
-    const { storageService } = services;
+    const { storageService, task, httpClient } = services;
     const { path = 'apps/angel-numbers', urlFragment = 'angel-numbers' } = appConfig;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
@@ -50,7 +50,11 @@ async function appInit(configuration, services) {
         }
     });
 
-    const filteringService = new FilteringService(filteringConfig, task);
+    const filteringService = new FilteringService(
+        filteringConfig,
+        httpClient,
+        task
+    );
     const bookmarksService = new BookmarksService(
         bookmarksConfig,
         storageService,
@@ -77,25 +81,19 @@ async function appInit(configuration, services) {
     app.provide('uiService', uiService);
 
     const locale = 'en-US';
-    const [messages, data] = await Promise.all([
-        fetch(`${path}/localization/${locale}.json`)
-            .then(response => response.json())
+    const [messages] = await Promise.all([
+        httpClient
+            .getJson(`${path}/localization/${locale}.json`)
             .catch(error => {
                 console.error(error);
                 return {};
             }),
-        fetch(`${path}/assets/data.json`)
-            .then(response => response.json())
-            .catch(error => {
-                console.error(error);
-                return [];
-            }),
+        filteringService.init(),
         bookmarksService.init()
     ]);
 
     i18n.global.setLocaleMessage(locale, messages);
     i18n.global.locale.value = locale;
-    filteringService.Data = data;
 
     return app;
 }

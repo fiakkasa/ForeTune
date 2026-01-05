@@ -11,7 +11,7 @@ const routes = [
 
 async function appInit(configuration, services) {
     const { appConfig, appsConfig, serviceWorkerConfig, } = configuration;
-    const { navigatorService } = services;
+    const { navigatorService, httpClient } = services;
     const { path = 'apps/navigator', urlFragment = '' } = appConfig;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
@@ -48,8 +48,8 @@ async function appInit(configuration, services) {
     app.provide('navigatorService', navigatorService);
 
     const locale = 'en-US';
-    const messages = await fetch(`${path}/localization/${locale}.json`)
-        .then(response => response.json())
+    const messages = await httpClient
+        .getJson(`${path}/localization/${locale}.json`)
         .catch(error => {
             console.error(error);
             return {};

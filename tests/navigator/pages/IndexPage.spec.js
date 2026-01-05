@@ -1,6 +1,6 @@
 import { IndexPage } from '../../../src/apps/navigator/pages/IndexPage.js';
 
-describe('IndexPage', function () {
+describe('IndexPage', () => {
     const appsConfig = {
         main: {
             title: 'main',
@@ -37,11 +37,10 @@ describe('IndexPage', function () {
         { path: '/', component: IndexPage }
     ];
 
-    function delay(value) {
-        return new Promise((resolve) => setTimeout(() => resolve(true), value || 100));
-    }
+    const delay = (value) =>
+        new Promise((resolve) => setTimeout(() => resolve(true), value || 100));
 
-    function mountPage(initialRouteValue = '/', mockNavigatorService = null) {
+    const mountPage = (initialRouteValue = '/', mockNavigatorService = null) => {
         const container = document.createElement('div');
         document.body.appendChild(container);
 
@@ -71,10 +70,10 @@ describe('IndexPage', function () {
         initialRouteValue && app.config.globalProperties.$router.push(initialRouteValue);
 
         return { app, container, router };
-    }
+    };
 
-    describe('Initial rendering', function () {
-        it('renders stand alone on empty route', async function () {
+    describe('Initial rendering', () => {
+        it('renders stand alone on empty route', async () => {
             const { app, container } = mountPage();
             await delay();
             await Vue.nextTick();
@@ -87,7 +86,7 @@ describe('IndexPage', function () {
             container.remove();
         });
 
-        it('renders stand alone on non existent route', async function () {
+        it('renders stand alone on non existent route', async () => {
             const { app, container } = mountPage('/some-page');
             await delay();
             await Vue.nextTick();
@@ -100,7 +99,7 @@ describe('IndexPage', function () {
             container.remove();
         });
 
-        it('renders existing page', async function () {
+        it('renders existing page', async () => {
             const { app, container } = mountPage('/numerology-calculator');
             await delay();
             await Vue.nextTick();
@@ -114,8 +113,8 @@ describe('IndexPage', function () {
         });
     });
 
-    describe('Selection change rendering', function () {
-        it('renders switch between standalone to sidebar', async function () {
+    describe('Selection change rendering', () => {
+        it('renders switch between standalone to sidebar', async () => {
             const { app, container, router } = mountPage();
             await delay();
             await Vue.nextTick();
@@ -139,7 +138,7 @@ describe('IndexPage', function () {
             container.remove();
         });
 
-        it('renders switch between sidebar and standalone', async function () {
+        it('renders switch between sidebar and standalone', async () => {
             const { app, container, router } = mountPage('/numerology-calculator');
             await delay();
             await Vue.nextTick();
@@ -163,7 +162,7 @@ describe('IndexPage', function () {
             container.remove();
         });
 
-        it('ignore when same page clicked', async function () {
+        it('ignore when same page clicked', async () => {
             const { app, container, router } = mountPage('/numerology-calculator');
             await delay();
             await Vue.nextTick();
@@ -188,8 +187,8 @@ describe('IndexPage', function () {
         });
     });
 
-    describe('Route change rendering', function () {
-        it('renders page change', async function () {
+    describe('Route change rendering', () => {
+        it('renders page change', async () => {
             const { app, container, router } = mountPage();
             await delay();
             await Vue.nextTick();

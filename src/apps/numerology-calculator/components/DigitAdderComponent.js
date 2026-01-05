@@ -48,7 +48,10 @@ const DigitAdderComponent = {
                     return;
                 }
 
-                const { result, steps, error } = await this.uiService.delay(this.abortController.signal)
+                const { result, steps, error } = await this.uiService
+                    .delay(
+                        this.abortController.signal
+                    )
                     .then(() => this.digitCalculatorService.calculate(
                         normalized,
                         this.abortController.signal

@@ -46,7 +46,10 @@ const LetterAdderComponent = {
                     return;
                 }
 
-                const { result, steps, error } = await this.uiService.delay(this.abortController.signal)
+                const { result, steps, error } = await this.uiService
+                    .delay(
+                        this.abortController.signal
+                    )
                     .then(() => this.letterCalculatorService.calculate(
                         normalized,
                         this.abortController.signal

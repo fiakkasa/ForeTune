@@ -1,11 +1,11 @@
 import { task } from '../../../src/utils/task.js';
 import { LetterCalculatorService } from '../../../src/apps/numerology-calculator/services/LetterCalculatorService.js';
 
-describe('LetterCalculatorService', function () {
+describe('LetterCalculatorService', () => {
     let uiServiceMock;
     let service;
 
-    beforeEach(function () {
+    beforeEach(() => {
         uiServiceMock = {
             composeCombinedItem: jasmine.createSpy('composeCombinedItem').and.callFake(
                 (ch, val) => `${ch}:${val}`
@@ -21,8 +21,8 @@ describe('LetterCalculatorService', function () {
         service = new LetterCalculatorService(uiServiceMock, task);
     });
 
-    describe('calculate', function () {
-        it('resolves empty result for null or undefined input', async function () {
+    describe('calculate', () => {
+        it('resolves empty result for null or undefined input', async () => {
             const nullResult = await service.calculate(null);
             const undefinedResult = await service.calculate(undefined);
 
@@ -30,19 +30,19 @@ describe('LetterCalculatorService', function () {
             expect(undefinedResult).toEqual({ result: '', steps: [] });
         });
 
-        it('resolves empty result for empty input', async function () {
+        it('resolves empty result for empty input', async () => {
             const result = await service.calculate('');
 
             expect(result).toEqual({ result: '', steps: [] });
         });
 
-        it('resolves empty result for non-letter input', async function () {
+        it('resolves empty result for non-letter input', async () => {
             const result = await service.calculate('123!?');
 
             expect(result).toEqual({ result: '', steps: [] });
         });
 
-        it('calculates single-letter input correctly', async function () {
+        it('calculates single-letter input correctly', async () => {
             const result = await service.calculate('A');
 
             expect(result.result).toBe('1');
@@ -53,7 +53,7 @@ describe('LetterCalculatorService', function () {
             expect(uiServiceMock.composeEntryEquation).toHaveBeenCalledWith(['A:1']);
         });
 
-        it('calculates multi-letter input with iterative sum reduction', async function () {
+        it('calculates multi-letter input with iterative sum reduction', async () => {
             const result = await service.calculate('ABCD');
 
             expect(result.result).toBe('1');
@@ -69,25 +69,22 @@ describe('LetterCalculatorService', function () {
             expect(uiServiceMock.composeEntryEquation).toHaveBeenCalled();
         });
 
-        it('ignores non-mapped letters', async function () {
+        it('ignores non-mapped letters', async () => {
             const result = await service.calculate('AXYZ*!');
 
             expect(result.result).toBe('4');
         });
 
-        it('handles cancellation via AbortSignal', async function () {
+        it('handles cancellation via AbortSignal', async () => {
             const abortController = new AbortController();
-            const calculationPromise = service.calculate('abcdefg', abortController.signal);
 
             abortController.abort();
+            const result = await service
+                .calculate('abcdefg', abortController.signal)
+                .catch(error => error);
 
-            try {
-                await calculationPromise;
-                fail('Expected calculation to be aborted');
-            } catch (error) {
-                expect(error).toBeDefined();
-                expect(error.message).toBe('Operation aborted');
-            }
+            expect(result).toBeInstanceOf(Error);
+            expect(result.message).toBe('Operation aborted');
         });
     });
 });

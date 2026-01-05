@@ -11,7 +11,7 @@ import { CalculationStepsComponent } from '../../../src/apps/numerology-calculat
 import { DigitAdderComponent } from '../../../src/apps/numerology-calculator/components/DigitAdderComponent.js';
 import { LetterAdderComponent } from '../../../src/apps/numerology-calculator/components/LetterAdderComponent.js';
 
-describe('IndexPage', function () {
+describe('IndexPage', () => {
     const uiConfig = {
         maxSearchInputChars: 1000,
         uiDefaultDelay: 100,
@@ -28,11 +28,10 @@ describe('IndexPage', function () {
         { path: '/', component: IndexPage }
     ];
 
-    function delay(value) {
-        return new Promise((resolve) => setTimeout(() => resolve(true), value || uiConfig.uiDefaultDelay));
-    }
+    const delay = (value) =>
+        new Promise((resolve) => setTimeout(() => resolve(true), value || 100));
 
-    function mountPage(initialRouteValue = '/') {
+    const mountPage = (initialRouteValue = '/') => {
         const container = document.createElement('div');
         document.body.appendChild(container);
 
@@ -72,10 +71,10 @@ describe('IndexPage', function () {
         initialRouteValue && app.config.globalProperties.$router.push(initialRouteValue);
 
         return { app, container, router };
-    }
+    };
 
-    describe('Initial rendering', function () {
-        it('renders empty', async function () {
+    describe('Initial rendering', () => {
+        it('renders empty', async () => {
             const { app, container } = mountPage();
             await delay();
             await Vue.nextTick();
@@ -94,7 +93,7 @@ describe('IndexPage', function () {
             container.remove();
         });
 
-        it('transforms %20 and . as spaces', async function () {
+        it('transforms %20 and . as spaces', async () => {
             const { app, container } = mountPage('/?text=%20%20Hello.World%20%20');
             await delay();
             await Vue.nextTick();
@@ -113,7 +112,7 @@ describe('IndexPage', function () {
             container.remove();
         });
 
-        it('renders numbers only', async function () {
+        it('renders numbers only', async () => {
             const { app, container } = mountPage('/?text=123');
             await delay();
             await Vue.nextTick();
@@ -132,7 +131,7 @@ describe('IndexPage', function () {
             container.remove();
         });
 
-        it('renders letters only', async function () {
+        it('renders letters only', async () => {
             const { app, container } = mountPage('/?text=abc');
             await delay();
             await Vue.nextTick();
@@ -151,7 +150,7 @@ describe('IndexPage', function () {
             container.remove();
         });
 
-        it('renders numbers and letters', async function () {
+        it('renders numbers and letters', async () => {
             const { app, container } = mountPage('/?text=abc123');
             await delay();
             await Vue.nextTick();
@@ -176,8 +175,8 @@ describe('IndexPage', function () {
         });
     });
 
-    describe('Input change rendering', function () {
-        it('renders continuous input', async function () {
+    describe('Input change rendering', () => {
+        it('renders continuous input', async () => {
             const { app, container, router } = mountPage();
             await delay();
             await Vue.nextTick();
@@ -233,8 +232,8 @@ describe('IndexPage', function () {
         });
     });
 
-    describe('Route change rendering', function () {
-        it('renders route parameter', async function () {
+    describe('Route change rendering', () => {
+        it('renders route parameter', async () => {
             const { app, container, router } = mountPage();
             await delay();
             await Vue.nextTick();

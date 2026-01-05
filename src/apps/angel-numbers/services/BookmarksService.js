@@ -1,64 +1,77 @@
-const { ref } = Vue;
-
 class BookmarksService {
-    _data = ref(new Set());
+    _data = new Set();
 
     get Count() {
-        return this._data.value.size;
+        return this._data.size;
     }
 
     get HasData() {
-        return this._data.value.size > 0;
+        return this._data.size > 0;
     }
 
     constructor(config, storageService, task) {
-        this.config = config;
-        this.storageService = storageService;
-        this.task = task;
+        this._config = config;
+        this._storageService = storageService;
+        this._task = task;
     }
 
-    async init(cancellationSignal) {
-        await this.task.run(() => {
-            const persistedData = this.storageService.get(this.config.storageKey);
+    async init(cancellationSignal = null) {
+        const result = await this._task
+            .run(() => {
+                const persistedData = this._storageService.get(
+                    this._config.storageKey
+                );
 
-            if (
-                !persistedData
-                || !Array.isArray(persistedData)
-                || !persistedData.length
-            ) {
-                return;
-            }
+                return !persistedData
+                    || !Array.isArray(persistedData)
+                    || !persistedData.length
+                    ? []
+                    : persistedData;
+            }, cancellationSignal)
+            .catch(error => {
+                console.error(error);
+                return [];
+            });
 
-            this._data.value = new Set(persistedData);
-        }, cancellationSignal);
+        this._data = new Set(result);
     }
 
-    async persistToStorage(cancellationSignal) {
-        await this.task.run(() => {
-            this.storageService.set(
-                this.config.storageKey,
-                [...this._data.value]
-            );
-        }, cancellationSignal);
+    async persistToStorage(cancellationSignal = null) {
+        await this._task
+            .run(() => {
+                this._storageService.set(
+                    this._config.storageKey,
+                    [...this._data]
+                );
+            }, cancellationSignal)
+            .catch(console.error);
     }
 
     isBookmarked(key) {
-        return !!this._data.value.has(key);
+        return !!this._data.has(key);
     }
 
-    async clear(cancellationSignal) {
-        this._data.value.clear();
-        await this.persistToStorage(cancellationSignal);
+    async clear(cancellationSignal = null) {
+        await this._task
+            .run(() =>
+                this._data.clear(),
+                cancellationSignal
+            )
+            .then(() => this.persistToStorage(cancellationSignal))
+            .catch(console.error);
     }
 
-    async toggleBookmark(key, cancellationSignal) {
-        if (this.isBookmarked(key)) {
-            this._data.value.delete(key);
-        } else {
-            this._data.value.add(key);
-        }
-
-        await this.persistToStorage(cancellationSignal);
+    async toggleBookmark(key, cancellationSignal = null) {
+        await this._task
+            .run(() => {
+                if (this.isBookmarked(key)) {
+                    this._data.delete(key);
+                } else {
+                    this._data.add(key);
+                }
+            }, cancellationSignal)
+            .then(() => this.persistToStorage(cancellationSignal))
+            .catch(console.error);
     }
 }
 

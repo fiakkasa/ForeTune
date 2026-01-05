@@ -1,7 +1,7 @@
 import { AdderTitleComponent } from '../../../src/apps/numerology-calculator/components/AdderTitleComponent.js';
 
-describe('AdderTitleComponent', function () {
-    function mountComponent(props = {}) {
+describe('AdderTitleComponent', () => {
+    const mountComponent = (props = {}) => {
         const container = document.createElement('div');
         document.body.appendChild(container);
         const app = Vue.createApp({
@@ -10,9 +10,9 @@ describe('AdderTitleComponent', function () {
         app.mount(container);
 
         return { app, container };
-    }
+    };
 
-    it('renders text when "text" prop is provided', async function () {
+    it('renders text when "text" prop is provided', async () => {
         const { app, container } = mountComponent({ text: 'Hello World' });
         await Vue.nextTick();
         const el = container.querySelector('.nc-title');
@@ -24,7 +24,7 @@ describe('AdderTitleComponent', function () {
         container.remove();
     });
 
-    it('does not render when "text" is falsy', async function () {
+    it('does not render when "text" is falsy', async () => {
         const { app, container } = mountComponent({ text: '' });
         await Vue.nextTick();
 

@@ -4,6 +4,11 @@ const task = {
             (resolve, reject) => {
                 setTimeout(() => {
                     try {
+                        if (cancellationSignal?.aborted) {
+                            reject(new Error('Operation aborted'));
+                            return;
+                        }
+
                         resolve(delegate());
                     } catch (error) {
                         reject(error);
@@ -21,7 +26,7 @@ const task = {
 
         return new Promise(
             (resolve, reject) => {
-                setTimeout(resolve, normalizedTimeout < 0 ? 0 : normalizedTimeout);
+                setTimeout(resolve, Math.max(normalizedTimeout, 0));
 
                 cancellationSignal?.addEventListener('abort', () => {
                     reject(new Error('Operation aborted'));

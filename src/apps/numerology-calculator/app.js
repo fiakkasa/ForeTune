@@ -1,5 +1,4 @@
 import { SearchInputComponent } from '../../components/SearchInputComponent.js';
-import { task } from '../../utils/task.js';
 import { AdderTitleComponent } from './components/AdderTitleComponent.js';
 import { CalculationResultComponent } from './components/CalculationResultComponent.js';
 import { CalculationStepsComponent } from './components/CalculationStepsComponent.js';
@@ -30,6 +29,7 @@ const routes = [
 
 async function appInit(configuration, services) {
     const { appConfig } = configuration;
+    const { httpClient, task } = services;
     const { path = 'apps/numerology-calculator', urlFragment = 'numerology-calculator' } = appConfig;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
@@ -79,11 +79,11 @@ async function appInit(configuration, services) {
     app.provide('letterCalculatorService', letterCalculatorService);
 
     const locale = 'en-US';
-    const messages = await fetch(`${path}/localization/${locale}.json`)
-        .then(response => response.json())
+    const messages = await httpClient
+        .getJson(`${path}/localization/${locale}.json`)
         .catch(error => {
             console.error(error);
-            return {};
+            return [];
         });
 
     i18n.global.setLocaleMessage(locale, messages);

@@ -1,7 +1,7 @@
 import { task } from '../../../src/utils/task.js';
 import { UiService } from '../../../src/apps/numerology-calculator/services/UiService.js';
 
-describe('UiService', function () {
+describe('UiService', () => {
     const config = {
         calculatorEquationSeparator: '+',
         calculatorEquationCombinedItemTemplate: '{0}:{1}',
@@ -10,33 +10,33 @@ describe('UiService', function () {
     };
     let service;
 
-    beforeEach(function () {
+    beforeEach(() => {
         service = new UiService(config, task);
     });
 
-    describe('composeEntryEquation', function () {
-        it('composes entry equation using separator', function () {
+    describe('composeEntryEquation', () => {
+        it('composes entry equation using separator', () => {
             expect(service.composeEntryEquation(['1', '2', '3'])).toBe('1+2+3');
             expect(service.composeEntryEquation([])).toBe('');
             expect(service.composeEntryEquation(null)).toBe('');
         });
     });
 
-    describe('composeEntrySequence', function () {
-        it('composes entry sequence by concatenation', function () {
+    describe('composeEntrySequence', () => {
+        it('composes entry sequence by concatenation', () => {
             expect(service.composeEntrySequence(['1', '2', '3'])).toBe('123');
             expect(service.composeEntrySequence(null)).toBe('');
         });
     });
 
-    describe('composeCombinedItem', function () {
-        it('composes combined item from template', function () {
+    describe('composeCombinedItem', () => {
+        it('composes combined item from template', () => {
             expect(service.composeCombinedItem('L', 'R')).toBe('L:R');
         });
     });
 
-    describe('normalizeTextInput', function () {
-        it('normalizes text input: trims spaces and enforces max length', function () {
+    describe('normalizeTextInput', () => {
+        it('normalizes text input: trims spaces and enforces max length', () => {
             expect(service.normalizeTextInput(' a b c ')).toBe('abc');
             expect(service.normalizeTextInput('')).toBe('');
             expect(service.normalizeTextInput('     ')).toBe('');
@@ -45,8 +45,8 @@ describe('UiService', function () {
         });
     });
 
-    describe('delay', function () {
-        it('resolves after configured delay', async function () {
+    describe('delay', () => {
+        it('resolves after configured delay', async () => {
             const start = Date.now();
             await service.delay();
             const elapsed = Date.now() > start;
@@ -54,19 +54,16 @@ describe('UiService', function () {
             expect(elapsed).toBeTrue();
         });
 
-        it('handles cancellation via AbortSignal', async function () {
+        it('handles cancellation via AbortSignal', async () => {
             const abortController = new AbortController();
-            const resultPromise = service.delay(abortController.signal);
 
-            abortController.abort();
+            setTimeout(() => abortController.abort());
+            const result = await service
+                .delay(abortController.signal)
+                .catch(error => error);
 
-            try {
-                await resultPromise;
-                fail('Expected calculation to be aborted');
-            } catch (error) {
-                expect(error).toBeDefined();
-                expect(error.message).toBe('Operation aborted');
-            }
+            expect(result).toBeInstanceOf(Error);
+            expect(result.message).toBe('Operation aborted');
         });
     });
 });

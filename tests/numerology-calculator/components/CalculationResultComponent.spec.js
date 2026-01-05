@@ -1,7 +1,7 @@
 import { CalculationResultComponent } from '../../../src/apps/numerology-calculator/components/CalculationResultComponent.js';
 
-describe('CalculationResultComponent', function () {
-    function mountComponent(props = {}, linksServiceMock = {}) {
+describe('CalculationResultComponent', () => {
+    const mountComponent = (props = {}, linksServiceMock = {}) => {
         const container = document.createElement('div');
         document.body.appendChild(container);
 
@@ -14,9 +14,9 @@ describe('CalculationResultComponent', function () {
         app.mount(container);
 
         return { app, container };
-    }
+    };
 
-    it('renders an anchor when linksService.isEligible returns true', async function () {
+    it('renders an anchor when linksService.isEligible returns true', async () => {
         const mockUrl = '/other-app/42';
         const linksServiceMock = {
             isEligible: (text) => true,
@@ -34,7 +34,7 @@ describe('CalculationResultComponent', function () {
         container.remove();
     });
 
-    it('renders a div when linksService.isEligible returns false', async function () {
+    it('renders a div when linksService.isEligible returns false', async () => {
         const linksServiceMock = {
             isEligible: (text) => false,
             getUrl: (text) => '/should/not/use'

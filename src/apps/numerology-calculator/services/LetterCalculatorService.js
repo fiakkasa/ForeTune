@@ -47,7 +47,7 @@ class LetterCalculatorService {
         this._task = task;
     }
 
-    calculate(text, cancellationSignal) {
+    calculate(text, cancellationSignal = null) {
         return this._task.run(() => {
             const letters = [];
             const digits = [];

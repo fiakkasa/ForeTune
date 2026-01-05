@@ -1,7 +1,7 @@
 import { SearchInputComponent } from '../../../src/components/SearchInputComponent.js';
 
-describe('SearchInputComponent', function () {
-    function mountComponent(props = {}, uiConfigMock = {}, emitSpy = null) {
+describe('SearchInputComponent', () => {
+    const mountComponent = (props = {}, uiConfigMock = {}, emitSpy = null) => {
         const container = document.createElement('div');
         document.body.appendChild(container);
 
@@ -21,11 +21,11 @@ describe('SearchInputComponent', function () {
         app.mount(container);
 
         return { app, container };
-    }
+    };
 
     const initialFocusDelay = () => new Promise((resolve) => setTimeout(() => resolve(true), 100));
 
-    it('sets input maxlength from uiConfig.maxSearchInputChars', async function () {
+    it('sets input maxlength from uiConfig.maxSearchInputChars', async () => {
         const uiConfig = { maxSearchInputChars: 7 };
         const { app, container } = mountComponent({ text: '' }, uiConfig);
 
@@ -41,7 +41,7 @@ describe('SearchInputComponent', function () {
         container.remove();
     });
 
-    it('emits update:text truncated to maxSearchInputChars when typing', async function () {
+    it('emits update:text truncated to maxSearchInputChars when typing', async () => {
         const uiConfig = { maxSearchInputChars: 5 };
         const spy = jasmine.createSpy('onUpdateText');
         const { app, container } = mountComponent({ text: '' }, uiConfig, spy);
@@ -68,7 +68,7 @@ describe('SearchInputComponent', function () {
         container.remove();
     });
 
-    it('clear button emits empty string and focuses the input', async function () {
+    it('clear button emits empty string and focuses the input', async () => {
         const uiConfig = { maxSearchInputChars: 10 };
         const spy = jasmine.createSpy('onUpdateText');
         const { app, container } = mountComponent({ text: 'hello' }, uiConfig, spy);
@@ -90,7 +90,7 @@ describe('SearchInputComponent', function () {
         container.remove();
     });
 
-    it('focuses the input on mount when focusOnLoad is truthy', async function () {
+    it('focuses the input on mount when focusOnLoad is truthy', async () => {
         const uiConfig = { maxSearchInputChars: 10 };
         const { app, container } = mountComponent({ text: '', focusOnLoad: true }, uiConfig);
 

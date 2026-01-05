@@ -1,19 +1,19 @@
 import { task } from '../../../src/utils/task.js';
 import { UiService } from '../../../src/apps/angel-numbers/services/UiService.js';
 
-describe('UiService', function () {
+describe('UiService', () => {
     const config = {
         maxSearchInputChars: 1000,
         uiDefaultDelay: 250
     };
     let service;
 
-    beforeEach(function () {
+    beforeEach(() => {
         service = new UiService(config, task);
     });
 
-    describe('delay', function () {
-        it('resolves after configured delay', async function () {
+    describe('delay', () => {
+        it('resolves after configured delay', async () => {
             const start = Date.now();
             await service.delay();
             const elapsed = Date.now() > start;
@@ -21,19 +21,16 @@ describe('UiService', function () {
             expect(elapsed).toBeTrue();
         });
 
-        it('handles cancellation via AbortSignal', async function () {
+        it('handles cancellation via AbortSignal', async () => {
             const abortController = new AbortController();
-            const resultPromise = service.delay(abortController.signal);
 
-            abortController.abort();
+            setTimeout(() => abortController.abort());
+            const result = await service
+                .delay(abortController.signal)
+                .catch(error => error);
 
-            try {
-                await resultPromise;
-                fail('Expected calculation to be aborted');
-            } catch (error) {
-                expect(error).toBeDefined();
-                expect(error.message).toBe('Operation aborted');
-            }
+            expect(result).toBeInstanceOf(Error);
+            expect(result.message).toBe('Operation aborted');
         });
     });
 });

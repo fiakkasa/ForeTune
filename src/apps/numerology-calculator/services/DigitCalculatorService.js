@@ -36,7 +36,7 @@ class DigitCalculatorService {
         this._task = task;
     }
 
-    calculate(text, cancellationSignal) {
+    calculate(text, cancellationSignal = null) {
         return this._task.run(() => {
             let digits = [...(text || '')]
                 .filter(ch => /\d/.test(ch))

@@ -1,11 +1,10 @@
 import { DigitAdderComponent } from '../../../src/apps/numerology-calculator/components/DigitAdderComponent.js';
 
-describe('DigitAdderComponent', function () {
-    function delay() {
-        return new Promise((resolve) => setTimeout(() => resolve(true), 100));
-    }
+describe('DigitAdderComponent', () => {
+    const delay = () =>
+        new Promise((resolve) => setTimeout(() => resolve(true), 100));
 
-    function mountComponent(initialProps = {}, services = {}, eventSpies = {}) {
+    const mountComponent = (initialProps = {}, services = {}, eventSpies = {}) => {
         const container = document.createElement('div');
         document.body.appendChild(container);
 
@@ -41,9 +40,9 @@ describe('DigitAdderComponent', function () {
         app.mount(container);
 
         return { app, container };
-    }
+    };
 
-    it('emits busy and empty result when uiService.normalizeTextInput returns empty', async function () {
+    it('emits busy and empty result when uiService.normalizeTextInput returns empty', async () => {
         const busySpy = jasmine.createSpy('busy');
         const resultSpy = jasmine.createSpy('result');
 
@@ -75,7 +74,7 @@ describe('DigitAdderComponent', function () {
         container.remove();
     });
 
-    it('calls services, updates result and renders when valid normalized input provided', async function () {
+    it('calls services, updates result and renders when valid normalized input provided', async () => {
         const busySpy = jasmine.createSpy('busy');
         const resultSpy = jasmine.createSpy('result');
 
