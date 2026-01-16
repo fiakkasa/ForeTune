@@ -2,20 +2,21 @@ const task = {
     run: (delegate, cancellationSignal = null) => {
         return new Promise(
             (resolve, reject) => {
-                setTimeout(() => {
+                const timeoutRef = setTimeout(() => {
                     try {
                         if (cancellationSignal?.aborted) {
                             reject(new Error('Operation aborted'));
                             return;
                         }
 
-                        resolve(delegate());
+                        resolve(delegate(cancellationSignal));
                     } catch (error) {
                         reject(error);
                     }
                 });
 
                 cancellationSignal?.addEventListener('abort', () => {
+                    clearTimeout(timeoutRef);
                     reject(new Error('Operation aborted'));
                 }, { once: true });
             }
@@ -26,9 +27,10 @@ const task = {
 
         return new Promise(
             (resolve, reject) => {
-                setTimeout(resolve, Math.max(normalizedTimeout, 0));
+                const timeoutRef = setTimeout(resolve, Math.max(normalizedTimeout, 0));
 
                 cancellationSignal?.addEventListener('abort', () => {
+                    clearTimeout(timeoutRef);
                     reject(new Error('Operation aborted'));
                 }, { once: true });
             }
