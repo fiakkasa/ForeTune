@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "tests": "CHROME_BIN=$(node -e \"console.log(require('puppeteer').executablePath())\") npx --no-install karma start",
-    "start": "npx --no-install lite-server"
+    "start": "npx --no-install lite-server",
+    "update-service-worker": "npx workbox-cli generateSW ./workbox-config.js"
   },
   "repository": {
     "type": "git",
