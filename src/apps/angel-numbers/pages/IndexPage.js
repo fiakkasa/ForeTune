@@ -147,6 +147,10 @@ const IndexPage = {
             );
 
             this.setVisibleBookmarksCount();
+
+            if(!this.bookmarksService.HasData) {
+                this.viewOnlyBookmarks = false;
+            }
             this.loading = false;
         },
         async clearBookmarks() {
