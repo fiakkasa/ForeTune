@@ -69,10 +69,54 @@ describe('LetterCalculatorService', () => {
             expect(uiServiceMock.composeEntryEquation).toHaveBeenCalled();
         });
 
+        it('for vowels type calculates multi-letter input with iterative sum reduction', async () => {
+            const result = await service.calculate('AEOI', 'vowels');
+
+            expect(result.result).toBe('3');
+            expect(result.steps.length).toBe(2);
+
+            expect(result.steps[0].sum).toBe('21');
+            expect(result.steps[0].numberOfCharacters).toBe(4);
+
+            expect(result.steps[1].sum).toBe('3');
+
+            expect(uiServiceMock.composeCombinedItem).toHaveBeenCalledTimes(4);
+            expect(uiServiceMock.composeEntrySequence).toHaveBeenCalled();
+            expect(uiServiceMock.composeEntryEquation).toHaveBeenCalled();
+        });
+
+        it('for consonants type calculates multi-letter input with iterative sum reduction', async () => {
+            const result = await service.calculate('BCDXYZ', 'consonants');
+
+            expect(result.result).toBe('3');
+            expect(result.steps.length).toBe(2);
+
+            expect(result.steps[0].sum).toBe('30');
+            expect(result.steps[0].numberOfCharacters).toBe(6);
+
+            expect(result.steps[1].sum).toBe('3');
+
+            expect(uiServiceMock.composeCombinedItem).toHaveBeenCalledTimes(6);
+            expect(uiServiceMock.composeEntrySequence).toHaveBeenCalled();
+            expect(uiServiceMock.composeEntryEquation).toHaveBeenCalled();
+        });
+
         it('ignores non-mapped letters', async () => {
             const result = await service.calculate('AXYZ*!');
 
             expect(result.result).toBe('4');
+        });
+        
+        it('for vowels type ignores non-mapped letters', async () => {
+            const result = await service.calculate('AB!', 'vowels');
+
+            expect(result.result).toBe('1');
+        });
+
+        it('for consonants type ignores non-mapped letters', async () => {
+            const result = await service.calculate('SA$', 'consonants');
+
+            expect(result.result).toBe('1');
         });
 
         it('handles cancellation via AbortSignal', async () => {
@@ -80,7 +124,7 @@ describe('LetterCalculatorService', () => {
 
             abortController.abort();
             const result = await service
-                .calculate('abcdefg', abortController.signal)
+                .calculate('abcdefg', 'all', abortController.signal)
                 .catch(error => error);
 
             expect(result).toBeInstanceOf(Error);

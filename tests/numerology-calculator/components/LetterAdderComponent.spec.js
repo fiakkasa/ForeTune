@@ -56,7 +56,11 @@ describe('LetterAdderComponent', () => {
             }
         };
 
-        const { app, container } = mountComponent({ text: '   ' }, services, { busy: busySpy, result: resultSpy });
+        const { app, container } = mountComponent(
+            { text: '   ' }, 
+            services, 
+            { busy: busySpy, result: resultSpy }
+        );
 
         await delay();
         await Vue.nextTick();
@@ -91,7 +95,11 @@ describe('LetterAdderComponent', () => {
             }
         };
 
-        const { app, container } = mountComponent({ text: 'Ab' }, services, { busy: busySpy, result: resultSpy });
+        const { app, container } = mountComponent(
+            { text: 'Ab', type: 'all' }, 
+            services, 
+            { busy: busySpy, result: resultSpy }
+        );
 
         await delay();
         await Vue.nextTick();

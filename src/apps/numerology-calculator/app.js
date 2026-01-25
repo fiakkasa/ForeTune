@@ -44,8 +44,10 @@ async function appInit(configuration, services) {
                 enter_your_values: 'Enter your values..',
                 digit_calculation: 'Numeric Calculation',
                 letter_calculation: 'Letter Calculation',
-                combined_calculation: 'Combined Calculation',
-                characters_of_max_characters: '{characters} / {maxCharacters}',
+                vowel_calculation: 'Vowel Calculation',
+                consonant_calculation: 'Consonant Calculation',
+                combined_numeric_and_letters_calculation: 'Combined Calculation',
+                characters_of_max_characters: '{characters} / {maxCharacters}'
             }
         }
     });

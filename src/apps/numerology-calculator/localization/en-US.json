@@ -1,7 +1,9 @@
 {
     "enter_your_values": "Enter numbers and/or letters..",
-    "digit_calculation": "Numeric Calculation",
-    "letter_calculation": "Letter Calculation",
-    "combined_calculation": "Combined Numeric and Letter Calculation",
+    "digit_calculation": "Numeric (Life Path)",
+    "letter_calculation": "Letters (Destiny)",
+    "vowel_calculation": "Vowels (Heart's Desire)",
+    "consonant_calculation": "Consonants (Personality)",
+    "combined_numeric_and_letters_calculation": "Numeric and Letters Combined",
     "characters_of_max_characters": "{characters} / {maxCharacters}"
 }

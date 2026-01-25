@@ -18,22 +18,41 @@ const IndexPage = {
                 <div class="px-3 pb-4" 
                     :class="{ 'd-none': !trimmedText || !digitResult }">
                     <digit-adder :title="$t('digit_calculation')"
-                                :text="trimmedText"
-                                @busy="digitBusy = $event"
-                                @result="digitResult = $event" />
+                                 :text="trimmedText"
+                                 @busy="digitBusy = $event"
+                                 @result="digitResult = $event" />
                 </div>
 
                 <div class="px-3 pb-4" 
                     :class="{ 'd-none': !trimmedText || !letterResult }">
                     <letter-adder :title="$t('letter_calculation')"
-                                :text="trimmedText"
-                                @busy="letterBusy = $event"
-                                @result="letterResult = $event" />
+                                  :text="trimmedText"
+                                  :type="'all'"
+                                  @busy="letterBusy = $event"
+                                  @result="letterResult = $event" />
+                </div>
+
+                <div class="px-3 pb-4" 
+                    :class="{ 'd-none': !trimmedText || !vowelResult }">
+                    <letter-adder :title="$t('vowel_calculation')"
+                                  :text="trimmedText"
+                                  :type="'vowels'"
+                                  @busy="vowelBusy = $event"
+                                  @result="vowelResult = $event" />
+                </div>
+
+                <div class="px-3 pb-4" 
+                    :class="{ 'd-none': !trimmedText || !consonantResult }">
+                    <letter-adder :title="$t('consonant_calculation')"
+                                  :text="trimmedText"
+                                  :type="'consonants'"
+                                  @busy="consonantBusy = $event"
+                                  @result="consonantResult = $event" />
                 </div>
 
                 <div class="px-3 pb-4" 
                     :class="{ 'd-none': !combinedResult }">
-                    <digit-adder :title="$t('combined_calculation')"
+                    <digit-adder :title="$t('combined_numeric_and_letters_calculation')"
                                 :text="combinedResult"
                                 @busy="combinedBusy = $event" />
                 </div>
@@ -48,16 +67,28 @@ const IndexPage = {
             digitBusy: false,
             letterBusy: false,
             combinedBusy: false,
+            vowelBusy: false,
+            consonantBusy: false,
             digitResult: '',
-            letterResult: ''
+            letterResult: '',
+            vowelResult: '',
+            consonantResult: '',
         };
     },
     computed: {
         loading() {
-            return this.digitBusy || this.letterBusy || this.combinedBusy;
+            return this.digitBusy 
+            || this.letterBusy 
+            || this.vowelBusy 
+            || this.consonantBusy 
+            || this.combinedBusy;
         },
         combinedResult() {
-            if (!this.trimmedText || !this.digitResult || !this.letterResult) {
+            if (
+                !this.trimmedText 
+                || !this.digitResult 
+                || !this.letterResult
+            ) {
                 return '';
             }
 

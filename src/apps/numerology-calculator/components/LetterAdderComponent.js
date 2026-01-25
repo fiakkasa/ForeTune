@@ -1,6 +1,6 @@
 const LetterAdderComponent = {
     inject: ['uiService', 'letterCalculatorService'],
-    props: ['title', 'text'],
+    props: ['title', 'text', 'type'],
     emits: ['busy', 'result'],
     template: `
         <div v-if="result && steps.length"
@@ -52,6 +52,7 @@ const LetterAdderComponent = {
                     )
                     .then(() => this.letterCalculatorService.calculate(
                         normalized,
+                        this.type,
                         this.abortController.signal
                     ))
                     .catch(error => ({ error }));

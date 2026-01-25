@@ -34,8 +34,7 @@
   background-color: var(--bs-body-bg);
   background-position: 50% 50%;
   background-repeat: no-repeat;
-  filter: blur(8px) opacity(0.5);
-  -webkit-filter: blur(8px) opacity(0.65);
+  filter: blur(8px) opacity(0.65);
 }
 
 .an-card > .card-body,
