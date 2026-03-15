@@ -69,9 +69,15 @@ class BookmarksService {
                 } else {
                     this._data.add(key);
                 }
+
+                return true;
             }, cancellationSignal)
             .then(() => this.persistToStorage(cancellationSignal))
-            .catch(console.error);
+            .catch(error => {
+                console.error(error);
+
+                return false;
+            });
     }
 }
 

@@ -1,58 +1,81 @@
 const _keyPrefix = '_';
 const _emptyMap = new Map();
 
-const splitToken = (token) => {
+const splitToken = (token, cancellationSignal = null) => {
+    if (cancellationSignal?.aborted) {
+        return { numericToken: '', textToken: '' };
+    }
+
     const numericToken = token.replace(/[^\d]/gi, '');
     const textToken = token.replace(/[\d]/gi, '').toLowerCase().trim();
 
     return { numericToken, textToken };
 };
 
-const findSimpleNumericMatch = (data, numericToken) => {
-    if (!numericToken || numericToken.length > 3) {
+const findSimpleNumericMatch = (
+    data,
+    numericToken,
+    cancellationSignal = null
+) => {
+    if (
+        cancellationSignal?.aborted
+        || !numericToken
+        || numericToken.length > 3
+    ) {
         return _emptyMap;
     }
 
-    return data.reduce(
-        (acc, item) => {
-            const { key, number } = item;
+    const result = new Map();
 
-            if (
-                !acc.has(key)
-                && numericToken
-                && number === numericToken
-            ) {
-                acc.set(key, item);
-            }
+    for (const item of data) {
+        if (cancellationSignal?.aborted) {
+            return _emptyMap;
+        }
 
-            return acc;
-        },
-        new Map()
-    );
+        const { key, number } = item;
+
+        if (
+            !result.has(key)
+            && numericToken
+            && number === numericToken
+        ) {
+            result.set(key, item);
+        }
+    }
+
+    return result;
 };
 
-const findSimpleTextMatch = (data, textToken, simpleNumericMatchResult) => {
-    if (!textToken) {
+const findSimpleTextMatch = (
+    data,
+    textToken,
+    simpleNumericMatchResult,
+    cancellationSignal = null
+) => {
+    if (cancellationSignal?.aborted || !textToken) {
         return _emptyMap;
     }
 
-    return data.reduce(
-        (acc, item) => {
-            const { key, processedText } = item;
+    const result = new Map();
 
-            if (
-                !acc.has(key)
-                && !simpleNumericMatchResult.has(key)
-                && textToken
-                && processedText.includes(textToken)
-            ) {
-                acc.set(key, item);
-            }
+    for (const item of data) {
+        if (cancellationSignal?.aborted) {
+            return _emptyMap;
+        }
 
-            return acc;
-        },
-        new Map()
-    );
+        const { key, processedText } = item;
+
+        if (
+            !result.has(key)
+            && !simpleNumericMatchResult.has(key)
+            && textToken
+            && processedText.includes(textToken)
+        ) {
+            result.set(key, item);
+        }
+    }
+
+    return result;
 };
 
 const findTokenizedNumber = (
@@ -60,31 +83,39 @@ const findTokenizedNumber = (
     config,
     numericToken,
     simpleNumericMatchResult,
-    simpleTextMatchResult
+    simpleTextMatchResult,
+    cancellationSignal = null
 ) => {
-    if (!numericToken || numericToken.length > config.maxChars) {
+    if (
+        cancellationSignal?.aborted
+        || !numericToken
+        || numericToken.length > config.maxChars
+    ) {
         return _emptyMap;
     }
 
     const tokenizedNumber = [...new Set(numericToken)];
 
-    return data.reduce(
-        (acc, item) => {
-            const { key, number } = item;
+    const result = new Map();
 
-            if (
-                !acc.has(key)
-                && !simpleNumericMatchResult.has(key)
-                && !simpleTextMatchResult.has(key)
-                && tokenizedNumber.every(fragment => number.includes(fragment))
-            ) {
-                acc.set(key, item);
-            }
+    for (const item of data) {
+        if (cancellationSignal?.aborted) {
+            return _emptyMap;
+        }
 
-            return acc;
-        },
-        new Map()
-    );
+        const { key, number } = item;
+
+        if (
+            !result.has(key)
+            && !simpleNumericMatchResult.has(key)
+            && !simpleTextMatchResult.has(key)
+            && tokenizedNumber.every(fragment => number.includes(fragment))
+        ) {
+            result.set(key, item);
+        }
+    }
+
+    return result;
 };
 
 const findTokenizedText = (
@@ -93,9 +124,14 @@ const findTokenizedText = (
     textToken,
     simpleNumericMatchResult,
     simpleTextMatchResult,
-    tokenizedNumberResult
+    tokenizedNumberResult,
+    cancellationSignal = null
 ) => {
-    if (!textToken || textToken.length > config.maxChars) {
+    if (
+        cancellationSignal?.aborted
+        || !textToken
+        || textToken.length > config.maxChars
+    ) {
         return _emptyMap;
     }
 
@@ -108,23 +144,26 @@ const findTokenizedText = (
         )
     ];
 
-    return data.reduce(
-        (acc, item) => {
-            const { key, processedText } = item;
+    const result = new Map();
 
-            if (
-                !acc.has(key)
-                && !simpleNumericMatchResult.has(key)
-                && !simpleTextMatchResult.has(key)
-                && !tokenizedNumberResult.has(key)
-                && tokenizedText.every(fragment => processedText.includes(fragment))) {
-                acc.set(key, item);
-            }
+    for (const item of data) {
+        if (cancellationSignal?.aborted) {
+            return _emptyMap;
+        }
 
-            return acc;
-        },
-        new Map()
-    );
+        const { key, processedText } = item;
+
+        if (
+            !result.has(key)
+            && !simpleNumericMatchResult.has(key)
+            && !simpleTextMatchResult.has(key)
+            && !tokenizedNumberResult.has(key)
+            && tokenizedText.every(fragment => processedText.includes(fragment))) {
+            result.set(key, item);
+        }
+    }
+
+    return result;
 };
 
 class FilteringService {
@@ -157,12 +196,12 @@ class FilteringService {
     }
 
     search(token, cancellationSignal = null) {
-        return this._task.run(() => {
+        return this._task.run(ct => {
             if (!token || !this._data.length) {
                 return [];
             }
 
-            const { numericToken, textToken } = splitToken(token);
+            const { numericToken, textToken } = splitToken(token, ct);
 
             if (!numericToken && !textToken) {
                 return [];
@@ -171,13 +210,15 @@ class FilteringService {
             // simple numeric match
             const simpleNumericMatchResult = findSimpleNumericMatch(
                 this._data,
-                numericToken
+                numericToken,
+                ct
             );
             // simple text match
             const simpleTextMatchResult = findSimpleTextMatch(
                 this._data,
                 textToken,
-                simpleNumericMatchResult
+                simpleNumericMatchResult,
+                ct
             );
             // number tokenized match
             const tokenizedNumberResult = findTokenizedNumber(
@@ -185,7 +226,8 @@ class FilteringService {
                 this._config,
                 numericToken,
                 simpleNumericMatchResult,
-                simpleTextMatchResult
+                simpleTextMatchResult,
+                ct
             );
             // text tokenized match
             const tokenizedTextResult = findTokenizedText(
@@ -194,15 +236,18 @@ class FilteringService {
                 textToken,
                 simpleNumericMatchResult,
                 simpleTextMatchResult,
-                tokenizedNumberResult
+                tokenizedNumberResult,
+                ct
             );
 
-            return [
-                ...simpleNumericMatchResult.values(),
-                ...simpleTextMatchResult.values(),
-                ...tokenizedNumberResult.values(),
-                ...tokenizedTextResult.values()
-            ];
+            return ct?.aborted
+                ? []
+                : [
+                    ...simpleNumericMatchResult.values(),
+                    ...simpleTextMatchResult.values(),
+                    ...tokenizedNumberResult.values(),
+                    ...tokenizedTextResult.values()
+                ];
         }, cancellationSignal);
     }
 }
