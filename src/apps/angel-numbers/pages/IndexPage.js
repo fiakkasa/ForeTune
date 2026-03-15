@@ -141,14 +141,16 @@ const IndexPage = {
             this.bookmarkAbortController.abort();
             this.bookmarkAbortController = new AbortController();
 
-            await this.bookmarksService.toggleBookmark(
+            const result = await this.bookmarksService.toggleBookmark(
                 number,
                 this.bookmarkAbortController.signal
             );
 
-            this.setVisibleBookmarksCount();
+            if (result) {
+                this.setVisibleBookmarksCount(this.bookmarkAbortController.signal);
+            }
 
-            if(!this.bookmarksService.HasData) {
+            if (!this.bookmarksService.HasData) {
                 this.viewOnlyBookmarks = false;
             }
             this.loading = false;
@@ -165,10 +167,18 @@ const IndexPage = {
             this.viewOnlyBookmarks = false;
             this.loading = false;
         },
-        setVisibleBookmarksCount() {
+        setVisibleBookmarksCount(cancellationSignal = null) {
+            if (cancellationSignal?.aborted) {
+                return;
+            }
+
             let count = 0;
 
             for (const { key } of this.visibleData) {
+                if (cancellationSignal?.aborted) {
+                    return;
+                }
+
                 this.bookmarksService.isBookmarked(key) && count++;
             }
 
@@ -182,7 +192,7 @@ const IndexPage = {
 
             if (!this.trimmedText) {
                 this.visibleData = this.filteringService.Data;
-                this.setVisibleBookmarksCount();
+                this.setVisibleBookmarksCount(this.findAbortController.signal);
                 this.loading = false;
 
                 return;
@@ -201,7 +211,7 @@ const IndexPage = {
             }
 
             this.visibleData = result;
-            this.setVisibleBookmarksCount();
+            this.setVisibleBookmarksCount(this.findAbortController.signal);
             this.loading = false;
         },
         setTextItemsFromRoute() {
