@@ -2,6 +2,8 @@
 
 A collection of tools related to metaphysics!
 
+[Live Demo](https://fiakkasa.github.io/ForeTune/src)
+
 It is also a single-spa example using Vue JS apps and pure browser ES modules (no bundler).
 
 ## Installation
