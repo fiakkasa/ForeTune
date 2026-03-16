@@ -29,7 +29,9 @@ const DigitAdderComponent = {
         text: {
             immediate: true,
             async handler(value) {
-                if (value === this.currentText) return;
+                if (value === this.currentText) {
+                    return;
+                }
 
                 this.$emit('busy', true);
 
@@ -37,9 +39,9 @@ const DigitAdderComponent = {
                 this.abortController = new AbortController();
                 this.currentText = value;
 
-                const normalized = this.uiService.normalizeTextInput(value);
+                const normalizedText = this.uiService.normalizeTextInput(value);
 
-                if (!normalized) {
+                if (!normalizedText) {
                     this.result = '';
                     this.steps = [];
                     this.$emit('busy', false);
@@ -49,11 +51,9 @@ const DigitAdderComponent = {
                 }
 
                 const { result, steps, error } = await this.uiService
-                    .delay(
-                        this.abortController.signal
-                    )
+                    .delay(this.abortController.signal)
                     .then(() => this.digitCalculatorService.calculate(
-                        normalized,
+                        normalizedText,
                         this.abortController.signal
                     ))
                     .catch(error => ({ error }));

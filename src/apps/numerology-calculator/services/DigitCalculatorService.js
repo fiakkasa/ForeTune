@@ -1,3 +1,15 @@
+const _digitsSet = new Set([
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9'
+]);
 const _codePointsMap = {
     '1': 1,
     '2': 2,
@@ -12,23 +24,95 @@ const _codePointsMap = {
 
 const toDeltaInt = (character) => _codePointsMap[character] || 0;
 
-const toDeltaIntCollectionSequence = (text) =>
-    [...text].map(ch => toDeltaInt(ch));
+const toDeltaIntCollectionSequence = (text, cancellationSignal = null) => {
+    if (cancellationSignal?.aborted) {
+        return [];
+    }
 
-const toSumString = (collection) =>
-    collection.reduce((a, b) => a + b, 0).toString();
+    const result = [];
 
-const calculateSumAndStep = (digits, sequence, equation) => {
-    const sum = toSumString(digits);
-    const step = {
+    for (const ch of text) {
+        if (cancellationSignal?.aborted) {
+            return [];
+        }
+
+        result.push(toDeltaInt(ch));
+    }
+
+    return result;
+};
+
+const toSumString = (collection, cancellationSignal = null) => {
+    if (cancellationSignal?.aborted) {
+        return '';
+    }
+
+    let result = 0;
+
+    for (const item of collection) {
+        if (cancellationSignal?.aborted) {
+            return '';
+        }
+
+        result += item;
+    }
+
+    return result.toString();
+};
+
+const calculateSumAndStep = (
+    digits,
+    sequence,
+    equation,
+    cancellationSignal = null
+) => {
+    let sum = '';
+    let step = {
         equation,
         sum,
         numberOfCharacters: digits.length,
         sequence
     };
 
+    if (cancellationSignal?.aborted) {
+        return {
+            sum,
+            step: {
+                equation,
+                sum,
+                numberOfCharacters: digits.length,
+                sequence
+            }
+        };
+    }
+
+    sum = toSumString(digits, cancellationSignal);
+    step.sum = sum;
+
     return { sum, step };
 };
+
+const getDigits = (text, cancellationSignal = null) => {
+    if (cancellationSignal?.aborted) {
+        return [];
+    }
+
+    const result = [];
+
+    for (const ch of text) {
+        if (cancellationSignal?.aborted) {
+            return [];
+        }
+
+        if (_digitsSet.has(ch)) {
+            result.push(toDeltaInt(ch));
+        }
+    }
+
+    return result;
+};
+
+const getEmptyResult = () => ({ result: '', steps: [] });
 
 class DigitCalculatorService {
     constructor(uiService, task) {
@@ -37,13 +121,11 @@ class DigitCalculatorService {
     }
 
     calculate(text, cancellationSignal = null) {
-        return this._task.run(() => {
-            let digits = [...(text || '')]
-                .filter(ch => /\d/.test(ch))
-                .map(ch => toDeltaInt(ch));
+        return this._task.run(ct => {
+            let digits = getDigits(text || '', ct);
 
             if (!digits.length) {
-                return { result: '', steps: [] };
+                return getEmptyResult();
             }
 
             let result = '';
@@ -52,17 +134,24 @@ class DigitCalculatorService {
             let { sum, step } = calculateSumAndStep(
                 digits,
                 this._uiService.composeEntrySequence(digits),
-                this._uiService.composeEntryEquation(digits)
+                this._uiService.composeEntryEquation(digits),
+                ct
             );
 
             result = sum;
             steps.push(step);
 
             while (result.length > 1) {
-                digits = toDeltaIntCollectionSequence(result);
+                if (ct?.aborted) {
+                    return getEmptyResult();
+                }
+
+                digits = toDeltaIntCollectionSequence(result, ct);
                 let { sum, step } = calculateSumAndStep(
                     digits,
-                    this._uiService.composeEntrySequence(digits)
+                    this._uiService.composeEntrySequence(digits),
+                    this._uiService.composeEntryEquation(digits),
+                    ct
                 );
 
                 result = sum;
