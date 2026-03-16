@@ -198,7 +198,8 @@ const IndexPage = {
                 return;
             }
 
-            const { result, error } = await this.uiService.delay(this.findAbortController.signal)
+            const { result, error } = await this.uiService
+                .delay(this.findAbortController.signal)
                 .then(() => this.filteringService.search(
                     this.trimmedText,
                     this.findAbortController.signal

@@ -28,7 +28,9 @@ const LetterAdderComponent = {
         text: {
             immediate: true,
             async handler(value) {
-                if (value === this.currentText) return;
+                if (value === this.currentText) {
+                    return;
+                }
 
                 this.$emit('busy', true);
 
@@ -36,8 +38,8 @@ const LetterAdderComponent = {
                 this.abortController = new AbortController();
                 this.currentText = value;
 
-                const normalized = this.uiService.normalizeTextInput(value);
-                if (!normalized) {
+                const normalizedText = this.uiService.normalizeTextInput(value);
+                if (!normalizedText) {
                     this.result = '';
                     this.steps = [];
                     this.$emit('busy', false);
@@ -47,11 +49,9 @@ const LetterAdderComponent = {
                 }
 
                 const { result, steps, error } = await this.uiService
-                    .delay(
-                        this.abortController.signal
-                    )
+                    .delay(this.abortController.signal)
                     .then(() => this.letterCalculatorService.calculate(
-                        normalized,
+                        normalizedText,
                         this.type,
                         this.abortController.signal
                     ))
