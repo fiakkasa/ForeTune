@@ -114,7 +114,7 @@ const IndexPage = {
             text: '',
             trimmedText: '',
             loading: false,
-            showSkeleton: true,
+            init: false,
             visibleData: [],
             visibleBookmarksCount: 0,
             timeoutRef: null,
@@ -142,6 +142,10 @@ const IndexPage = {
         }
     },
     computed: {
+        showSkeleton() {
+            return !this.init
+                || (this.loading && !this.visibleDataCount);
+        },
         visibleDataCount() {
             return this.viewOnlyBookmarks
                 ? this.visibleBookmarksCount
@@ -211,7 +215,7 @@ const IndexPage = {
                 this.visibleData = this.filteringService.Data;
                 this.setVisibleBookmarksCount(this.findAbortController.signal);
                 this.loading = false;
-                this.showSkeleton = false;
+                this.init = true;
 
                 return;
             }
@@ -232,7 +236,7 @@ const IndexPage = {
             this.visibleData = result;
             this.setVisibleBookmarksCount(this.findAbortController.signal);
             this.loading = false;
-            this.showSkeleton = false;
+            this.init = true;
         },
         setTextItemsFromRoute() {
             this.text = this.normalizeText(
