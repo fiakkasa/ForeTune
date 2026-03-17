@@ -41,16 +41,32 @@ const IndexPage = {
                     </template>
                 </search-input>
             </div>
-
+            <div class="an-skeleton an-cards container d-flex flex-column"
+                 v-if="showSkeleton">
+                <div class="an-card card">
+                    <div class="card-body">
+                        <h5 class="card-title d-flex align-items-center justify-content-between">
+                            <div class="placeholder-glow">
+                                <span class="placeholder"></span>
+                            </div>
+                        </h5>
+                        <p class="card-text placeholder-glow">
+                            <div class="placeholder w-75"></div>
+                            <div class="placeholder w-100"></div>
+                            <div class="placeholder w-75"></div>
+                        </p>
+                    </div>
+                </div>
+            </div>
             <div class="an-cards container d-flex flex-column"
-                 v-if="visibleData.length">
+                 v-else-if="visibleData.length">
                 <template v-for="item in visibleData">
                     <div class="an-card card"
                          v-if="bookmarksService.isBookmarked(item.key)"
                          :key="item.key">
                         <div class="card-body">
                             <h5 class="card-title d-flex align-items-center justify-content-between">
-                                <div v-text="item.number"></div>
+                                <div class="an-card-number" v-text="item.number"></div>
                                 <button type="button"
                                         class="btn btn-default text-success d-flex align-items-center justify-content-center p-1"
                                         @click="toggleBookmark(item.key)">
@@ -98,6 +114,7 @@ const IndexPage = {
             text: '',
             trimmedText: '',
             loading: false,
+            showSkeleton: true,
             visibleData: [],
             visibleBookmarksCount: 0,
             timeoutRef: null,
@@ -194,6 +211,7 @@ const IndexPage = {
                 this.visibleData = this.filteringService.Data;
                 this.setVisibleBookmarksCount(this.findAbortController.signal);
                 this.loading = false;
+                this.showSkeleton = false;
 
                 return;
             }
@@ -214,6 +232,7 @@ const IndexPage = {
             this.visibleData = result;
             this.setVisibleBookmarksCount(this.findAbortController.signal);
             this.loading = false;
+            this.showSkeleton = false;
         },
         setTextItemsFromRoute() {
             this.text = this.normalizeText(

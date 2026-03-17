@@ -43,3 +43,7 @@
   position: relative;
   z-index: 10;
 }
+
+.an-skeleton > .an-card h5 > .placeholder-glow > .placeholder {
+  width: 2rem;
+}
