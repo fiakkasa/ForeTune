@@ -77,16 +77,16 @@ const IndexPage = {
     },
     computed: {
         loading() {
-            return this.digitBusy 
-            || this.letterBusy 
-            || this.vowelBusy 
-            || this.consonantBusy 
-            || this.combinedBusy;
+            return this.digitBusy
+                || this.letterBusy
+                || this.vowelBusy
+                || this.consonantBusy
+                || this.combinedBusy;
         },
         combinedResult() {
             if (
-                !this.trimmedText 
-                || !this.digitResult 
+                !this.trimmedText
+                || !this.digitResult
                 || !this.letterResult
             ) {
                 return '';
@@ -99,17 +99,14 @@ const IndexPage = {
                 return '0';
             }
 
-            let elementHeight = 0;
-
-            if (this.init) {
-                elementHeight = this.$refs.searchInputContainer?.offsetHeight ?? 87;
-            }
+            const defaultHeight = this.init ? 87 : 43;
+            const elementHeight = this.$refs?.searchInputContainer?.offsetHeight ?? defaultHeight;
 
             return `max(calc(50vh - ${elementHeight}px), 0px)`;
         }
     },
     beforeMount() {
-        this.setTextItemsFromRoute();
+        this.setTextItems(this.$route.query.text);
     },
     mounted() {
         this.init = true;
@@ -120,23 +117,19 @@ const IndexPage = {
                 return;
             }
 
-            this.setTextItemsFromRoute();
+            this.setTextItems(to.query.text);
         }
     },
     methods: {
-        setTextItemsFromRoute() {
-            this.text = this.normalizeText(
-                this.$route.query.text
-            );
+        setTextItems(text) {
+            this.text = this.normalizeText(text);
             this.trimmedText = this.text.trim();
         },
         normalizeText(text) {
             return (text || '').replaceAll('%20', ' ').replaceAll('.', ' ');
         },
         onTextChange(text) {
-            this.text = this.normalizeText(text);
-            this.trimmedText = this.text.trim();
-            this.$router.push({ query: { text: this.text } });
+            this.$router.push({ query: { text } });
         }
     }
 };

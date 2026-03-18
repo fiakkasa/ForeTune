@@ -16,7 +16,7 @@
 }
 
 .nc-search-input-spacer {
-  transition: 375ms ease-in-out all;
+  transition: 275ms ease-in-out padding-bottom;
 }
 
 .nc-card:after,

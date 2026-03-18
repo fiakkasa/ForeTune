@@ -124,7 +124,7 @@ const IndexPage = {
         };
     },
     beforeMount() {
-        this.setTextItemsFromRoute();
+        this.setTextItems(this.$route.query.text);
         this.find();
     },
     beforeUnmount() {
@@ -137,7 +137,7 @@ const IndexPage = {
                 return;
             }
 
-            this.setTextItemsFromRoute();
+            this.setTextItems(to.query.text);
             this.find();
         }
     },
@@ -238,20 +238,15 @@ const IndexPage = {
             this.loading = false;
             this.init = true;
         },
-        setTextItemsFromRoute() {
-            this.text = this.normalizeText(
-                this.$route.query.text
-            );
+        setTextItems(text) {
+            this.text = this.normalizeText(text);
             this.trimmedText = this.text.trim();
         },
         normalizeText(text) {
             return (text || '').replaceAll('%20', ' ').replaceAll('.', ' ');
         },
         onTextChange(text) {
-            this.text = this.normalizeText(text);
-            this.trimmedText = this.text.trim();
-            this.$router.push({ query: { text: this.text } });
-            this.find();
+            this.$router.push({ query: { text } });
         }
     }
 };
