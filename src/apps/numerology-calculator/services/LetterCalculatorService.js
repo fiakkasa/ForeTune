@@ -1,3 +1,5 @@
+import { toDeltaIntCollectionSequence, calculateSumAndStep } from './CalculatorUtils.js';
+
 const _letterMap = {
     A: 1, J: 1, S: 1,
     B: 2, K: 2, T: 2,
@@ -26,79 +28,6 @@ const _consonantMap = {
     G: 7, P: 7, Y: 7,
     H: 8, Q: 8, Z: 8,
     /* */ R: 9
-};
-const _codePointsMap = {
-    '1': 1,
-    '2': 2,
-    '3': 3,
-    '4': 4,
-    '5': 5,
-    '6': 6,
-    '7': 7,
-    '8': 8,
-    '9': 9
-};
-
-const toDeltaInt = (character) => _codePointsMap[character] || 0;
-
-const toDeltaIntCollectionSequence = (text, cancellationSignal = null) => {
-    if (cancellationSignal?.aborted) {
-        return [];
-    }
-
-    const result = [];
-
-    for (const ch of text) {
-        if (cancellationSignal?.aborted) {
-            return [];
-        }
-
-        result.push(toDeltaInt(ch));
-    }
-
-    return result;
-};
-
-const toSumString = (collection, cancellationSignal = null) => {
-    if (cancellationSignal?.aborted) {
-        return '';
-    }
-
-    let result = 0;
-
-    for (const item of collection) {
-        if (cancellationSignal?.aborted) {
-            return '';
-        }
-
-        result += item;
-    }
-
-    return result.toString();
-};
-
-const calculateSumAndStep = (
-    digits,
-    sequence,
-    equation,
-    cancellationSignal = null
-) => {
-    let sum = '';
-    let step = {
-        equation,
-        sum,
-        numberOfCharacters: digits.length,
-        sequence
-    };
-
-    if (cancellationSignal?.aborted) {
-        return { sum, step };
-    }
-
-    sum = toSumString(digits, cancellationSignal);
-    step.sum = sum;
-
-    return { sum, step };
 };
 
 const getLettersAndDigits = (
