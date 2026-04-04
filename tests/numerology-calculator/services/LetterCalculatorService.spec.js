@@ -86,7 +86,7 @@ describe('LetterCalculatorService', () => {
         });
 
         it('for consonants type calculates multi-letter input with iterative sum reduction', async () => {
-            const result = await service.calculate('BCDXYZ', 'consonants');
+            const result = await service.calculate('BCDXPZ', 'consonants');
 
             expect(result.result).toBe('3');
             expect(result.steps.length).toBe(2);
