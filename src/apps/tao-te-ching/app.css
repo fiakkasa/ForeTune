@@ -1,0 +1,75 @@
+.ttc-app {
+  position: relative;
+  background-image: url("./assets/yin-yang.png");
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+
+.ttc-cards {
+  gap: 0.375rem;
+}
+
+.ttc-card {
+  position: relative;
+}
+
+.ttc-card,
+.ttc-search-input-container,
+.ttc-footer {
+  background-color: transparent;
+  overflow: hidden;
+}
+
+.ttc-card:after,
+.ttc-search-input-container:after,
+.ttc-footer:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bs-body-bg);
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  filter: blur(8px) opacity(0.65);
+}
+
+.ttc-card > .card-body,
+.ttc-search-input-container > *,
+.ttc-footer > * {
+  position: relative;
+  z-index: 10;
+}
+
+.ttc-card > .card-body > .card-title {
+  gap: 0.375rem;
+}
+
+.ttc-cards > .ttc-card > .card-body > .card-text {
+  white-space: preserve-breaks;
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(auto-fit, calc(33% - 0.25rem));
+  gap: 0.25rem;
+}
+
+.ttc-cards > .ttc-card > .card-body > .card-text.visible-columns-1 {
+  grid-template-columns: repeat(auto-fit, 100%);
+}
+
+.ttc-cards > .ttc-card > .card-body > .card-text.visible-columns-2 {
+  grid-template-columns: repeat(auto-fit, calc(50% - 0.25rem));
+}
+
+.ttc-skeleton > .ttc-card h5 > .placeholder-glow > .placeholder {
+  width: 2rem;
+}
+
+@media (max-width: 991px) {
+  .ttc-cards > .ttc-card > .card-body > .card-text {
+    grid-template-columns: repeat(auto-fit, 100%)!important;
+  }
+}

@@ -25,7 +25,16 @@ const appsConfig = Object.freeze({
         icon: 'fa-solid fa-feather-pointed',
         activeCssClass: 'btn-primary',
         inactiveCssClass: '',
-    })
+    }),
+    taoTeChing: Object.freeze({
+        title: 'tao_te_ching',
+        urlFragment: 'tao-te-ching',
+        path: 'apps/tao-te-ching',
+        id: 'tao-te-ching',
+        icon: 'fa-solid fa-yin-yang',
+        activeCssClass: 'btn-primary',
+        inactiveCssClass: '',
+    }),
 });
 const urlConfig = Object.freeze({
     baseUrlPrefix: '#/'
@@ -51,7 +60,7 @@ const singleSpaConfig = Object.freeze({
 const serviceWorkerConfig = Object.freeze({
     path: './sw.js',
     scope: './',
-    type: 'classic' // 'classic' or 'none' to disable
+    type: 'none' // 'classic' or 'none' to disable
 });
 const storageConfig = Object.freeze({
     namespace: 'foretune__',

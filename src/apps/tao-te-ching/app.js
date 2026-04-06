@@ -10,12 +10,12 @@ const uiConfig = Object.freeze({
 });
 
 const filteringConfig = Object.freeze({
-    dataUrl: 'apps/angel-numbers/assets/data.json',
+    dataUrl: 'apps/tao-te-ching/assets/data.json',
     maxChars: uiConfig.maxSearchInputChars
 });
 
 const bookmarksConfig = Object.freeze({
-    storageKey: 'angel-numbers.bookmarks'
+    storageKey: 'tao-te-ching.bookmarks'
 });
 
 const routes = [
@@ -26,7 +26,7 @@ const routes = [
 async function appInit(configuration, services) {
     const { appConfig } = configuration;
     const { storageService, task, httpClient } = services;
-    const { path = 'apps/angel-numbers', urlFragment = 'angel-numbers' } = appConfig;
+    const { path = 'apps/tao-te-ching', urlFragment = 'tao-te-ching' } = appConfig;
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(`/${urlFragment}`),
         routes
@@ -46,7 +46,10 @@ async function appInit(configuration, services) {
                 view_only_bookmarks: 'View only bookmarks',
                 x_bookmarks_will_be_removed: '| {count} bookmark will be removed! | {count} bookmarks will be removed!',
                 ok: 'OK',
-                cancel: 'Cancel'
+                cancel: 'Cancel',
+                english: 'English',
+                original: 'Original',
+                no_text_mode_selected: 'No text mode selected..'
             }
         }
     });

@@ -4,6 +4,8 @@ const SearchInputComponent = {
     emits: ['update:text'],
     template: `
         <div class="app-search-container input-group">
+            <slot name="controlsPre" />
+
             <input type="text"
                 class="form-control"
                 :placeholder="$t('enter_your_values')"
