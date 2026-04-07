@@ -154,7 +154,7 @@ const IndexPage = {
             </div>
 
             <small class="ttc-footer justify-content-end container position-sticky sticky-bottom p-1 px-3 d-flex text-body-secondary"
-                   v-if="!showSkeleton && visibleDataCount">
+                   v-if="!showSkeleton && visibleDataCount && visibleColumns">
                 <span class="px-1 bg-body rounded"
                       v-text="$t('items_of_total', { items: visibleDataCount, total: filteringService.Data.length })">
                 </span>
@@ -374,7 +374,7 @@ const IndexPage = {
             this.findAbortController = new AbortController();
 
             if (!this.trimmedText || !this.visibleColumns) {
-                this.visibleData = !this.trimmedText ? this.filteringService.Data : [];
+                this.visibleData = this.filteringService.Data;
                 this.setVisibleBookmarksCount(this.findAbortController.signal);
                 this.loading = false;
                 this.init = true;
