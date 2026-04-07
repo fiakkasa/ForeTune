@@ -1,5 +1,5 @@
 {
-    "enter_your_values": "Enter numbers and/or letters..",
+    "enter_your_values": "Enter your search token..",
     "characters_of_max_characters": "{characters} / {maxCharacters}",
     "items_of_total": "{items} of {total}",
     "nothing_found": "No items matched your search token..",
@@ -8,5 +8,8 @@
     "view_only_bookmarks": "View only bookmarks",
     "x_bookmarks_will_be_removed": "| {count} bookmark will be removed! | {count} bookmarks will be removed!",
     "ok": "OK",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "english": "English",
+    "original": "繁體中文 (Original)",
+    "no_text_mode_selected": "No text mode selected.."
 }

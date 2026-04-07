@@ -42,7 +42,7 @@ const toSumString = (collection, cancellationSignal = null) => {
             return '';
         }
 
-        result += ~~item;
+        result += Math.trunc(item);
     }
 
     return result.toString();
