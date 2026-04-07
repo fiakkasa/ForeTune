@@ -1,3 +1,7 @@
+const boolToChar = value => value ? '1' : '0';
+const charToBool = value => value === '1';
+const _charBool = new Set(['0', '1']);
+
 const IndexPage = {
     inject: ['uiService', 'filteringService', 'bookmarksService'],
     template: `
@@ -86,7 +90,7 @@ const IndexPage = {
                 <span v-text="$t('no_text_mode_selected')"></span>
             </small>
             <small class="p-1 px-3 d-flex justify-content-center text-body-secondary"
-                   v-else-if="!loading && filteringService.Data.length && !visibleData.length">
+                   v-else-if="!loading && !visibleDataCount">
                 <span v-text="$t('nothing_found')"></span>
             </small>
             <div class="ttc-cards container d-flex flex-column"
@@ -111,7 +115,7 @@ const IndexPage = {
                                     <p v-text="item.text"></p>
                                 </div>
                                 <div v-if="originalTextVisible">
-                                    <h6 v-text="$t('original')"></h6>
+                                    <h6 v-if="visibleColumns > 1" v-text="$t('original')"></h6>
                                     <p v-text="item.originalText"></p>
                                 </div>
                             </div>
@@ -139,7 +143,7 @@ const IndexPage = {
                                         <p v-text="item.text"></p>
                                     </div>
                                     <div v-if="originalTextVisible">
-                                        <h6 v-text="$t('original')"></h6>
+                                        <h6 v-if="visibleColumns > 1" v-text="$t('original')"></h6>
                                         <p v-text="item.originalText"></p>
                                     </div>
                                 </div>
@@ -150,7 +154,7 @@ const IndexPage = {
             </div>
 
             <small class="ttc-footer justify-content-end container position-sticky sticky-bottom p-1 px-3 d-flex text-body-secondary"
-                   v-if="!loading && visibleDataCount">
+                   v-if="!showSkeleton && visibleDataCount">
                 <span class="px-1 bg-body rounded"
                       v-text="$t('items_of_total', { items: visibleDataCount, total: filteringService.Data.length })">
                 </span>
@@ -184,9 +188,9 @@ const IndexPage = {
         $route(to, from) {
             if (
                 to.query.text === this.text
-                && to.query.viewOnlyBookmarks === (this.viewOnlyBookmarks ? '1' : '')
-                && to.query.textVisible === (this.textVisible ? '1' : '')
-                && to.query.originalTextVisible === (this.originalTextVisible ? '1' : '')
+                && to.query.viewOnlyBookmarks === boolToChar(this.viewOnlyBookmarks)
+                && to.query.textVisible === boolToChar(this.textVisible)
+                && to.query.originalTextVisible === boolToChar(this.originalTextVisible)
             ) {
                 return;
             }
@@ -197,6 +201,7 @@ const IndexPage = {
     computed: {
         showSkeleton() {
             return !this.init
+                || (this.loading && this.visibleColumns < 2)
                 || (this.loading && !this.visibleDataCount);
         },
         visibleDataCount() {
@@ -227,9 +232,9 @@ const IndexPage = {
             }
 
             const text = query.text ?? '';
-            const viewOnlyBookmarksValue = query.viewOnlyBookmarks === '1';
-            const textVisible = query.textVisible === '1';
-            const originalTextVisible = query.originalTextVisible === '1';
+            const viewOnlyBookmarksValue = charToBool(query.viewOnlyBookmarks);
+            const textVisible = charToBool(query.textVisible);
+            const originalTextVisible = charToBool(query.originalTextVisible);
             const viewOnlyBookmarks = viewOnlyBookmarksValue && this.bookmarksService.HasData;
 
             if (
@@ -241,9 +246,9 @@ const IndexPage = {
                     || !keys.has('textVisible')
                     || !keys.has('originalTextVisible')
                 )
-                || !['', '1'].includes(query.viewOnlyBookmarks)
-                || !['', '1'].includes(query.textVisible)
-                || !['', '1'].includes(query.originalTextVisible)
+                || !_charBool.has(query.viewOnlyBookmarks)
+                || !_charBool.has(query.textVisible)
+                || !_charBool.has(query.originalTextVisible)
             ) {
                 this.setRoute(
                     text,
@@ -264,9 +269,9 @@ const IndexPage = {
             this.$router.push({
                 query: {
                     text,
-                    viewOnlyBookmarks: viewOnlyBookmarks ? '1' : '',
-                    textVisible: textVisible ? '1' : '',
-                    originalTextVisible: originalTextVisible ? '1' : ''
+                    viewOnlyBookmarks: boolToChar(viewOnlyBookmarks),
+                    textVisible: boolToChar(textVisible),
+                    originalTextVisible: boolToChar(originalTextVisible)
                 }
             });
         },
@@ -368,8 +373,8 @@ const IndexPage = {
             this.findAbortController.abort();
             this.findAbortController = new AbortController();
 
-            if (!this.trimmedText) {
-                this.visibleData = this.filteringService.Data;
+            if (!this.trimmedText || !this.visibleColumns) {
+                this.visibleData = !this.trimmedText ? this.filteringService.Data : [];
                 this.setVisibleBookmarksCount(this.findAbortController.signal);
                 this.loading = false;
                 this.init = true;

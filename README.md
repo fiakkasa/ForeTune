@@ -48,3 +48,5 @@ Under the project root folder run: `npx workbox-cli generateSW ./workbox-config.
 - https://getbootstrap.com
 - https://bootswatch.com
 - https://www.taoteching.online/
+- https://www.tao-te-ching.org
+- https://theqiflow.com/pages/tao-te-ching-chapter-1

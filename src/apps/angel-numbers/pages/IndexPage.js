@@ -1,3 +1,7 @@
+const boolToChar = value => value ? '1' : '0';
+const charToBool = value => value === '1';
+const _charBool = new Set(['0', '1']);
+
 const IndexPage = {
     inject: ['uiService', 'filteringService', 'bookmarksService'],
     template: `
@@ -63,7 +67,7 @@ const IndexPage = {
                 <span v-text="$t('no_data')"></span>
             </small>
             <small class="p-1 px-3 d-flex justify-content-center text-body-secondary"
-                   v-else-if="!loading && filteringService.Data.length && !visibleData.length">
+                   v-else-if="!loading && !visibleDataCount">
                 <span v-text="$t('nothing_found')"></span>
             </small>
             <div class="an-cards container d-flex flex-column"
@@ -107,7 +111,7 @@ const IndexPage = {
             </div>
 
             <small class="an-footer justify-content-end container position-sticky sticky-bottom p-1 px-3 d-flex text-body-secondary"
-                   v-if="!loading && visibleDataCount">
+                   v-if="!showSkeleton && visibleDataCount">
                 <span class="px-1 bg-body rounded"
                       v-text="$t('items_of_total', { items: visibleDataCount, total: filteringService.Data.length })">
                 </span>
@@ -139,7 +143,7 @@ const IndexPage = {
         $route(to, from) {
             if (
                 to.query.text === this.text
-                && to.query.viewOnlyBookmarks === (this.viewOnlyBookmarks ? '1' : '')
+                && to.query.viewOnlyBookmarks === boolToChar(this.viewOnlyBookmarks)
             ) {
                 return;
             }
@@ -171,14 +175,14 @@ const IndexPage = {
             }
 
             const text = query.text ?? '';
-            const viewOnlyBookmarksValue = query.viewOnlyBookmarks === '1';
+            const viewOnlyBookmarksValue = charToBool(query.viewOnlyBookmarks);
             const viewOnlyBookmarks = viewOnlyBookmarksValue && this.bookmarksService.HasData;
 
             if (
                 keys.size !== 2
                 || (viewOnlyBookmarksValue && !this.bookmarksService.HasData)
                 || (!keys.has('text') || !keys.has('viewOnlyBookmarks'))
-                || !['', '1'].includes(query.viewOnlyBookmarks)
+                || !_charBool.has(query.viewOnlyBookmarks)
             ) {
                 this.setRoute(text, viewOnlyBookmarks);
                 return;
@@ -192,7 +196,7 @@ const IndexPage = {
             this.$router.push({
                 query: {
                     text,
-                    viewOnlyBookmarks: viewOnlyBookmarks ? '1' : ''
+                    viewOnlyBookmarks: boolToChar(viewOnlyBookmarks)
                 }
             });
         },
