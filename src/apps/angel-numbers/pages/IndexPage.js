@@ -181,16 +181,20 @@ const IndexPage = {
             if (
                 keys.size !== 2
                 || (viewOnlyBookmarksValue && !this.bookmarksService.HasData)
-                || (!keys.has('text') || !keys.has('viewOnlyBookmarks'))
+                || !(keys.has('text') && keys.has('viewOnlyBookmarks'))
                 || !_charBool.has(query.viewOnlyBookmarks)
             ) {
                 this.setRoute(text, viewOnlyBookmarks);
                 return;
             }
 
-            this.viewOnlyBookmarks = viewOnlyBookmarks;
-            this.setTextItems(text);
-            this.find();
+            const setViewOnlyBookmarks = viewOnlyBookmarks !== this.viewOnlyBookmarks;
+            const setTextItems = text !== this.text;
+            const runFind = !this.init || setTextItems;
+
+            setViewOnlyBookmarks && (this.viewOnlyBookmarks = viewOnlyBookmarks);
+            setTextItems && (this.setTextItems(text));
+            runFind && this.find();
         },
         setRoute(text, viewOnlyBookmarks) {
             this.$router.push({

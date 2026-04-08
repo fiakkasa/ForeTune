@@ -166,6 +166,7 @@ const IndexPage = {
             text: '',
             trimmedText: '',
             loading: false,
+            loadingSkeleton: false,
             init: false,
             visibleData: [],
             visibleBookmarksCount: 0,
@@ -201,7 +202,7 @@ const IndexPage = {
     computed: {
         showSkeleton() {
             return !this.init
-                || (this.loading && this.visibleColumns < 2)
+                || this.loadingSkeleton
                 || (this.loading && !this.visibleDataCount);
         },
         visibleDataCount() {
@@ -240,11 +241,11 @@ const IndexPage = {
             if (
                 keys.size !== 4
                 || (viewOnlyBookmarksValue && !this.bookmarksService.HasData)
-                || (
-                    !keys.has('text')
-                    || !keys.has('viewOnlyBookmarks')
-                    || !keys.has('textVisible')
-                    || !keys.has('originalTextVisible')
+                || !(
+                    keys.has('text')
+                    && keys.has('viewOnlyBookmarks')
+                    && keys.has('textVisible')
+                    && keys.has('originalTextVisible')
                 )
                 || !_charBool.has(query.viewOnlyBookmarks)
                 || !_charBool.has(query.textVisible)
@@ -259,11 +260,20 @@ const IndexPage = {
                 return;
             }
 
-            this.viewOnlyBookmarks = viewOnlyBookmarks;
-            this.textVisible = textVisible;
-            this.originalTextVisible = originalTextVisible;
-            this.setTextItems(text);
-            this.find();
+            const setViewOnlyBookmarks = viewOnlyBookmarks !== this.viewOnlyBookmarks;
+            const setTextVisible = textVisible !== this.textVisible;
+            const setOriginalTextVisible = originalTextVisible !== this.originalTextVisible;
+            const setTextItems = text !== this.text;
+            const runFind = !this.init
+                || setTextVisible
+                || setOriginalTextVisible
+                || setTextItems;
+
+            setViewOnlyBookmarks && (this.viewOnlyBookmarks = viewOnlyBookmarks);
+            setTextVisible && (this.textVisible = textVisible);
+            setOriginalTextVisible && (this.originalTextVisible = originalTextVisible);
+            setTextItems && (this.setTextItems(text));
+            runFind && this.find();
         },
         setRoute(text, viewOnlyBookmarks, textVisible, originalTextVisible) {
             this.$router.push({
@@ -284,6 +294,7 @@ const IndexPage = {
             );
         },
         toggleTextVisible() {
+            this.loadingSkeleton = true;
             this.setRoute(
                 this.text,
                 this.viewOnlyBookmarks,
@@ -292,6 +303,7 @@ const IndexPage = {
             );
         },
         toggleOriginalTextVisible() {
+            this.loadingSkeleton = true;
             this.setRoute(
                 this.text,
                 this.viewOnlyBookmarks,
@@ -320,10 +332,9 @@ const IndexPage = {
             this.setVisibleBookmarksCount(this.bookmarkAbortController.signal);
 
             if (!this.bookmarksService.HasData) {
-                this.viewOnlyBookmarks = false;
                 this.setRoute(
                     this.text,
-                    this.viewOnlyBookmarks,
+                    false,
                     this.textVisible,
                     this.originalTextVisible
                 );
@@ -340,10 +351,9 @@ const IndexPage = {
             await this.bookmarksService.clear(this.bookmarkAbortController.signal);
             this.visibleBookmarksCount = 0;
 
-            this.viewOnlyBookmarks = false;
             this.setRoute(
                 this.text,
-                this.viewOnlyBookmarks,
+                false,
                 this.textVisible,
                 this.originalTextVisible
             );
@@ -377,6 +387,7 @@ const IndexPage = {
                 this.visibleData = this.filteringService.Data;
                 this.setVisibleBookmarksCount(this.findAbortController.signal);
                 this.loading = false;
+                this.loadingSkeleton = false;
                 this.init = true;
 
                 return;
@@ -404,6 +415,7 @@ const IndexPage = {
             this.visibleData = result;
             this.setVisibleBookmarksCount(this.findAbortController.signal);
             this.loading = false;
+            this.loadingSkeleton = false;
             this.init = true;
         },
         setTextItems(text) {
