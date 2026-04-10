@@ -7,7 +7,7 @@ const IndexPage = {
     template: `
         <div class="ttc-app h-100 overflow-auto">
             <div class="ttc-search-input-container container position-sticky sticky-top px-3 pt-4">
-                <search-input :text="text"
+                <search-input :text="searchToken"
                               :loading="loading"
                               :focus-on-load="true"
                               @update:text="onTextChange">
@@ -163,10 +163,10 @@ const IndexPage = {
     `,
     data() {
         return {
-            text: '',
-            trimmedText: '',
+            searchToken: '',
+            trimmedSearchToken: '',
             loading: false,
-            loadingSkeleton: false,
+            loadingTextMode: false,
             init: false,
             visibleData: [],
             visibleBookmarksCount: 0,
@@ -188,7 +188,7 @@ const IndexPage = {
     watch: {
         $route(to, from) {
             if (
-                to.query.text === this.text
+                to.query.search === this.searchToken
                 && to.query.viewOnlyBookmarks === boolToChar(this.viewOnlyBookmarks)
                 && to.query.textVisible === boolToChar(this.textVisible)
                 && to.query.originalTextVisible === boolToChar(this.originalTextVisible)
@@ -202,7 +202,7 @@ const IndexPage = {
     computed: {
         showSkeleton() {
             return !this.init
-                || this.loadingSkeleton
+                || this.loadingTextMode
                 || (this.loading && !this.visibleDataCount);
         },
         visibleDataCount() {
@@ -223,16 +223,17 @@ const IndexPage = {
             const keys = new Set(Object.keys(query));
 
             if (keys.size === 0) {
+                this.setSearchTokens('');
                 this.viewOnlyBookmarks = false;
                 this.textVisible = true;
                 this.originalTextVisible = true;
-                this.setTextItems('');
+
                 this.find();
 
                 return;
             }
 
-            const text = query.text ?? '';
+            const searchToken = query.search ?? '';
             const viewOnlyBookmarksValue = charToBool(query.viewOnlyBookmarks);
             const textVisible = charToBool(query.textVisible);
             const originalTextVisible = charToBool(query.originalTextVisible);
@@ -240,9 +241,9 @@ const IndexPage = {
 
             if (
                 keys.size !== 4
-                || (viewOnlyBookmarksValue && !this.bookmarksService.HasData)
+                || (viewOnlyBookmarksValue !== viewOnlyBookmarks)
                 || !(
-                    keys.has('text')
+                    keys.has('search')
                     && keys.has('viewOnlyBookmarks')
                     && keys.has('textVisible')
                     && keys.has('originalTextVisible')
@@ -252,7 +253,7 @@ const IndexPage = {
                 || !_charBool.has(query.originalTextVisible)
             ) {
                 this.setRoute(
-                    text,
+                    searchToken,
                     viewOnlyBookmarks,
                     textVisible || !keys.has('textVisible'),
                     originalTextVisible || !keys.has('originalTextVisible')
@@ -260,25 +261,28 @@ const IndexPage = {
                 return;
             }
 
+            const setSearchTokens = searchToken !== this.searchToken;
             const setViewOnlyBookmarks = viewOnlyBookmarks !== this.viewOnlyBookmarks;
             const setTextVisible = textVisible !== this.textVisible;
             const setOriginalTextVisible = originalTextVisible !== this.originalTextVisible;
-            const setTextItems = text !== this.text;
             const runFind = !this.init
+                || setSearchTokens
                 || setTextVisible
-                || setOriginalTextVisible
-                || setTextItems;
+                || setOriginalTextVisible;
 
+            this.loadingTextMode = this.init && (setTextVisible || setOriginalTextVisible);
+
+            setSearchTokens && (this.setSearchTokens(searchToken));
             setViewOnlyBookmarks && (this.viewOnlyBookmarks = viewOnlyBookmarks);
             setTextVisible && (this.textVisible = textVisible);
             setOriginalTextVisible && (this.originalTextVisible = originalTextVisible);
-            setTextItems && (this.setTextItems(text));
+
             runFind && this.find();
         },
-        setRoute(text, viewOnlyBookmarks, textVisible, originalTextVisible) {
+        setRoute(searchToken, viewOnlyBookmarks, textVisible, originalTextVisible) {
             this.$router.push({
                 query: {
-                    text,
+                    search: searchToken,
                     viewOnlyBookmarks: boolToChar(viewOnlyBookmarks),
                     textVisible: boolToChar(textVisible),
                     originalTextVisible: boolToChar(originalTextVisible)
@@ -294,18 +298,16 @@ const IndexPage = {
             );
         },
         toggleTextVisible() {
-            this.loadingSkeleton = true;
             this.setRoute(
-                this.text,
+                this.searchToken,
                 this.viewOnlyBookmarks,
                 !this.textVisible,
                 this.originalTextVisible
             );
         },
         toggleOriginalTextVisible() {
-            this.loadingSkeleton = true;
             this.setRoute(
-                this.text,
+                this.searchToken,
                 this.viewOnlyBookmarks,
                 this.textVisible,
                 !this.originalTextVisible
@@ -313,7 +315,7 @@ const IndexPage = {
         },
         toggleViewOnlyBookmarks() {
             this.setRoute(
-                this.text,
+                this.searchToken,
                 !this.viewOnlyBookmarks,
                 this.textVisible,
                 this.originalTextVisible
@@ -331,16 +333,16 @@ const IndexPage = {
             );
             this.setVisibleBookmarksCount(this.bookmarkAbortController.signal);
 
-            if (!this.bookmarksService.HasData) {
+            this.loading = false;
+
+            if (!this.bookmarksService.HasData && this.viewOnlyBookmarks) {
                 this.setRoute(
-                    this.text,
+                    this.searchToken,
                     false,
                     this.textVisible,
                     this.originalTextVisible
                 );
             }
-
-            this.loading = false;
         },
         async clearBookmarks() {
             this.loading = true;
@@ -349,19 +351,26 @@ const IndexPage = {
             this.bookmarkAbortController = new AbortController();
 
             await this.bookmarksService.clear(this.bookmarkAbortController.signal);
-            this.visibleBookmarksCount = 0;
-
-            this.setRoute(
-                this.text,
-                false,
-                this.textVisible,
-                this.originalTextVisible
-            );
+            this.setVisibleBookmarksCount(this.bookmarkAbortController.signal);
 
             this.loading = false;
+
+            if (this.viewOnlyBookmarks) {
+                this.setRoute(
+                    this.searchToken,
+                    false,
+                    this.textVisible,
+                    this.originalTextVisible
+                );
+            }
         },
         setVisibleBookmarksCount(cancellationSignal = null) {
             if (cancellationSignal?.aborted) {
+                return;
+            }
+
+            if (!this.bookmarksService.HasData) {
+                this.visibleBookmarksCount = 0;
                 return;
             }
 
@@ -383,11 +392,11 @@ const IndexPage = {
             this.findAbortController.abort();
             this.findAbortController = new AbortController();
 
-            if (!this.trimmedText || !this.visibleColumns) {
+            if (!this.trimmedSearchToken || !this.visibleColumns) {
                 this.visibleData = this.filteringService.Data;
                 this.setVisibleBookmarksCount(this.findAbortController.signal);
                 this.loading = false;
-                this.loadingSkeleton = false;
+                this.loadingTextMode = false;
                 this.init = true;
 
                 return;
@@ -396,7 +405,7 @@ const IndexPage = {
             const { result, error } = await this.uiService
                 .delay(this.findAbortController.signal)
                 .then(() => this.filteringService.search(
-                    this.trimmedText,
+                    this.trimmedSearchToken,
                     {
                         chapter: true,
                         title: true,
@@ -415,12 +424,12 @@ const IndexPage = {
             this.visibleData = result;
             this.setVisibleBookmarksCount(this.findAbortController.signal);
             this.loading = false;
-            this.loadingSkeleton = false;
+            this.loadingTextMode = false;
             this.init = true;
         },
-        setTextItems(text) {
-            this.text = (text || '').replaceAll('%20', ' ').replaceAll('.', ' ');
-            this.trimmedText = this.text.trim();
+        setSearchTokens(text) {
+            this.searchToken = (text || '').replaceAll('%20', ' ').replaceAll('.', ' ');
+            this.trimmedSearchToken = this.searchToken.trim();
         }
     }
 };
