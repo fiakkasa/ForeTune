@@ -7,7 +7,7 @@ const IndexPage = {
     template: `
         <div class="an-app h-100 overflow-auto">
             <div class="an-search-input-container container position-sticky sticky-top px-3 pt-4">
-                <search-input :text="text"
+                <search-input :text="searchToken"
                               :loading="loading"
                               :focus-on-load="true"
                               @update:text="onTextChange">
@@ -120,8 +120,8 @@ const IndexPage = {
     `,
     data() {
         return {
-            text: '',
-            trimmedText: '',
+            searchToken: '',
+            trimmedSearchToken: '',
             loading: false,
             init: false,
             visibleData: [],
@@ -142,7 +142,7 @@ const IndexPage = {
     watch: {
         $route(to, from) {
             if (
-                to.query.text === this.text
+                to.query.search === this.searchToken
                 && to.query.viewOnlyBookmarks === boolToChar(this.viewOnlyBookmarks)
             ) {
                 return;
@@ -167,39 +167,41 @@ const IndexPage = {
             const keys = new Set(Object.keys(query));
 
             if (keys.size === 0) {
+                this.setSearchTokens('');
                 this.viewOnlyBookmarks = false;
-                this.setTextItems('');
+
                 this.find();
 
                 return;
             }
 
-            const text = query.text ?? '';
+            const searchToken = query.search ?? '';
             const viewOnlyBookmarksValue = charToBool(query.viewOnlyBookmarks);
             const viewOnlyBookmarks = viewOnlyBookmarksValue && this.bookmarksService.HasData;
 
             if (
                 keys.size !== 2
-                || (viewOnlyBookmarksValue && !this.bookmarksService.HasData)
-                || !(keys.has('text') && keys.has('viewOnlyBookmarks'))
+                || (viewOnlyBookmarksValue !== viewOnlyBookmarks)
+                || !(keys.has('search') && keys.has('viewOnlyBookmarks'))
                 || !_charBool.has(query.viewOnlyBookmarks)
             ) {
-                this.setRoute(text, viewOnlyBookmarks);
+                this.setRoute(searchToken, viewOnlyBookmarks);
                 return;
             }
 
+            const setSearchTokens = searchToken !== this.searchToken;
             const setViewOnlyBookmarks = viewOnlyBookmarks !== this.viewOnlyBookmarks;
-            const setTextItems = text !== this.text;
-            const runFind = !this.init || setTextItems;
+            const runFind = !this.init || setSearchTokens;
 
+            setSearchTokens && (this.setSearchTokens(searchToken));
             setViewOnlyBookmarks && (this.viewOnlyBookmarks = viewOnlyBookmarks);
-            setTextItems && (this.setTextItems(text));
+
             runFind && this.find();
         },
-        setRoute(text, viewOnlyBookmarks) {
+        setRoute(searchToken, viewOnlyBookmarks) {
             this.$router.push({
                 query: {
-                    text,
+                    search: searchToken,
                     viewOnlyBookmarks: boolToChar(viewOnlyBookmarks)
                 }
             });
@@ -208,7 +210,7 @@ const IndexPage = {
             this.setRoute(text, this.viewOnlyBookmarks);
         },
         toggleViewOnlyBookmarks() {
-            this.setRoute(this.text, !this.viewOnlyBookmarks);
+            this.setRoute(this.searchToken, !this.viewOnlyBookmarks);
         },
         async toggleBookmark(number) {
             this.loading = true;
@@ -222,12 +224,11 @@ const IndexPage = {
             );
             this.setVisibleBookmarksCount(this.bookmarkAbortController.signal);
 
-            if (!this.bookmarksService.HasData) {
-                this.viewOnlyBookmarks = false;
-                this.setRoute(this.text, this.viewOnlyBookmarks);
-            }
-
             this.loading = false;
+
+            if (!this.bookmarksService.HasData && this.viewOnlyBookmarks) {
+                this.setRoute(this.searchToken, false);
+            }
         },
         async clearBookmarks() {
             this.loading = true;
@@ -236,15 +237,21 @@ const IndexPage = {
             this.bookmarkAbortController = new AbortController();
 
             await this.bookmarksService.clear(this.bookmarkAbortController.signal);
-            this.visibleBookmarksCount = 0;
-
-            this.viewOnlyBookmarks = false;
-            this.setRoute(this.text, this.viewOnlyBookmarks);
+            this.setVisibleBookmarksCount(this.bookmarkAbortController.signal);
 
             this.loading = false;
+
+            if (this.viewOnlyBookmarks) {
+                this.setRoute(this.searchToken, false);
+            }
         },
         setVisibleBookmarksCount(cancellationSignal = null) {
             if (cancellationSignal?.aborted) {
+                return;
+            }
+
+            if (!this.bookmarksService.HasData) {
+                this.visibleBookmarksCount = 0;
                 return;
             }
 
@@ -266,7 +273,7 @@ const IndexPage = {
             this.findAbortController.abort();
             this.findAbortController = new AbortController();
 
-            if (!this.trimmedText) {
+            if (!this.trimmedSearchToken) {
                 this.visibleData = this.filteringService.Data;
                 this.setVisibleBookmarksCount(this.findAbortController.signal);
                 this.loading = false;
@@ -278,7 +285,7 @@ const IndexPage = {
             const { result, error } = await this.uiService
                 .delay(this.findAbortController.signal)
                 .then(() => this.filteringService.search(
-                    this.trimmedText,
+                    this.trimmedSearchToken,
                     this.findAbortController.signal
                 ))
                 .then(result => ({ result }))
@@ -293,9 +300,9 @@ const IndexPage = {
             this.loading = false;
             this.init = true;
         },
-        setTextItems(text) {
-            this.text = (text || '').replaceAll('%20', ' ').replaceAll('.', ' ');
-            this.trimmedText = this.text.trim();
+        setSearchTokens(text) {
+            this.searchToken = (text || '').replaceAll('%20', ' ').replaceAll('.', ' ');
+            this.trimmedSearchToken = this.searchToken.trim();
         }
     }
 };
