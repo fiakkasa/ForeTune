@@ -19,7 +19,10 @@ const uiConfig = Object.freeze({
 
 const linksConfig = Object.freeze({
     url: '/angel-numbers',
-    queryParameterName: 'search'
+    queryParameterName: 'search',
+    additionalQueryParams: {
+        viewOnlyBookmarks: 0
+    }
 });
 
 const routes = [

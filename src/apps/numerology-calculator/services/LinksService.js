@@ -16,7 +16,10 @@ class LinksService {
 
         return {
             path: this._config.url,
-            query: { [this._config.queryParameterName]: normalizedValue }
+            query: { 
+                ...(this._config.additionalQueryParams || { }),
+                [this._config.queryParameterName]: normalizedValue 
+            }
         }
     }
 }
